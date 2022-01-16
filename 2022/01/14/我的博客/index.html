@@ -14,10 +14,11 @@
 
 
 <link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"Available values":"default | flat | mac","style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="这是一篇加密文章，内容可能是个人情感宣泄或者收费技术。如果你确实想看，请与我联系。">
@@ -28,9 +29,9 @@
 <meta property="og:description" content="这是一篇加密文章，内容可能是个人情感宣泄或者收费技术。如果你确实想看，请与我联系。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2022-01-14T02:19:19.000Z">
-<meta property="article:modified_time" content="2022-01-14T12:48:22.395Z">
+<meta property="article:modified_time" content="2022-01-16T08:57:40.138Z">
 <meta property="article:author" content="Insominac">
-<meta property="article:tag" content="第一篇">
+<meta property="article:tag" content="文章">
 <meta name="twitter:card" content="summary">
 
 <link rel="canonical" href="http://example.com/2022/01/14/%E6%88%91%E7%9A%84%E5%8D%9A%E5%AE%A2/">
@@ -82,12 +83,6 @@
 
 <script type="text/javascript" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
 
-
-
-   <canvas class="fireworks" style="position: fixed;left: 0;top: 0;z-index: 1; pointer-events: none;" ></canvas> 
-   <script type="text/javascript" src="//cdn.bootcss.com/animejs/2.2.0/anime.min.js"></script> 
-   <script type="text/javascript" src="source/js/fireworks.js"></script>
-
 <body itemscope itemtype="http://schema.org/WebPage">
   <div class="container use-motion">
     <div class="headband"></div>
@@ -115,6 +110,7 @@
 
   <div class="site-nav-right">
     <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
     </div>
   </div>
 </div>
@@ -129,6 +125,11 @@
     <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
 
   </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
         <li class="menu-item menu-item-tags">
 
     <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
@@ -139,21 +140,38 @@
     <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
 
   </li>
-        <li class="menu-item menu-item-schedule">
-
-    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
-
-  </li>
-        <li class="menu-item menu-item-resources">
-
-    <a href="/resources/" rel="section"><i class="download fa-fw"></i>资源</a>
-
-  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
   </ul>
 </nav>
 
 
 
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
 
 </div>
     </header>
@@ -163,6 +181,7 @@
     <i class="fa fa-arrow-up"></i>
     <span>0%</span>
   </div>
+  <div class="reading-progress-bar"></div>
 
 
     <main class="main">
@@ -194,17 +213,47 @@
         </h1>
 
         <div class="post-meta">
+        
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2022-01-14 10:19:19 / 修改时间：20:48:22" itemprop="dateCreated datePublished" datetime="2022-01-14T10:19:19+08:00">2022-01-14</time>
+              <time title="创建时间：2022-01-14 10:19:19" itemprop="dateCreated datePublished" datetime="2022-01-14T10:19:19+08:00">2022-01-14</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-01-16 16:57:40" itemprop="dateModified" datetime="2022-01-16T16:57:40+08:00">2022-01-16</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%96%87%E7%AB%A0/" itemprop="url" rel="index"><span itemprop="name">文章</span></a>
+                </span>
             </span>
 
-          
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>254</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
 
         </div>
       </header>
@@ -215,8 +264,8 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <div class="hbe hbe-container" id="hexo-blog-encrypt" data-wpm="Oh, this is an invalid password. Check and try again, please." data-whm="OOPS, these decrypted content may changed, but you can still have a look.">
-  <script id="hbeData" type="hbeData" data-hmacdigest="58859a66c7d1b9b6e3300ca0bf0f6611b306c8d9342db0dac92205e72ccd6570">4630436162ade97ba2718b7d0c4b3b63673a2f41305796001771d77f5c3bca5f6e47e18c0bcc932126c42a841eddd6ace54ab0b5d60e5d6a6b629428c2d4c54bdaef1a42e6a939064f15a810cf2d51b30ec72222682b706dfc9f5c30c7a16a3eb685c3adfff55b9f4483b4c9f0fb4e0dc842b2ae0bb05c23bf7c88f7f620ae7d51e6574a8ff20c30582786986958b6b7a6f3f34c0fc96a960edd4d91170202d68bfbc22f767fca7dfbc8e33673a20e035ac498b5509d4acdca2263e31b33d81032b5838a373c6f9a347dff9980b4b7eb96e185c39497e09b37b80534c710edcbd58ca698d98a78d86c796d4d6207837c3602c977a983085e4757364b26873a099a2bd139ed7241a2817f749dfecb219faf15703f5f07dfff3d703880f52dc390d76bc845039ebf5b192374a3b70cd5625d6b841faa84db9c27b9e17e6b830807845c680ddb3310c13014d281c37c31926c2dbf99f1ea4541cf00f0f0c0e63e928fee478fc24333a4d6b5f1ba294e6605fbeee999198a9a1ce9ea9ca3b21ea219948fe9dfc63ca3b88acc891692f57d7b2f68619d6a16a1e30b5d44b720b279bb490d132538396b3a255fd567ee7e3b6cc61b71bc0b2aa838ec2a11e3dfd07d958e666151af9f0d921bb3fde385768de864a8674fb578e4739848e115547d60c9a6889f089d0cf3dd13873b005c6e218aa184164d315e308988888140599a8fa1f9ad4d8855d36412fe7e030dbe3149d8a43e371c2ea2c57659854666c72dd404b7b10aa9fc7b8f9cd0d34c1eaf683b603b5370c14d69a49e6441164aeaf3e2519c62eae644efb877a27e1ce4600bf1fde0ab2bf4047f4114dff4ee2a1e1001f3270f624c745b7da459ed5c564838e2e61d9e1a104e1bf50225a765174ee8fcdfbecab056dc4627e984171d4da1907828e06f393addbc591179e96211c19bad38b6ebe7d79e3cdf0e3d7855ee3f6901326ee050c6995a3ea3487ddc8f529c2fd83e22afe63fd09fda22811c7f344028111a095c66c39a996673ac3b1ae670c187283b7956e328df1d7e07a35f22d04c71acaa65b5ef05e223dc8079dbb07f830f657c563d28a91714a04da53cc4180eeefe88c312a5993df86506902e3f3a60092c6d24c7bcf12e4a42803a228a3ab19e</script>
+        <div class="hbe hbe-container" id="hexo-blog-encrypt" data-wpm="抱歉, 这个密码看着不太对, 请再试试." data-whm="抱歉, 这个文章不能被校验, 不过您还是能看看解密后的内容.">
+  <script id="hbeData" type="hbeData" data-hmacdigest="9cdf9c4beab5386a129d46b455463ab406df7deeb5d2c69fa0dac5699b4462ad">4630436162ade97ba2718b7d0c4b3b63673a2f41305796001771d77f5c3bca5f6e47e18c0bcc932126c42a841eddd6ace54ab0b5d60e5d6a6b629428c2d4c54bdaef1a42e6a939064f15a810cf2d51b30ec72222682b706dfc9f5c30c7a16a3eb685c3adfff55b9f4483b4c9f0fb4e0dc842b2ae0bb05c23bf7c88f7f620ae7d51e6574a8ff20c30582786986958b6b7a6f3f34c0fc96a960edd4d91170202d68bfbc22f767fca7dfbc8e33673a20e035ac498b5509d4acdca2263e31b33d81032b5838a373c6f9a347dff9980b4b7eb96e185c39497e09b37b80534c710edcbd58ca698d98a78d86c796d4d6207837c3602c977a983085e4757364b26873a099a2bd139ed7241a2817f749dfecb219faf15703f5f07dfff3d703880f52dc390d76bc845039ebf5b192374a3b70cd5625d6b841faa84db9c27b9e17e6b830807845c680ddb3310c13014d281c37c31926c2dbf99f1ea4541cf00f0f0c0e63e928fee478fc24333a4d6b5f1ba294e6605fbeee999198a9a1ce9ea9ca3b21ea219948fe9dfc63ca3b88acc891692f57d7b2f68619d6a16a1e30b5d44b720b279bb490d132538396b3a255fd567ee7e3b6cc61b71bc0b2aa838ec2a11e3dfd07d958e666151af9f0d921bb3fde385768de864a8674fb578e4739848e115547d60c9a6889f089d0cf3dd13873b005c6e218aa184164d315e308988888140599a8fa1f9ad4d8855d36412fe7e030dbe3149d8a43e371c2ea2c57659854666c72dd404b7b10aa9fc7b8f9cd0d34c1eaf683b603b5370c14d69a49e6441164aeaf3e2519c62eae644efb877a27e1ce4600bf1fde0ab2bf4047f4114dff4ee2a1e1001f3270f624c745b7da459ed5c564838e2e61d9e1a104e1bf50225a765174ee8fcdfbecab056dc4627e984171d4da1907828e06f393addbc591179e96211c19bad38b6ebe7d79e3cdf0e3d7855ee3f6901326ee050c6995a3ea3487ddc8f529c2fd83e22afe63fd09fda22811c7f344028111a095c66c39a996673ac3b1ae670c187283b7956e328df1d7e07a35f22d04c71acaa65b5ef05e223dc8079dbb07f830f657c563d28a91714a04da53cc4180eeefe88c312a5993df86506902e3f3a6009ffaabd57745bcf6ae9a909a45ae7a7ce7c171fb0b1d08766029413c00c81d443070937a6772eaee18396ea1e15a323c940d9a30bb400a2006edab2f7f898f9d36848e4957110a0d3e025475c52ccc87d</script>
   <div class="hbe hbe-content">
     <div class="hbe hbe-input hbe-input-default">
       <input class="hbe hbe-input-field hbe-input-field-default" type="password" id="hbePass">
@@ -241,16 +290,41 @@
 </div>
       
     </div>
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Insominac
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://example.com/2022/01/14/%E6%88%91%E7%9A%84%E5%8D%9A%E5%AE%A2/" title="我的博客">http://example.com/2022/01/14/我的博客/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
 
       <footer class="post-footer">
+          
           <div class="post-tags">
-              <a href="/tags/%E7%AC%AC%E4%B8%80%E7%AF%87/" rel="tag"><i class="fa fa-tag"></i># 第一篇</a>
+              <a href="/tags/%E6%96%87%E7%AB%A0/" rel="tag"><i class="fa fa-tag"></i><i class="fa fa-tag"></i> 文章</a>
           </div>
 
         
 
 
         
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/01/14/hexo%E5%AE%89%E8%A3%85/" rel="prev" title="Hexo安装">
+      <i class="fa fa-chevron-left"></i> Hexo安装
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
       </footer>
     
   </article>
@@ -322,9 +396,15 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
           <a href="/archives">
-          <span class="site-state-item-count">1</span>
+          <span class="site-state-item-count">2</span>
           <span class="site-state-item-name">日志</span>
         </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
@@ -348,6 +428,7 @@
 
 
 
+
       </div>
 
     </div>
@@ -367,8 +448,6 @@
 
         
 
-<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-
 <div class="copyright">
   
   &copy; 
@@ -377,18 +456,18 @@
     <i class="fa fa-heart"></i>
   </span>
   <span class="author" itemprop="copyrightHolder">Insominac</span>
-</div>
-  <div class="powered-by">
-    <i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
-    本站访客数:<span id="busuanzi_value_site_uv"></span>
-  </span>
-  </div>
-
-  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
-  </div>
-<div class="theme-info">
-  <div class="powered-by"></div>
-  <span class="post-count">博客全站共9字</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">2k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">2 分钟</span>
 </div>
 
 
@@ -407,6 +486,8 @@
 
   
   <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
 
@@ -428,6 +509,10 @@
 
 
 
+  
+<script src="/js/local-search.js"></script>
+
+
 
 
 
@@ -444,4 +529,9 @@
   
 
 </body>
+
+   <canvas class="fireworks" style="position: fixed;left: 0;top: 0;z-index: 1; pointer-events: none;" ></canvas> 
+   <script type="text/javascript" src="//cdn.bootcss.com/animejs/2.2.0/anime.min.js"></script> 
+   <script type="text/javascript" src="js/fireworks.js"></script>
+
 </html>

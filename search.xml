@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  <entry>
+    <title>Hexo安装</title>
+    <url>/2022/01/14/hexo%E5%AE%89%E8%A3%85/</url>
+    <content><![CDATA[<p>Hexo 是一个快速、简洁且高效的博客框架。Hexo 使用 Markdown（或其他渲染引擎）解析文章，在几秒内，即可利用靓丽的主题生成静态网页。</p>
+<span id="more"></span>
+
+<h2 id="1-安装Hexo"><a href="#1-安装Hexo" class="headerlink" title="1.安装Hexo"></a>1.安装Hexo</h2><h3 id="1-1-安装前提"><a href="#1-1-安装前提" class="headerlink" title="1.1 安装前提"></a>1.1 安装前提</h3><p>安装 Hexo 相当简单，只需要先安装下列应用程序即可：<br><a href="https://nodejs.org/en/">Node.js</a> (Node.js 版本需不低于 10.13，建议使用 Node.js 12.0 及以上版本)<br><a href="http://git-scm.com/">Git</a><br>如果您的电脑中已经安装上述必备程序，可以直接到安装 Hexo 步骤。<br>安装好后可以测试下输入以下命令</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">node -v</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm -v</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git --version</span><br></pre></td></tr></table></figure>
+<p>命令回车结果<br><img src="/images/node1.png"></p>
+<h3 id="1-2-Node-js-版本限制"><a href="#1-2-Node-js-版本限制" class="headerlink" title="1.2 Node.js 版本限制"></a>1.2 Node.js 版本限制</h3><table>
+<thead>
+<tr>
+<th>Hexo 版本</th>
+<th>最低兼容 Node.js 版本</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>6.0+</td>
+<td>12.13.0</td>
+</tr>
+<tr>
+<td>5.0+</td>
+<td>10.13.0</td>
+</tr>
+<tr>
+<td>4.2-4.2</td>
+<td>8.10</td>
+</tr>
+</tbody></table>
+<h3 id="1-3-安装-Hexo"><a href="#1-3-安装-Hexo" class="headerlink" title="1.3 安装 Hexo"></a>1.3 安装 Hexo</h3><p>所有必备的应用程序安装完成后，即可使用 npm 安装 Hexo。<br>Windows电脑下面命令复制去掉$</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ npm install -g hexo-cli</span><br></pre></td></tr></table></figure>
+
+<p>验证hexo安装成功</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo -v</span><br></pre></td></tr></table></figure>
+<p><img src="/images/hexo1.png"></p>
+<p>安装 Hexo 完成后，在我们想要放hexo的终端目录执行下列命令，Hexo 将会在指定文件夹中新建所需要的文件。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo init &lt;folder&gt;</span><br><span class="line">$ <span class="built_in">cd</span> &lt;folder&gt;</span><br><span class="line">$ npm install</span><br></pre></td></tr></table></figure>
+<p>启动，进入我们hexo根目录，也就是上面的folder，按照以下命令</p>
+<table>
+<thead>
+<tr>
+<th>Hexo 版本</th>
+<th>最低兼容 Node.js 版本</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>hexo generate</td>
+<td>生成静态文件，可以简写hexo g</td>
+</tr>
+<tr>
+<td>hexo server</td>
+<td>启动服务器，-p可以指定启动端口,可以简写hexo s</td>
+</tr>
+<tr>
+<td>hexo deploy</td>
+<td>部署网站，这里我后面结合git使用，部署之前预先生成静态文件,可以简写hexo d</td>
+</tr>
+<tr>
+<td>hexo clean</td>
+<td>清除缓存文件 (db.json) 和已生成的静态文件 (public)。在某些情况（尤其是更换主题后），如果发现您对站点的更改无论如何也不生效，您可能需要运行该命令。</td>
+</tr>
+</tbody></table>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo g &amp;&amp; hexo s</span><br></pre></td></tr></table></figure>
+<p>执行上述命令后，用浏览器打开<a href="http://localhost:4000/">http://localhost:4000/</a></p>
+<h2 id="2-部署"><a href="#2-部署" class="headerlink" title="2.部署"></a>2.部署</h2><p>部署到我们的github上，通过访问我们的github pag来看我们的博客</p>
+<h4 id="1-设置Git的user-name和email"><a href="#1-设置Git的user-name和email" class="headerlink" title="1. 设置Git的user name和email"></a>1. 设置Git的user name和email</h4><p>在我们创建博客文件夹里右击，选择 Git Base Here，然后在窗口中依次输入</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git config --global user.name <span class="string">&quot;yourname&quot;</span></span><br><span class="line">git config --global user.email <span class="string">&quot;youremail&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="2-SSH-授权"><a href="#2-SSH-授权" class="headerlink" title="2. SSH 授权"></a>2. SSH 授权</h4><p>打开git bash，输入<br>ssh-keygen -t rsa, 接着回车三下，最后得到了两个文件：id_rsa和id_rsa.pub。<br>文件在我们C盘-&gt;用户文件夹-&gt;用户名下面，是一个.ssh隐藏文件夹，如果看不到隐藏项目，请在查看里面勾选隐藏项目，具体看图<br><img src="/images/ssh.png"></p>
+<h4 id="3-部署到github"><a href="#3-部署到github" class="headerlink" title="3. 部署到github"></a>3. 部署到github</h4><p>登录我们的github，为我们的博客创建一个仓库，仓库名字为 username.github.io,username为自定义名字，等上传成功后可通过<a href="https://langallover.github.io/">https://LangAllover.github.io/</a> 访问自己的博客（这里用我的演示）<br><img src="/images/boke.png"></p>
+<p>通过hexo上传到github，需要hexo-deployer-git插件，安装插件<br>在我们的hexo根目录安装</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm install hexo-deployer-git</span><br></pre></td></tr></table></figure>
+
+<p>打开hexo根目录路径下配置文件_config.yml修改deploy参数<br>ctrl +f搜索deploy然后修改如下：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">deploy:</span><br><span class="line">  <span class="built_in">type</span>: git</span><br><span class="line">  repository: git@github.com:LangAllover/LangAllover.github.io.git</span><br><span class="line">  branch: master</span><br></pre></td></tr></table></figure>
+
+<p>在终端输入命令创建一篇新博客</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo new post <span class="string">&quot;博客名&quot;</span></span><br></pre></td></tr></table></figure>
+<p>这时文件夹source/_posts文件夹里会出现博客名.md的博客文章源文件文件是markdown格式，有一套语法规范，后面文章会说到。</p>
+<p>本来现在只需要hexo d -g命令直接部署到我们github就行，下面是把换主题一起说明。<br>这个时候我们的博客是hexo默认主题，我有个仓库放了hexo-theme-next主题，本篇文章也是基于我这边版本主题来的。<br><img src="/images/hexo2.png" alt="默认主题"></p>
+<p>在我们的hexo根目录下,终端输入命令回车</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/LangAllover/hexo-theme-next.git themes/next</span><br></pre></td></tr></table></figure>
+<p>我们的themes目录就是专门放我们主题的，这时候next主题就clone到我们本地了，然后我们在hexo根目录下的_config.yml文件下ctrl+f搜索theme修改如下<br><img src="/images/hexo-next.png"></p>
+<p>后面就可以本地启动访问看下，确认是变成next主题就可以部署到github上<br>在hexo根目录下终端输入，可以简写命令一起用</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo g &amp;&amp; hext d</span><br></pre></td></tr></table></figure>
+<p>先生成静态文件然后部署<br>或者用下面这个，效果一样</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo d -g</span><br></pre></td></tr></table></figure>
+<p>发布上去后就可以看到我们的next主题，这时我们可以访问我们之前的仓库链接看效果<br><a href="https://langallover.github.io/">https://LangAllover.github.io/</a> </p>
+<p><img src="/images/hexo-ok.png"></p>
+<p>Hexo命令和详细说明请点击-&gt;<a href="https://hexo.io/zh-cn/docs/">官方详情文档</a>，以上是本人使用过程中用到的。</p>
+]]></content>
+      <categories>
+        <category>Hexo</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>我的博客</title>
+    <url>/2022/01/14/%E6%88%91%E7%9A%84%E5%8D%9A%E5%AE%A2/</url>
+    <content><![CDATA[<div class="hbe hbe-container" id="hexo-blog-encrypt" data-wpm="抱歉, 这个密码看着不太对, 请再试试." data-whm="抱歉, 这个文章不能被校验, 不过您还是能看看解密后的内容.">
+  <script id="hbeData" type="hbeData" data-hmacdigest="9cdf9c4beab5386a129d46b455463ab406df7deeb5d2c69fa0dac5699b4462ad">4630436162ade97ba2718b7d0c4b3b63673a2f41305796001771d77f5c3bca5f6e47e18c0bcc932126c42a841eddd6ace54ab0b5d60e5d6a6b629428c2d4c54bdaef1a42e6a939064f15a810cf2d51b30ec72222682b706dfc9f5c30c7a16a3eb685c3adfff55b9f4483b4c9f0fb4e0dc842b2ae0bb05c23bf7c88f7f620ae7d51e6574a8ff20c30582786986958b6b7a6f3f34c0fc96a960edd4d91170202d68bfbc22f767fca7dfbc8e33673a20e035ac498b5509d4acdca2263e31b33d81032b5838a373c6f9a347dff9980b4b7eb96e185c39497e09b37b80534c710edcbd58ca698d98a78d86c796d4d6207837c3602c977a983085e4757364b26873a099a2bd139ed7241a2817f749dfecb219faf15703f5f07dfff3d703880f52dc390d76bc845039ebf5b192374a3b70cd5625d6b841faa84db9c27b9e17e6b830807845c680ddb3310c13014d281c37c31926c2dbf99f1ea4541cf00f0f0c0e63e928fee478fc24333a4d6b5f1ba294e6605fbeee999198a9a1ce9ea9ca3b21ea219948fe9dfc63ca3b88acc891692f57d7b2f68619d6a16a1e30b5d44b720b279bb490d132538396b3a255fd567ee7e3b6cc61b71bc0b2aa838ec2a11e3dfd07d958e666151af9f0d921bb3fde385768de864a8674fb578e4739848e115547d60c9a6889f089d0cf3dd13873b005c6e218aa184164d315e308988888140599a8fa1f9ad4d8855d36412fe7e030dbe3149d8a43e371c2ea2c57659854666c72dd404b7b10aa9fc7b8f9cd0d34c1eaf683b603b5370c14d69a49e6441164aeaf3e2519c62eae644efb877a27e1ce4600bf1fde0ab2bf4047f4114dff4ee2a1e1001f3270f624c745b7da459ed5c564838e2e61d9e1a104e1bf50225a765174ee8fcdfbecab056dc4627e984171d4da1907828e06f393addbc591179e96211c19bad38b6ebe7d79e3cdf0e3d7855ee3f6901326ee050c6995a3ea3487ddc8f529c2fd83e22afe63fd09fda22811c7f344028111a095c66c39a996673ac3b1ae670c187283b7956e328df1d7e07a35f22d04c71acaa65b5ef05e223dc8079dbb07f830f657c563d28a91714a04da53cc4180eeefe88c312a5993df86506902e3f3a6009ffaabd57745bcf6ae9a909a45ae7a7ce7c171fb0b1d08766029413c00c81d443070937a6772eaee18396ea1e15a323c940d9a30bb400a2006edab2f7f898f9d36848e4957110a0d3e025475c52ccc87d</script>
+  <div class="hbe hbe-content">
+    <div class="hbe hbe-input hbe-input-default">
+      <input class="hbe hbe-input-field hbe-input-field-default" type="password" id="hbePass">
+      <label class="hbe hbe-input-label hbe-input-label-default" for="hbePass">
+        <span class="hbe hbe-input-label-content hbe-input-label-content-default">输入密码，查看文章</span>
+      </label>
+    </div>
+  </div>
+</div>
+<script data-pjax src="/lib/hbe.js"></script><link href="/css/hbe.style.css" rel="stylesheet" type="text/css">]]></content>
+      <categories>
+        <category>文章</category>
+      </categories>
+      <tags>
+        <tag>文章</tag>
+      </tags>
+  </entry>
+</search>

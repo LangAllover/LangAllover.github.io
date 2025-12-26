@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"langallover.github.io","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"Available values":"default | flat | mac","style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="计算机硬件系统均由运算器、控制器、存储器、输入设备和输出设备五大部分构成。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="计算机基础系列-计算机基本组成">
+<meta property="og:url" content="https://langallover.github.io/2022/01/28/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80%E7%B3%BB%E5%88%97-%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E6%9C%AC%E7%BB%84%E6%88%90/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="计算机硬件系统均由运算器、控制器、存储器、输入设备和输出设备五大部分构成。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://langallover.github.io/images/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E6%9C%AC%E7%A1%AC%E4%BB%B6%E7%BB%84%E6%88%90.png">
+<meta property="og:image" content="https://langallover.github.io/images/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F.png">
+<meta property="article:published_time" content="2022-01-28T05:14:08.000Z">
+<meta property="article:modified_time" content="2025-12-26T09:23:09.712Z">
+<meta property="article:author" content="Insominac">
+<meta property="article:tag" content="计算机组成原理">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://langallover.github.io/images/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E6%9C%AC%E7%A1%AC%E4%BB%B6%E7%BB%84%E6%88%90.png">
+
+<link rel="canonical" href="https://langallover.github.io/2022/01/28/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80%E7%B3%BB%E5%88%97-%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E6%9C%AC%E7%BB%84%E6%88%90/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>计算机基础系列-计算机基本组成 | Hexo</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+
+<script type="text/javascript" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <a target="_blank" rel="noopener" href="https://github.com/LangAllover" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Hexo</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://langallover.github.io/2022/01/28/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80%E7%B3%BB%E5%88%97-%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E6%9C%AC%E7%BB%84%E6%88%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/OIP-C.jpg">
+      <meta itemprop="name" content="Insominac">
+      <meta itemprop="description" content="分享学习，记录自己的成长！">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          计算机基础系列-计算机基本组成
+        </h1>
+
+        <div class="post-meta">
+        
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-01-28 13:14:08" itemprop="dateCreated datePublished" datetime="2022-01-28T13:14:08+08:00">2022-01-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-12-26 17:23:09" itemprop="dateModified" datetime="2025-12-26T17:23:09+08:00">2025-12-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">计算机组成原理</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.9k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>计算机硬件系统均由运算器、控制器、存储器、输入设备和输出设备五大部分构成。</p>
+<span id="more"></span>
+<h2 id="一-计算机的基本硬件组成"><a href="#一-计算机的基本硬件组成" class="headerlink" title="一.计算机的基本硬件组成"></a>一.计算机的基本硬件组成</h2><p><img src="/images/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E6%9C%AC%E7%A1%AC%E4%BB%B6%E7%BB%84%E6%88%90.png"></p>
+<ul>
+<li><p>1、运算器：算术运算和逻辑运行的实际执行部件。</p>
+</li>
+<li><p>2、控制器：统一指挥和控制计算机各部件按时序协调操作的部件。</p>
+</li>
+<li><p>3、内部存储器按其存储信息的方式可以分为只读存储器ROM(Read Only Memory)、随机存储器RAM(Random Access Memory)和高速缓冲存储器Cache。</p>
+</li>
+<li><p>4、输入设备：键盘、鼠标、扫描仪、光笔。</p>
+</li>
+<li><p>5、输出设备：显示器、音箱、打印机、绘图仪。<br><img src="/images/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F.png"><br>详细内容：<a target="_blank" rel="noopener" href="https://blog.csdn.net/sunshine_hsm/article/details/81536509">https://blog.csdn.net/sunshine_hsm/article/details/81536509</a></p>
+</li>
+</ul>
+<h4 id="1-1-cpu"><a href="#1-1-cpu" class="headerlink" title="1.1 cpu"></a>1.1 cpu</h4><p> 中央处理器（CPU），是电子计算机的主要设备之一，电脑中的核心配件。其功能主要是解释计算机指令以及处理计算机软件中的数据。CPU是计算机中负责读取指令，对指令译码并执行指令的核心部件。中央处理器主要包括两个部分，即<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E6%8E%A7%E5%88%B6%E5%99%A8/2206126">控制器</a>、<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E8%BF%90%E7%AE%97%E5%99%A8/2667320">运算器</a>，其中还包括<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E9%AB%98%E9%80%9F%E7%BC%93%E5%86%B2%E5%AD%98%E5%82%A8%E5%99%A8/9027270">高速缓冲存储器</a>及实现它们之间联系的数据、控制的总线。电子计算机三大核心部件就是CPU、内部存储器、输入/输出设备。中央处理器的功效主要为处理指令、执行操作、控制时间、处理数据。</p>
+<p>在计算机体系结构中，CPU 是对计算机的所有硬件资源（如存储器、输入输出单元） 进行控制调配、执行通用运算的核心硬件单元。CPU 是计算机的运算和控制核心。计算机系统中所有软件层的操作，最终都将通过指令集映射为CPU的操作。</p>
+<h4 id="1-2-内存"><a href="#1-2-内存" class="headerlink" title="1.2 内存"></a>1.2 内存</h4><p>内存(Memory)是<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E8%AE%A1%E7%AE%97%E6%9C%BA/140338">计算机</a>的重要部件之一，也称<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E5%86%85%E5%AD%98%E5%82%A8%E5%99%A8/834392">内存储器</a>和<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E4%B8%BB%E5%AD%98%E5%82%A8%E5%99%A8/10635399">主存储器</a>，它用于暂时存放CPU中的运算数据，与<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E7%A1%AC%E7%9B%98/159825">硬盘</a>等<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E5%A4%96%E9%83%A8%E5%AD%98%E5%82%A8%E5%99%A8/4843180">外部存储器</a>交换的数据。它是<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E5%A4%96%E5%AD%98/2445612">外存</a>与<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/CPU/120556">CPU</a>进行沟通的桥梁，计算机中所有程序的运行都在内存中进行，内存性能的强弱影响计算机整体发挥的水平。只要计算机开始运行，<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/192">操作系统</a>就会把需要运算的数据从内存调到CPU中进行运算，当运算完成，CPU将结果传送出来。</p>
+<p>内存的运行也决定计算机整体运行快慢的程度。</p>
+<h4 id="1-3-主板"><a href="#1-3-主板" class="headerlink" title="1.3 主板"></a>1.3 主板</h4><p>主板，也叫母板，安装在<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E8%AE%A1%E7%AE%97%E6%9C%BA/140338">计算机</a>主机箱内，是计算机最基本也是最重要的部件之一，在整个计算机系统中扮演着举足轻重的角色。主板制造质量的高低，决定了硬件系统的稳定性。主板与CPU关系密切，每一次CPU的重大升级，必然导致主板的换代。主板是计算机<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E7%A1%AC%E4%BB%B6/479446">硬件</a>系统的核心，也是主机箱内面积最大的一块<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E5%8D%B0%E5%88%B7%E7%94%B5%E8%B7%AF%E6%9D%BF/10690193">印刷电路板</a>。主板的主要功能是传输各种电子信号，部分芯片也负责初步处理一些外围数据。计算机主机中的各个部件都是通过主板来连接的，计算机在正常运行时对系统内存、存储设备和其他<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/I%2FO%E8%AE%BE%E5%A4%87/9688581">I/O设备</a>的操控都必须通过主板来完成。计算机性能是否能够充分发挥，硬件功能是否足够，以及硬件兼容性如何等，都取决于主板的设计。主板的优劣在某种程度上决定了一台计算机的整体性能、使用年限以及功能扩展能力 。</p>
+<p>主板采用了开放式结构。主板上大都有6-15个扩展插槽，供<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/PC/107">PC</a>机外围设备的控制卡（<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E9%80%82%E9%85%8D%E5%99%A8/908851">适配器</a>）插接。通过更换这些插卡，可以对微机的相应子系统进行局部升级，使厂家和用户在配置机型方面有更大的灵活性。总之，主板在整个<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E5%BE%AE%E6%9C%BA%E7%B3%BB%E7%BB%9F/2852578">微机系统</a>中扮演着举足轻重的角色。可以说，主板的类型和档次决定着整个微机系统的类型和档次，主板的性能影响着整个微机系统的性</p>
+<h4 id="1-4-I-O设备"><a href="#1-4-I-O设备" class="headerlink" title="1.4 I/O设备"></a>1.4 I/O设备</h4><p>计算机的IO设备非常多，键盘、鼠标、感应屏幕、显示器、网卡、U盘、打印机。</p>
+<p>提前需要说明的一点就是，IO设备中最核心的一点就是中断处理。这在单片机中也是最核心的一块内容。具体开辟一章blog来写控制，这里就只总结IO相关的东西。</p>
+<ul>
+<li><p>IO结构<br>最早的IO要先和CPU通信，和主存的连接是间接的。现在发展成为经过一个IO接口，直接接到总线上，和主存通信，单片机和本章节要讨论的就是这个。除此之外，还有具有通道结构的IO结构，具有IO处理机的结构，这两个也很重要，但是不讨论了。</p>
+</li>
+<li><p>IO组成<br>IO硬件的部分是大家都能具体接触的，但除了具体设备之外，还有接口模块，接口也是一些电路，主要功能是克服IO和主机之间的不匹配、不畅通、排队控制等困难的。<br>IO软件的功能就是将数据顺畅地在主机和IO设备之间流通，协调。而IO软件落到底层就是IO指令，它不同于一般的机器操作指令，由操作码、命令码、设备码构成。</p>
+</li>
+<li><p>IO和主机之间的联系方式<br>通常将IO设备码看成是地址码，通过设备编号来确定指令操作的是哪个设备。但是设备码的编制方法有统一编址和不统一编址两种。如果统一编址的话，那么就把设备地址和存储器地址放在一起，占用了内存，但是速度较快；如果不统一编址，则需要IO指令来操作一番，这样就降低了运行速度。<br>在IO和主机联系上之后，有立即响应的，也有通过IO接口联络响应的，这个叫做异步，也有同步响应的。</p>
+</li>
+<li><p>IO和主机之间的信息传送控制方法<br>在IO和主机联系之后，还有一些控制功能需要添加进去，所以，如何去控制信息传输有多种方法：<br>1、 程序查询：CPU发起的，不停地去监控IO设备有没有来；已经淘汰不用了。<br>2、 程序中断：单片机核心；等到IO发起中断请求的时候再处理。<br>3、 DMA：直接存取的方式，这种方法克服了当CPU响应中断的时候，无法进行计算的缺点。DMA只是挪用了一个周期而已，这个周期 叫做挪用周期。<br>4、 通道控制：略<br>5、 处理机控制：略</p>
+</li>
+<li><p>IO接口<br>设置接口是为了：1、实现IO选择；2、实现数据缓冲，解决CPU速度过高，IO速度太慢的问题；3、串并转换；4、调整为一致的电平；5、其他的一些控制功能。</p>
+</li>
+</ul>
+<p>以上原文链接：<a target="_blank" rel="noopener" href="https://blog.csdn.net/dongrixinyu/article/details/78608095">https://blog.csdn.net/dongrixinyu/article/details/78608095</a></p>
+<h4 id="1-5-显卡"><a href="#1-5-显卡" class="headerlink" title="1.5 显卡"></a>1.5 显卡</h4><p>显卡又称<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E6%98%BE%E7%A4%BA%E5%8D%A1/103062">显示卡</a>( Video card)，是计算机中一个重要的组成部分，承担输出显示图形的任务，对喜欢玩游戏和从事专业图形设计的人来说，显卡非常重要。主流显卡的显示芯片主要由<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/NVIDIA/325313">NVIDIA</a>（英伟达）和<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/AMD/5905">AMD</a>（超威半导体）两大厂商制造，通常将采用NVIDIA显示芯片的显卡称为N卡，而将采用AMD显示芯片的显卡称为A卡。</p>
+<p>配置较高的<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E8%AE%A1%E7%AE%97%E6%9C%BA/140338">计算机</a>，都包含显卡计算核心。在科学计算中，显卡被称为显示加速卡。</p>
+<p><a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E6%98%BE%E7%A4%BA%E8%8A%AF%E7%89%87/206428">显示芯片</a>( Video chipset)是显卡的主要处理单元，因此又称为<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E5%9B%BE%E5%BD%A2%E5%A4%84%E7%90%86%E5%99%A8/8694767">图形处理器</a>(Graphic Processing Unit，GPU)，GPU是NVIDIA公司在发布GeForce 256图形处理芯片时首先提出的概念。尤其是在处理3D图形时，<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/GPU/105524">GPU</a>使显卡减少了对CPU的依赖，并完成部分原本属于CPU的工作。GPU所采用的核心技术有硬件<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/T%26L/15272313">T&amp;L</a>（几何转换和光照处理）、立方环境材质贴图和顶点混合、纹理压缩和凹凸映射贴图、双重纹理四<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E5%83%8F%E7%B4%A0/95084">像素</a>256位<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E6%B8%B2%E6%9F%93%E5%BC%95%E6%93%8E/10982158">渲染引擎</a>等，而硬件T&amp;L技术可以说是GPU的标志。</p>
+<p>显卡所支持的各种<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/3D%E7%89%B9%E6%95%88/11071016">3D特效</a>由<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E6%98%BE%E7%A4%BA%E8%8A%AF%E7%89%87/206428">显示芯片</a>的性能决定，采用什么样的显示芯片大致决定了这块显卡的档次和基本性能，比如<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/NVIDIA/325313">NVIDIA</a>的GT系列和<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/AMD/5905">AMD</a>的HD系列。</p>
+<p>衡量一个显卡好坏的方法有很多，除了使用测试软件测试比较外，还有很多指标可供用户比较显卡的性能，影响显卡性能的高低主要有<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E6%98%BE%E5%8D%A1%E9%A2%91%E7%8E%87/9816288">显卡频率</a>、<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E6%98%BE%E7%A4%BA%E5%AD%98%E5%82%A8%E5%99%A8/3430768">显示存储器</a>等性能指标</p>
+
+    </div>
+
+    
+    
+    
+    <div>
+      
+        <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+      
+    </div>
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Insominac
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://langallover.github.io/2022/01/28/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80%E7%B3%BB%E5%88%97-%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E6%9C%AC%E7%BB%84%E6%88%90/" title="计算机基础系列-计算机基本组成">https://langallover.github.io/2022/01/28/计算机基础系列-计算机基本组成/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/" rel="tag"><i class="fa fa-tag"></i><i class="fa fa-tag"></i> 计算机组成原理</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/01/27/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80%E7%B3%BB%E5%88%97-%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/" rel="prev" title="计算机基础系列-计算机组成原理">
+      <i class="fa fa-chevron-left"></i> 计算机基础系列-计算机组成原理
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/01/28/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80%E7%B3%BB%E5%88%97-%E5%86%AF%E8%AF%BA%E4%BE%9D%E6%9B%BC%E5%92%8C%E5%93%88%E4%BD%9B/" rel="next" title="计算机基础系列-冯诺依曼和哈佛">
+      计算机基础系列-冯诺依曼和哈佛 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80-%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%A1%AC%E4%BB%B6%E7%BB%84%E6%88%90"><span class="nav-text">一.计算机的基本硬件组成</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-cpu"><span class="nav-text">1.1 cpu</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-%E5%86%85%E5%AD%98"><span class="nav-text">1.2 内存</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-3-%E4%B8%BB%E6%9D%BF"><span class="nav-text">1.3 主板</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-4-I-O%E8%AE%BE%E5%A4%87"><span class="nav-text">1.4 I&#x2F;O设备</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-5-%E6%98%BE%E5%8D%A1"><span class="nav-text">1.5 显卡</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Insominac"
+      src="/images/OIP-C.jpg">
+  <p class="site-author-name" itemprop="name">Insominac</p>
+  <div class="site-description" itemprop="description">分享学习，记录自己的成长！</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+          <span class="site-state-item-count">44</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/LangAllover" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;LangAllover" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/705805084@qq.com" title="E-Mail → 705805084@qq.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/ll705805084" title="csdn → https:&#x2F;&#x2F;blog.csdn.net&#x2F;ll705805084" rel="noopener" target="_blank"><i class="fab fa-skype fa-fw"></i>csdn</a>
+      </span>
+  </div>
+
+
+
+<script type="text/javascript" charset="utf-8" src="/js/tagcloud.js"></script>
+<script type="text/javascript" charset="utf-8" src="/js/tagcanvas.js"></script>
+<div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div id="myCanvasContainer" class="widget tagcloud">
+        <canvas width="250" height="250" id="resCanvas" style="width=100%">
+            <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/" rel="tag">Hexo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JVM/" rel="tag">JVM</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java%E5%9F%BA%E7%A1%80/" rel="tag">Java基础</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mysql/" rel="tag">Mysql</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/" rel="tag">Python</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/VS-Code/" rel="tag">VS Code</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Windows/" rel="tag">Windows</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" rel="tag">并发编程</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%96%87%E7%AB%A0/" rel="tag">文章</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/" rel="tag">计算机组成原理</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95/" rel="tag">面试</a><span class="tag-list-count">1</span></li></ul>
+        </canvas>
+    </div>
+</div>
+
+
+      </div>
+      
+    </div>
+    <div id="music163player">
+    <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=1911728484&auto=1&height=66"></iframe>
+  </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2022 – 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Insominac</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">179k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">2:43</span>
+</div>
+
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+
+   <canvas class="fireworks" style="position: fixed;left: 0;top: 0;z-index: 1; pointer-events: none;" ></canvas> 
+   <script type="text/javascript" src="//cdn.bootcss.com/animejs/2.2.0/anime.min.js"></script> 
+   <script type="text/javascript" src="js/fireworks.js"></script>
+
+</html>

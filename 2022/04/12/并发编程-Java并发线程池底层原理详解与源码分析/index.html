@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"langallover.github.io","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"Available values":"default | flat | mac","style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="线程池解释起来可以理解为线程缓存，不能被无限制的创建，否则不仅会消耗系统资源，还会降低系统的稳定性，因此Java中提供线程池对线程进行统一分配、调优和监控">
+<meta property="og:type" content="article">
+<meta property="og:title" content="并发编程-Java并发线程池底层原理详解与源码分析">
+<meta property="og:url" content="https://langallover.github.io/2022/04/12/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B-Java%E5%B9%B6%E5%8F%91%E7%BA%BF%E7%A8%8B%E6%B1%A0%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3%E4%B8%8E%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="线程池解释起来可以理解为线程缓存，不能被无限制的创建，否则不仅会消耗系统资源，还会降低系统的稳定性，因此Java中提供线程池对线程进行统一分配、调优和监控">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-04-12T05:11:40.000Z">
+<meta property="article:modified_time" content="2025-12-26T09:22:07.712Z">
+<meta property="article:author" content="Insominac">
+<meta property="article:tag" content="并发编程">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://langallover.github.io/2022/04/12/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B-Java%E5%B9%B6%E5%8F%91%E7%BA%BF%E7%A8%8B%E6%B1%A0%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3%E4%B8%8E%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>并发编程-Java并发线程池底层原理详解与源码分析 | Hexo</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+
+<script type="text/javascript" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <a target="_blank" rel="noopener" href="https://github.com/LangAllover" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Hexo</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://langallover.github.io/2022/04/12/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B-Java%E5%B9%B6%E5%8F%91%E7%BA%BF%E7%A8%8B%E6%B1%A0%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3%E4%B8%8E%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/OIP-C.jpg">
+      <meta itemprop="name" content="Insominac">
+      <meta itemprop="description" content="分享学习，记录自己的成长！">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          并发编程-Java并发线程池底层原理详解与源码分析
+        </h1>
+
+        <div class="post-meta">
+        
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-04-12 13:11:40" itemprop="dateCreated datePublished" datetime="2022-04-12T13:11:40+08:00">2022-04-12</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-12-26 17:22:07" itemprop="dateModified" datetime="2025-12-26T17:22:07+08:00">2025-12-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">并发编程</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>10k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>9 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>线程池<br>解释起来可以理解为线程缓存，不能被无限制的创建，否则不仅会消耗系统资源，还会降低系统的稳定性，因此Java中提供线程池对线程进行统一分配、调优和监控</p>
+<span id="more"></span>
+
+<p>使用线程池的目的<br>当我们请求过多不断使用线程执行任务时，如果执行任务时间很短，就会造成频繁的的创建和销毁线程，可能出现服务器在为每个请求创建新线程和销毁线程上花费的时间和消耗的系统资源要比处理实际的用户请求的时间和资源更多。<br>线程池可以复用线程，而不是使用完就销毁，可以继续执行其他任务，通过对多个任务重用线程，线程创建的开销被分摊到了多个任务上。当我们有已下情况建议使用线程池；</p>
+<ul>
+<li>单个任务处理时间比较短</li>
+<li>需要处理的任务数量很大</li>
+</ul>
+<p>java线程池工作流程.png</p>
+<p>Executor框架<br>Executor接口是线程池框架中最基础的部分，定义了一个用于执行Runnable的execute方法。</p>
+<p>线程池存在5种状态：</p>
+<ul>
+<li><p>RUNNING = ‐1 &lt;&lt; COUNT_BITS; //高3位为111，线程池处在RUNNING状态时，能够接收新任务，以及对已添加的任务进行处理。状态切换：线程池的初始化状态是RUNNING。换句话说，线程池被一旦被创建，就处于RUNNING状态，并且线程池中的任务数为0！</p>
+</li>
+<li><p>SHUTDOWN = 0 &lt;&lt; COUNT_BITS; //高3位为000，状态说明：线程池处在SHUTDOWN状态时，不接收新任务，但能处理已添加的任务。<br>状态切换：调用线程池的shutdown()接口时，线程池由RUNNING -&gt; SHUTDOWN。</p>
+</li>
+<li><p>STOP = 1 &lt;&lt; COUNT_BITS; //高3位为001，) 状态说明：线程池处在STOP状态时，不接收新任务，不处理已添加的任务，并且会中<br>断正在处理的任务。状态切换：调用线程池的shutdownNow()接口时，线程池由(RUNNING or SHUTDOWN ) -&gt; STOP。</p>
+</li>
+<li><p>TIDYING = 2 &lt;&lt; COUNT_BITS; //高3位为010，状态说明：当所有的任务已终止，ctl记录的”任务数量”为0，线程池会变为TIDYING<br>状态。当线程池变为TIDYING状态时，会执行钩子函数terminated()。terminated()在ThreadPoolExecutor类中是空的，若用户想在线程池变为TIDYING时，进行相应的处理；可以通过重载terminated()函数来实现。<br>状态切换：当线程池在SHUTDOWN状态下，阻塞队列为空并且线程池中执行的任务也为空时，就会由 SHUTDOWN -&gt; TIDYING。 当线程池在STOP状态下，线程池中执行的任务为空时，就会由STOP -&gt; TIDYING。</p>
+</li>
+<li><p>TERMINATED = 3 &lt;&lt; COUNT_BITS; //高3位为01，状态说明：线程池彻底终止，就变成TERMINATED状态。状态切换：线程池处在TIDYING状态时，执行完terminated()之后，就会由 TIDYING -&gt; TERMINATED。<br>进入TERMINATED的条件如下：<br>线程池不是RUNNING状态；<br>线程池状态不是TIDYING状态或TERMINATED状态；<br>如果线程池状态是SHUTDOWN并且workerQueue为空；<br>workerCount为0；<br>设置TIDYING状态成功。</p>
+</li>
+</ul>
+<p>线程池状态流程.png</p>
+<p>默认线程池<br>public ThreadPoolExecutor(int corePoolSize,int maximumPoolSize,long keepAliveTime,TimeUnit unit,<br>BlockingQueue<Runnable> workQueue,ThreadFactory threadFactory,RejectedExecutionHandler handler)</p>
+<p>无返回值提交：public void execute()</p>
+<p>任务执行完有返回值：public Future&lt;?&gt; submit()</p>
+<p>ThreadPoolExecutor方法参数：<br>corePoolSize，线程池中的核心线程数，达到这个核心数继续提交的任务被保存到阻塞队列中，等待被执行；如果执行了线程池的prestartAllCoreThreads()方法，线程池会提前创建并启动所有核心线程。<br>maximumPoolSize：线程池中允许的最大线程数，如果corePoolSize中阻塞队列满了，且继续提交任务，则创建新的线程执行任务，但是依旧要满足当前线程数小于maximumPoolSize；<br>keepAliveTime：线程池维护的线程空闲时间，当前线程执行完不会销毁会等待新提交的任务过来，在这个时间之内会一直等待，超过就不等了。<br>unit：keepAliveTime的时间单位；<br>workQueue：用来保存等待被执行的任务的阻塞队列，且任务必须实现Runable接口，在JDK中提供了如下阻塞队列：<br>ArrayBlockingQueue：基于数组结构的有界阻塞队列，按FIFO排序任务；<br>LinkedBlockingQuene：基于链表结构的阻塞队列，按FIFO排序任务，吞吐量通常要高于ArrayBlockingQuene；<br>SynchronousQuene：一个不存储元素的阻塞队列，每个插入操作必须等到另一个线程调用移除操作，否则插入操作一直处于阻塞状态，吞吐量通常要高于LinkedBlockingQuene；<br>priorityBlockingQuene：具有优先级的无界阻塞队列；</p>
+<p>threadFactory：用来创建新线程，默认使用Executors.defaultThreadFactory() 来创建线程。<br>handler：线程池的饱和策略，当阻塞队列满了，且没有空闲的工作线程，如果继续提交任务，必须采取一种策略处理该任务，线程池提供了4种策略：<br>AbortPolicy：直接抛出异常，默认策略；<br>CallerRunsPolicy：用调用者所在的线程来执行任务；<br>DiscardOldestPolicy：丢弃阻塞队列中靠最前的任务，并执行当前任务；<br>DiscardPolicy：直接丢弃任务；<br>上面的4种策略都是ThreadPoolExecutor的内部类。</p>
+<p>我们也可以根据需要自定义策略：<br>通过实现RejectedExecutionHandler接口，自定义饱和策略，如记录日志或持久化存储不能处理的任务。</p>
+<p>Executors的创建线程池的方法，创建出来的线程池都实现了ExecutorService接口。常用方法有以下几个：<br>1.newFiexedThreadPool(int Threads)：创建固定数目线程的线程池。<br>2.newCachedThreadPool()：创建一个可缓存的线程池，调用execute 将重用以前构造的线程（如果线程可用）。如果没有可用的线程，则创建一个新线程并添加到池中。终止并从缓存中移除那些已有 60 秒钟未被使用的线程。<br>3.newSingleThreadExecutor()创建一个单线程化的Executor。<br>4.newScheduledThreadPool(int corePoolSize) 创建一个支持定时及周期性的任务执行的线程池，多数情况下可用来替代Timer类。</p>
+<p>执行原理<br>线程池执行器将会根据corePoolSize和maximumPoolSize自动地调整线程池大小。<br>当在execute(Runnable)方法中提交新任务并且少于corePoolSize线程正在运行时，即使其他工作线程处于空闲状态，也会创建一个新线程来处理该请求。 如果有多于corePoolSize但小于maximumPoolSize线程正在运行，则仅当队列已满时才会创建新线程。 通过设置corePoolSize和maximumPoolSize相同，您可以创建一个固定大小的线程池。通过将maximumPoolSize设置为基本上无界的值，例如Integer.MAX_VALUE，您可以允许池容纳任意数量的并发任务。 通常，核心和最大池大小仅在构建时设置，但也可以使用setCorePoolSize和setMaximumPoolSize进行动态更改。<br>corePoolSize线程流转图.png</p>
+<p>使用 Executors 创建四种类型的线程池<br>newCachedThreadPool是Executors工厂类的一个静态函数，用来创建一个可以无限扩大的线程池。而Executors工厂类一共可以创建四种类型的线程池，通过Executors.newXXX即可创建。<br>FixedThreadPool</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public static ExecutorService newFixedThreadPool(int nThreads)&#123;</span><br><span class="line">    <span class="built_in">return</span> new ThreadPoolExecutor(nThreads,nThreads,0L,TimeUnit.MILLISECONDS,new LinkedBlockingQueue&lt;Runnable&gt;());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>FixedThreadPool.png<br>它是一种固定大小的线程池；<br>corePoolSize和maximunPoolSize都为用户设定的线程数量nThreads；<br>keepAliveTime为0，意味着一旦有多余的空闲线程，就会被立即停止掉；但这里keepAliveTime无效；<br>阻塞队列采用了LinkedBlockingQueue，它是一个无界队列；<br>由于阻塞队列是一个无界队列，因此永远不可能拒绝任务；<br>由于采用了无界队列，实际线程数量将永远维持在nThreads，因此maximumPoolSize和keepAliveTime将无效。</p>
+<p>CachedThreadPool</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public static ExecutorService <span class="function"><span class="title">newCachedThreadPool</span></span>()&#123;</span><br><span class="line">    <span class="built_in">return</span> new ThreadPoolExecutor(0,Integer.MAX_VALUE,60L,TimeUnit.MILLISECONDS,new SynchronousQueue&lt;Runnable&gt;());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>CachedThreadPool.png<br>它是一个可以无限扩大的线程池；<br>它比较适合处理执行时间比较小的任务；<br>corePoolSize为0，maximumPoolSize为无限大，意味着线程数量可以无限大；<br>keepAliveTime为60S，意味着线程空闲时间超过60S就会被杀死；<br>采用SynchronousQueue装等待的任务，这个阻塞队列没有存储空间，这意味着只要有请求到来，就必须要找到一条工作线程处理他，如果当前没有空闲的线程，那么就会再创建一条新的线程。</p>
+<p>SingleThreadExecutor</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public static ExecutorService <span class="function"><span class="title">newSingleThreadExecutor</span></span>()&#123;</span><br><span class="line">    <span class="built_in">return</span> new ThreadPoolExecutor(1,1,0L,TimeUnit.MILLISECONDS,new LinkedBlockingQueue&lt;Runnable&gt;());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>SingleThreadExecutor.png<br>它只会创建一条工作线程处理任务；<br>采用的阻塞队列为LinkedBlockingQueue；</p>
+<p>ScheduledThreadPool<br>它用来处理延时任务或定时任务。<br>ScheduledThreadPool.png<br>它接收SchduledFutureTask类型的任务，有两种提交任务的方式：<br>scheduledAtFixedRate<br>scheduledWithFixedDelay<br>SchduledFutureTask接收的参数：<br>time：任务开始的时间<br>sequenceNumber：任务的序号<br>period：任务执行的时间间隔<br>它采用DelayQueue存储等待的任务<br>DelayQueue内部封装了一个PriorityQueue，它会根据time的先后时间排序，若time相同则根据sequenceNumber排序；<br>DelayQueue也是一个无界队列；<br>工作线程的执行过程：<br>工作线程会从DelayQueue取已经到期的任务去执行；<br>执行结束后重新设置任务的到期时间，再次放回DelayQueue</p>
+<p>Executors为什么存在缺陷?<br>Java中的BlockingQueue主要有两种实现，分别是ArrayBlockingQueue 和 LinkedBlockingQueue。<br>ArrayBlockingQueue是一个用数组实现的有界阻塞队列，必须设置容量。<br>LinkedBlockingQueue是一个用链表实现的有界阻塞队列，容量可以选择进行设置，不设置的话，将是一个无边界的阻塞队列，最大长度为Integer.MAX_VALUE。这里的问题就出在：不设置的话，将是一个无边界的阻塞队列，最大长度为Integer.MAX_VALUE。也就是说，如果我们不设置LinkedBlockingQueue的容量的话，其默认容量将会是Integer.MAX_VALUE。<br>而newFixedThreadPool中创建LinkedBlockingQueue时，并未指定容量。此时，LinkedBlockingQueue就是一个无边界队列，对于一个无边界队列来说，是可以不断的向队列中加入任务的，这种情况下就有可能因为任务过多而导致内存溢出问题。<br>上面提到的问题主要体现在newFixedThreadPool和newSingleThreadExecutor两个工厂方法上，并不是说newCachedThreadPool和newScheduledThreadPool这两个方法就安全了，这两种方式创建的最大线程数可能是Integer.MAX_VALUE，而创建这么多线程，必然就有可能导致OOM。</p>
+<p>正确创建线程池</p>
+<p>避免使用Executors创建线程池，主要是避免使用其中的默认实现，那么我们可以自己直接调用ThreadPoolExecutor的构造函数来自己创建线程池。在创建的同时，给BlockQueue指定容量就可以了。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">private static ExecutorService executor = new ThreadPoolExecutor(10, 10,</span><br><span class="line">        60L, TimeUnit.SECONDS,</span><br><span class="line">        new ArrayBlockingQueue(10));</span><br></pre></td></tr></table></figure>
+<p>这种情况下，一旦提交的线程数超过当前可用线程数时，就会抛出java.util.concurrent.RejectedExecutionException，这是因为当前线程池使用的队列是有边界队列，队列已经满了便无法继续处理新的请求。但是异常（Exception）总比发生错误（Error）要好。<br>除了自己定义ThreadPoolExecutor外。还有其他方法。这个时候第一时间就应该想到开源类库，如apache和guava等。<br>推荐使用guava提供的ThreadFactoryBuilder来创建线程池。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">public class ExecutorsDemo &#123;</span><br><span class="line"></span><br><span class="line">    private static ThreadFactory namedThreadFactory = new ThreadFactoryBuilder()</span><br><span class="line">        .setNameFormat(<span class="string">&quot;demo-pool-%d&quot;</span>).build();</span><br><span class="line"></span><br><span class="line">    private static ExecutorService pool = new ThreadPoolExecutor(5, 200,</span><br><span class="line">        0L, TimeUnit.MILLISECONDS,</span><br><span class="line">        new LinkedBlockingQueue&lt;Runnable&gt;(1024), namedThreadFactory, new ThreadPoolExecutor.AbortPolicy());</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (int i = 0; i &lt; Integer.MAX_VALUE; i++) &#123;</span><br><span class="line">            pool.execute(new SubThread());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<p>HashMap<br>数据结构：数组+链表+（jdk&gt;=8引入红黑树）<br>特点：<br>key，value存储，key可以为null，同样的key会被覆盖掉<br>原理讲解：<br>哈希算法（也叫散列），就是把任意长度值(Key)通过散列算法变换成固定长度的key（地址）<br>通过这个地址进行访问的数据结构它通过把关键码值映射到表中一个。位置来访问记录，以加<br>快查找的速度。<br>Hashcode：通过字符串算出它的ascii码，进行mod（取模），算出哈希表中的下标</p>
+<p>哈希冲突<br>在向Hash表中存数据时，首先要用Hash函数计算出该数据要存放的地址。但是在这个地址中已经有值存在，所以这个时候就发生了Hash冲突。也就是一句话：key值不同的元素可能会映象到哈希表的同一地址上。</p>
+<p>HashMap中如何解决Hash冲突？<br>HashMap的底层主要是基于数组和链表来实现的，它之所以有相当快的查询速度主要是因为它通过计算散列码来决定存储的位置，HashMap中主要是通过key的hashCode来计算hash值的，只要hashCode相同，出来的hash值一样，不同对象出来的hash值一样，出现所谓hash冲突，HashMap底层通过链表解决hash冲突的。<br>HashMap其实就是一个Entry数组（类似pair），Entry对象中包含了链和值，其中next也是一个Entry对象，它就是用来处理hash冲突的，形成一个链表。<br>在Java8之前，如果发生hash冲突往往是将该value直接链接到该位置的其他所有value的头部，即相互冲突的所有value形成一个链表，因此，最坏情况HashMap的查找时间复杂度退化到O(n)，在Java8中做了改进，一个是改头插法为尾插法，还有一个是当一个位置冲突过多时（大于等于8），存储的value将形成一排序二叉树，排序的依据为key的hashCode，这样在最坏情况下，性能也只退化到O(logn)。<br>这样的改进意义重大，一是从O(n)提升到O(logn)的时间开销（最坏情况），二是如果恶意程序知道我们利用的Hash算法，在纯链表情况下，发送大量请求导致hash碰撞，不停访问这些key使HashMap忙于查找，最终瘫痪。</p>
+<p>为什么引入红黑树？<br>static final int TREEIFY_THRESHOLD = 8; 链表长度大于 红黑树，因为链表查询的时候链表过长了查询效率非常低，所以需要用红黑树</p>
+<p>Hash冲突的解决方法<br>Hash冲突，也就是经过一个函数结果作为地址去存放当前key value键值对(这个是hashmap存值方式)。<br>解决hash冲突发方法有：</p>
+<ul>
+<li>开放地址法，这种方法也称再散列法，其基本思想是：当关键字key的哈希地址p=H（key）出现冲突时，以p为基础，产生另一个哈希地址p1，如果p1仍然冲突，再以p为基础，产生另一个哈希地址p2，…，直到找出一个不冲突的哈希地址pi ，将相应元素存入其中。</li>
+<li>链地址法，就是key值取模再运算，java的HashMap就是这么实现的，在put()方法里面。</li>
+<li>重哈希法，在创建hashmap的时候一般默认初始化容量，创建的hash表是桶的数量，负载因子：map的size/初始化容量，当hash表中负载因子达到负载极限，hash表会自动成倍增加容量，并将原有的对象重新分配加入新的值，成为rehash，rehash非常影响性能，所以初始化容量要设置好，不能太过浪费空间，也不能过小造成rehash情况经常出现。</li>
+<li>建立一个公共溢出区域，这种方法的基本思想是：将哈希表分为基本表和溢出表两部分，凡是和基本表发生冲突的元素，一律填入溢出表。</li>
+</ul>
+<p>ConcurrentHashMap<br>特点：<br>并发安全的HashMap ，比Hashtable效率更高<br>存储结构：<br>底层采用数组、链表、红黑树 内部大量采用CAS操作。并发控制使⽤synchronized 和CAS 来操作来实现的。ConcurrentHashMap的数据结构与HashMap基本类似，区别在于：1、内部在数据写入时加了同步机制(分段锁)保证线程安全，读操作是无锁操作；2、扩容时老数据的转移是并发执行的，这样扩容的效率更高。</p>
+<p>Java7和8对比：<a target="_blank" rel="noopener" href="https://www.processon.com/view/link/625903a10791296b57b44b3b">https://www.processon.com/view/link/625903a10791296b57b44b3b</a></p>
+<p>ConcurrentHashMap由三部分构成, table+链表+红黑树, 其中table是一个数组, 既然是数组, 必须要在使用时确定数组的大小, 当table存放的元素过多时, 就需要扩容, 以减少碰撞发生次数, 本文就讲解扩容的过程。扩容检查主要发生在插入元素(putVal())的过程</p>
+<ul>
+<li>一个线程插完元素后, 检查table使用率, 若超过阈值, 调用transfer进行扩容</li>
+<li>一个线程插入数据时, 发现table对应元素的hash=MOVED, 那么调用helpTransfer()协助扩容。</li>
+</ul>
+<p>协助扩容helpTransfer:<br>1.检查是否扩容完成<br>2.对sizeCtrl = sizeCtrl+1, 然后调用transfer()进行真正的扩容。</p>
+<p>transfer进行扩容：<br>扩容的整体步骤就是新建一个nextTab, size是之前的2倍, 将table上的非空元素迁移到nextTab上面去。</p>
+<p>table扩容过程就是将table元素迁移到新的table上, 在元素迁移时, 可以并发完成, 加快了迁移速度, 同时不至于阻塞线程。所有元素迁移完成后, 旧的table直接丢失, 直接使用新的table。</p>
+<p>Map 是一种键-值对（key-value）集合，Map 集合中的每一个元素都包含一个键（key）对象和一个值（value）对象。用于保存具有映射关系的数据。</p>
+<p>Map 集合里保存着两组值，一组值用于保存 Map 里的 key，另外一组值用于保存 Map 里的 value，key 和 value 都可以是任何引用类型的数据。Map 的 key 不允许重复，value 可以重复，即同一个 Map 对象的任何两个 key 通过 equals 方法比较总是返回 false。</p>
+<p>Map 中的 key 和 value 之间存在单向一对一关系，即通过指定的 key，总能找到唯一的、确定的 value。从 Map 中取出数据时，只要给出指定的 key，就可以取出对应的 value。</p>
+<p>Map集合的特点:<br>1.是一个双列集合,赋值的时候必须同时给key和value赋值<br>2.是一个无序的集合(存入和取出元素的顺序可能不一致)<br>3.key值不能重复,value可以重复<br>4.一个key只能对应一个vlaue<br>5.定义集合时,数据类型key和value可以使用相同的数据类型,也可以使用不同的数据类型</p>
+<p>Map 接口主要有两个实现类：HashMap 类和 TreeMap 类。其中，HashMap 类按哈希算法来存取键对象，而 TreeMap 类可以对键对象进行排序。<br>map接口.png</p>
+<p>遍历Map</p>
+<ol>
+<li><p>使用keySet()方法遍历<br>使用keyset方法遍历，是先取出map的key组成的Set集合，通过对Set集合的遍历，然后使用map.get(key)方法取出value值。<br>for (String key : map.keySet()) {<br> System.out.println(key + “ : “ + map.get(key));<br>}</p>
+</li>
+<li><p>使用map的values()方法遍历集合的values<br>map.values()返回的是由map的值组成的Collection，这个方法只能遍历map的所有value，不能得到map的key。<br>for (String value : map.values()) {<br> System.out.println(value);<br>}</p>
+</li>
+<li><p>使用map的entrySet()方法遍历<br>使用map的entrySet()方法返回一个以Entry为元素的Set集合，然后对Set集合进行遍历。<br>for (Entry&lt;String, String&gt; entry : map.entrySet()) {<br> System.out.println(entry.getKey() + “ : “ +     entry.getValue());<br>}</p>
+</li>
+<li><p>通过keySet()返回的集合的iterator遍历<br>由于map.keySet()返回的是一个Set集合，所以通过它的iterator()方法返回一个迭代器，通过迭代器遍历map。<br>Iterator<String> it = map.keySet().iterator();<br>while(it1.hasNext()) {<br> String key = it1.next();<br> System.out.println(key + “ : “ + map.get(key));<br>}</p>
+</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+    <div>
+      
+        <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+      
+    </div>
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Insominac
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://langallover.github.io/2022/04/12/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B-Java%E5%B9%B6%E5%8F%91%E7%BA%BF%E7%A8%8B%E6%B1%A0%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3%E4%B8%8E%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/" title="并发编程-Java并发线程池底层原理详解与源码分析">https://langallover.github.io/2022/04/12/并发编程-Java并发线程池底层原理详解与源码分析/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" rel="tag"><i class="fa fa-tag"></i><i class="fa fa-tag"></i> 并发编程</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/04/08/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B-Future&CompletableFuture&Disruptor%E5%AE%9E%E6%88%98/" rel="prev" title="并发编程-Future&CompletableFuture&Disruptor实战">
+      <i class="fa fa-chevron-left"></i> 并发编程-Future&CompletableFuture&Disruptor实战
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/04/17/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B-Java%E5%B9%B6%E5%8F%91%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="next" title="并发编程-Java并发设计模式">
+      并发编程-Java并发设计模式 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Insominac"
+      src="/images/OIP-C.jpg">
+  <p class="site-author-name" itemprop="name">Insominac</p>
+  <div class="site-description" itemprop="description">分享学习，记录自己的成长！</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+          <span class="site-state-item-count">44</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/LangAllover" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;LangAllover" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/705805084@qq.com" title="E-Mail → 705805084@qq.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/ll705805084" title="csdn → https:&#x2F;&#x2F;blog.csdn.net&#x2F;ll705805084" rel="noopener" target="_blank"><i class="fab fa-skype fa-fw"></i>csdn</a>
+      </span>
+  </div>
+
+
+
+<script type="text/javascript" charset="utf-8" src="/js/tagcloud.js"></script>
+<script type="text/javascript" charset="utf-8" src="/js/tagcanvas.js"></script>
+<div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div id="myCanvasContainer" class="widget tagcloud">
+        <canvas width="250" height="250" id="resCanvas" style="width=100%">
+            <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/" rel="tag">Hexo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JVM/" rel="tag">JVM</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java%E5%9F%BA%E7%A1%80/" rel="tag">Java基础</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mysql/" rel="tag">Mysql</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/" rel="tag">Python</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/VS-Code/" rel="tag">VS Code</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Windows/" rel="tag">Windows</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" rel="tag">并发编程</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%96%87%E7%AB%A0/" rel="tag">文章</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/" rel="tag">计算机组成原理</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95/" rel="tag">面试</a><span class="tag-list-count">1</span></li></ul>
+        </canvas>
+    </div>
+</div>
+
+
+      </div>
+      
+    </div>
+    <div id="music163player">
+    <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=1911728484&auto=1&height=66"></iframe>
+  </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2022 – 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Insominac</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">179k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">2:43</span>
+</div>
+
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+
+   <canvas class="fireworks" style="position: fixed;left: 0;top: 0;z-index: 1; pointer-events: none;" ></canvas> 
+   <script type="text/javascript" src="//cdn.bootcss.com/animejs/2.2.0/anime.min.js"></script> 
+   <script type="text/javascript" src="js/fireworks.js"></script>
+
+</html>

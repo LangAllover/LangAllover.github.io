@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"langallover.github.io","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"Available values":"default | flat | mac","style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="计算机发展由来">
+<meta property="og:type" content="article">
+<meta property="og:title" content="计算机基础系列-计算机组成原理">
+<meta property="og:url" content="https://langallover.github.io/2022/01/27/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80%E7%B3%BB%E5%88%97-%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="计算机发展由来">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://langallover.github.io/images/jsjyjxt.png">
+<meta property="article:published_time" content="2022-01-27T13:44:30.000Z">
+<meta property="article:modified_time" content="2025-12-26T09:23:15.547Z">
+<meta property="article:author" content="Insominac">
+<meta property="article:tag" content="计算机组成原理">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://langallover.github.io/images/jsjyjxt.png">
+
+<link rel="canonical" href="https://langallover.github.io/2022/01/27/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80%E7%B3%BB%E5%88%97-%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>计算机基础系列-计算机组成原理 | Hexo</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+
+<script type="text/javascript" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <a target="_blank" rel="noopener" href="https://github.com/LangAllover" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Hexo</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://langallover.github.io/2022/01/27/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80%E7%B3%BB%E5%88%97-%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/OIP-C.jpg">
+      <meta itemprop="name" content="Insominac">
+      <meta itemprop="description" content="分享学习，记录自己的成长！">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          计算机基础系列-计算机组成原理
+        </h1>
+
+        <div class="post-meta">
+        
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-01-27 21:44:30" itemprop="dateCreated datePublished" datetime="2022-01-27T21:44:30+08:00">2022-01-27</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-12-26 17:23:15" itemprop="dateModified" datetime="2025-12-26T17:23:15+08:00">2025-12-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">计算机组成原理</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>计算机发展由来</p>
+<span id="more"></span>
+<h2 id="一-早期的计算器"><a href="#一-早期的计算器" class="headerlink" title="一.早期的计算器"></a>一.早期的计算器</h2><h3 id="1-1-算盘"><a href="#1-1-算盘" class="headerlink" title="1.1 算盘"></a>1.1 算盘</h3><p>计算机没有出现之前，最早的计算工具是计算器。<br>西亚人发明，最早的算盘出现在公元前2700到2300左右的苏美文明。</p>
+<h3 id="1-2-算筹"><a href="#1-2-算筹" class="headerlink" title="1.2 算筹"></a>1.2 算筹</h3><p>是第一种有进位的10进制记数法</p>
+<h3 id="1-3-纳皮尔算筹"><a href="#1-3-纳皮尔算筹" class="headerlink" title="1.3 纳皮尔算筹"></a>1.3 纳皮尔算筹</h3><p>17世纪初，英国数学家纳皮尔发明的“纳皮尔算筹”，主要用来计算乘除法</p>
+<h3 id="1-4-计算尺"><a href="#1-4-计算尺" class="headerlink" title="1.4 计算尺"></a>1.4 计算尺</h3><p>约翰.纳皮尔继续提出对数概念，直接引出另一种沿用至今的计算工具-计算尺</p>
+<h2 id="二-机械计算机"><a href="#二-机械计算机" class="headerlink" title="二.机械计算机"></a>二.机械计算机</h2><h3 id="2-1-契克卡德的计算钟（1623年）"><a href="#2-1-契克卡德的计算钟（1623年）" class="headerlink" title="2.1 契克卡德的计算钟（1623年）"></a>2.1 契克卡德的计算钟（1623年）</h3><p>1623年，德国科学家契克卡德制造了人类有史以来的第一台机械式计算机，这台计算机能够进行六位数的加减乘除，比帕斯卡机诞生早约了20年。</p>
+<h3 id="2-2-帕斯卡计算器（1642年）"><a href="#2-2-帕斯卡计算器（1642年）" class="headerlink" title="2.2 帕斯卡计算器（1642年）"></a>2.2 帕斯卡计算器（1642年）</h3><p>1642年，法国数学家，物理学家和化学家帕斯卡借钟表指针的齿轮转动（天然的具有进位功能）发明了一台“帕斯卡计算器”。跟之前的计算器相比，虽然功能不及算筹个算盘，却是一次彻底的革命–算筹和算盘本身不包含算法，只能存储计算的中间结果，操作依赖熟记指令的人，本质上是寄存器。帕斯卡计算器却用内部的齿轮机构预存的算法，操作者完全不需要计算方法就能操作。</p>
+<h3 id="2-3-莱布尼兹步进计算器（1674年）"><a href="#2-3-莱布尼兹步进计算器（1674年）" class="headerlink" title="2.3 莱布尼兹步进计算器（1674年）"></a>2.3 莱布尼兹步进计算器（1674年）</h3><p>德国大数学家，哲学家莱布尼兹在1672年到1694年之间发明的一种“步进计算器”，采用他独创的“莱布尼兹轮”，可以控制齿轮只转动需要的角度。这产生相当复杂的运算能力，除了普通的加减法以外，还能将两个八位数字相乘为一个十六位数字，或者用一个十六位数字的数字乘以一个八位数字。</p>
+<h2 id="三-现代计算机鼻祖-查尔斯-巴贝奇"><a href="#三-现代计算机鼻祖-查尔斯-巴贝奇" class="headerlink" title="三.现代计算机鼻祖-查尔斯.巴贝奇"></a>三.现代计算机鼻祖-查尔斯.巴贝奇</h2><h3 id="3-1-差分思想"><a href="#3-1-差分思想" class="headerlink" title="3.1 差分思想"></a>3.1 差分思想</h3><p>帕斯卡1654年提出差分思想-n次多项式的n次数值差分为同一常数。</p>
+<h3 id="3-2-差分机"><a href="#3-2-差分机" class="headerlink" title="3.2 差分机"></a>3.2 差分机</h3><p>1822年6月14日，查尔斯.巴贝奇向皇家天文学会递交了一篇《论机械在天文及数学用表计算中的应用》的论文，差分机的概念正式问世。</p>
+<h3 id="3-3-分析机"><a href="#3-3-分析机" class="headerlink" title="3.3 分析机"></a>3.3 分析机</h3><p>之前差分机夭折了，1833年巴贝奇在此设计稿上不断改进直至离世，这台被他称为分析机的机械，直接将机械运算的理念从地表推上云天。<br>第一位程序员–艾达.洛夫莱斯</p>
+<h3 id="3-4-穿孔制表机"><a href="#3-4-穿孔制表机" class="headerlink" title="3.4 穿孔制表机"></a>3.4 穿孔制表机</h3><p>穿孔卡是早期计算机输入信息的设备，通常可以储存80列数据。它是一种很薄的纸片，面积为190×84毫米。首次使用穿孔卡技术的数据处理机器，是美国统计专家霍列瑞斯博士（H.Hollerith）的伟大发明。Hollerith机(Hollerith Machine)，是美国人口普查催生的计算器。1880年以前，美国的人口普查都是人工做的。1880的普查完成之后，美国人意识到按照当时的人口增长速度，下一次1890年的普查十年也不可能完成统计，而美国的法律规定必须在十年内完成。于是招标寻找解决办法。Herman Hollerith设计了这种在纸板上打孔(punched card)的技术，帮助解决了统计局的难题。但是他本人并没有赚到钱。1896年他成立了一个公司(TabulatingMachine Company)，向其它国家卖他的产品。后来在他老了以后，他把公司卖给了手下的一个主管。最后成了成立IBM的三家公司之一。<br>霍列瑞斯首先把穿孔纸带改造成穿孔卡片，以适应人口数据采集的需要。由于每个人的调查数据有若干不同的项目，如性别、籍贯、年龄等等。霍列瑞斯把每个人所有的调查项目依次排列于一张卡片，然后根据调查结果在相应项目的位置上打孔。例如，穿孔卡片“性别”栏目下，有“男”和“女”两个选项；“年龄”栏目下有从“0岁”到“70岁以上”等系列选项，如此等等。统计员可以根据每个调查对象的具体情况，分别在穿孔卡片各栏目相应位置打出小孔。每张卡片都代表着一位公民的个人档案。<br>霍列瑞斯博士巧妙的设计在于自动统计。他在机器上安装了一组盛满水银的小杯，穿好孔的卡片就放置在这些水银杯上。卡片上方有几排精心调好的探针，探针连接在电路的一端，水银杯则连接于电路的另一端。与杰卡德提花机穿孔纸带的原理类似：只要某根探针撞到卡片上有孔的位置，便会自动跌落下去，与水银接触接通电流，启动计数装置前进一个刻度。由此可见，霍列瑞斯穿孔卡表达的也是二进制信息：有孔处能接通电路计数，代表该调查项目为“有”（“1”），无孔处不能接通电路计数，表示该调查项目为“无”（“0”）。<br>直到1888年，霍列瑞斯博士才实际完成自动制表机设计并申报了专利。他发明的这种机电式计数装置，比传统纯机械装置更加灵敏，因而被1890年后历次美国人口普查选用，获得了巨大的成功。例如，1900年进行的人口普查全部采用霍列瑞斯制表机，平均每台机器可代替500人工作，全国的数据统计仅用了1年多时间。虽然霍列瑞斯发明的并不是通用计算机，除了能统计数据表格外，它几乎没有别的什么用途，然而，制表机穿孔卡第一次把数据转变成二进制信息。在以后的计算机系统里，用穿孔卡片输入数据的方法一直沿用到20世纪70年代，数据处理也发展成为电脑的主要功能之一。</p>
+<h2 id="四-图灵机-计算机世界的理论基石"><a href="#四-图灵机-计算机世界的理论基石" class="headerlink" title="四. 图灵机-计算机世界的理论基石"></a>四. 图灵机-计算机世界的理论基石</h2><p>图灵机，又称图灵计算机指一个抽象的机器，是，英国数学家艾伦・麦席森・图灵(1912―-1954年)于1936年提出的一种抽象的计算模型，即将人们使用纸笔进行数学运算的过程进行抽象，由一个虚拟的机器替代人类进行数学运算。<br>图灵提出图灵机的模型并不是为了同时给出计算机的设计，它的意义有如下几点:<br>(1)它证明了通用计算理论，肯定了计算机实现的可能性，同时它给出了计算机应有的主要架构；<br>(2)图灵机模型引入了读写与算法与程序语言的概念，极大的突破了过去的计算机器的设计理念；<br>(3)图灵机模型理论是计算学科最核心的理论，因为计算机的极限计算能力就是通用图灵机的计算能力，很多问题可以转化到图灵机这个简单的模型来考虑。<br>通用图灵机向人们展示这样一个过程:程序和其输入可以先保存到存储带上，图灵机就按程序一步一步运行直到给出结果，结果也保存在存储带上。更重要的是，隐约可以看到现代计算机主要构成，尤其是冯・诺依曼理论的主要构成。<br>从图灵开始，计算机有了真正坚实的理论基础，更多人开始投身计算机的理论研究，而不是尝试构建一台机器，从如今的应用来看，图灵机之于计算机领域的价值远高于数学领域，计算机的原始公式，只有图灵机这一个。1966年，美国计算机协会ACM设立计算机领域最高奖项，命名为图灵，图灵奖素有“计算机界的诺贝尔奖”之称，图灵的名字当之无愧。</p>
+<h2 id="五-ENIAC（1945）"><a href="#五-ENIAC（1945）" class="headerlink" title="五.ENIAC（1945）"></a>五.ENIAC（1945）</h2><p>第一台电子通用计算机<br>ENIAC，全称为Electronic Numerical Integrator And Computer，即电子数字积分计算机。ENIAC是继ABC（阿塔纳索夫-贝瑞计算机）之后的第二台电子计算机和第一台通用计算机。<br>它是完全的电子计算机，能够重新编程，解决各种计算问题。它于1946年2月14日在美国宣告诞生。 承担开发任务的人员由科学家约翰·冯·诺依曼和“莫尔小组”的工程师埃克特、莫克利、戈尔斯坦以及华人科学家朱传榘组成。总工程师埃克特在当时年仅25岁。</p>
+<h2 id="六-冯诺依曼结构-现代计算机诞生"><a href="#六-冯诺依曼结构-现代计算机诞生" class="headerlink" title="六.冯诺依曼结构-现代计算机诞生"></a>六.冯诺依曼结构-现代计算机诞生</h2><p>美籍匈牙利数学家冯·诺依曼于1946年提出存储程序原理，把程序本身当作数据来对待，程序和该程序处理的数据用同样的方式储存。 冯·诺依曼体系结构冯·诺依曼理论的要点是：计算机的数制采用二进制；计算机应该按照程序顺序执行。<br>冯·诺伊曼体系结构是现代计算机的基础，现在大多计算机仍是冯·诺伊曼计算机的组织结构，只是作了一些改进而已，并没有从根本上突破冯体系结构的束缚。冯·诺伊曼也因此被人们称为“计算机之父”。然而由于传统冯·诺伊曼计算机体系结构天然所具有的局限性，从根本上限制了计算机的发展。<br><img src="/images/jsjyjxt.png"></p>
+<h2 id="七-第二代电子计算机"><a href="#七-第二代电子计算机" class="headerlink" title="七.第二代电子计算机"></a>七.第二代电子计算机</h2><p>第二代电子计算机采用晶体管制造的电子计算机。国外第二代电子计算机的生存期大约是1957-1964年。其软件开始使用面向过程的程序设计语言，如fortran、algol等。中国第一台晶体管计算机于1967年制成，运算速度为每秒五万次。<br>第二代电子计算机是用晶体管制造的计算机。在20世纪50年代之前，计算机都采用电子管作元件。电子管元件有许多明显的缺点。例如，在运行时产生的热量太多，可靠性较差，运算速度不快，价格昂贵，体积庞大，这些都使计算机发展受到限制。于是，晶体管开始被用来作计算机的元件。使用了晶体管以后，电子线路的结构大大改观，制造高速电子计算机的设想也就更容易实现了。<br>1954年，美国贝尔实验室研制成功第一台使用晶体管线路的计算机，取名“催迪克”（TRADIC），装有800个晶体管。1955年，美国在阿塔拉斯洲际导弹上装备了以晶体管为主要元件的小型计算机。以后，在美国生产的同一型号的导弹中，由于改用集成电路元件，重量只有原来的1/100，体积与功耗减少到原来的1/300。1958年，美国的IBM公司制成了第一台全部使用晶体管的计算机RCA501型。由于第二代计算机采用晶体管逻辑元件，及快速磁芯存储器，计算机速度从每秒几千次提高到几十万次，主存储器的存贮量，从几千提高到10万以上。1959年，IBM公司又生产出全部晶体管化的的电子计算机IBM7090。1958-1964年，晶体管电子计算机经历了大范围的发展过程。从印刷电路板到单元电路和随机存储器，从运算理论到程序设计语言，不断的革新使晶体管电子计算机日臻完善。1961年，世界上最大的晶体管电子计算机ATLAS安装完毕。1964年，中国制成了第一台全晶体管电子计算机441-B型。</p>
+<h2 id="八-第三代集成电路计算机"><a href="#八-第三代集成电路计算机" class="headerlink" title="八.第三代集成电路计算机"></a>八.第三代集成电路计算机</h2><p>第三代计算机即第三代集成电路计算机 (1964-1971)。特征是以中小规模集成电路（每片上集成一千个逻辑门以内）（西文写作SSI、MSI）来构成计算机的主要功能部件；主存储器采用半导体存储器。运算速度可达每秒几十万次至几百万次基本运算。在软件方面，操作系统日趋完善。</p>
+<table>
+<thead>
+<tr>
+<th align="left">发展阶段</th>
+<th>逻辑元件</th>
+<th>主存储器</th>
+<th>运算速度（每秒）</th>
+<th>软件</th>
+<th>应用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">第一代（1946-1958）</td>
+<td>电子管</td>
+<td>电子射线管</td>
+<td>几千次到几万次</td>
+<td>机器语言、汇编语言</td>
+<td>军事研究、科学计算</td>
+</tr>
+<tr>
+<td align="left">第二代（1958-1964）</td>
+<td>晶体管</td>
+<td>磁芯</td>
+<td>几十万次</td>
+<td>监控程序、高级语言</td>
+<td>数据处理、事务处理</td>
+</tr>
+<tr>
+<td align="left">第三代（1964-1971）</td>
+<td>中小规模集成电路</td>
+<td>半导体</td>
+<td>几十万次到几百万次</td>
+<td>操作系统、编辑系统、应用程序</td>
+<td>有较大发展开始广泛应用</td>
+</tr>
+<tr>
+<td align="left">第四代（1971-至今）</td>
+<td>大规模超大规模集成电路</td>
+<td>集成度更高的半导体</td>
+<td>上千万次到上亿次</td>
+<td>操作系统完善、数据库系统、高级语言发展、应用程序发展</td>
+<td>渗入社会各级领域</td>
+</tr>
+</tbody></table>
+<h2 id="九-第四代大规模集成电路计算机（1971-至今）"><a href="#九-第四代大规模集成电路计算机（1971-至今）" class="headerlink" title="九.第四代大规模集成电路计算机（1971-至今）"></a>九.第四代大规模集成电路计算机（1971-至今）</h2><p> 随着大规模集成电路的发展，计算机进入了第四代发展。第四代计算机以大规模集成电路作为逻辑元件和存储器，使计算机向着微型化和巨型化两个方向发展。从第一代到第四代，计算机的<a target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84&spm=1001.2101.3001.7020">体系结构</a>都是相同的，即都由控制器，存储器，运算器和输入输出设备组成，称为冯·诺依曼体系结构 。 </p>
+
+    </div>
+
+    
+    
+    
+    <div>
+      
+        <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+      
+    </div>
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Insominac
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://langallover.github.io/2022/01/27/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80%E7%B3%BB%E5%88%97-%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/" title="计算机基础系列-计算机组成原理">https://langallover.github.io/2022/01/27/计算机基础系列-计算机组成原理/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/" rel="tag"><i class="fa fa-tag"></i><i class="fa fa-tag"></i> 计算机组成原理</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/01/14/%E6%88%91%E7%9A%84%E5%8D%9A%E5%AE%A2/" rel="prev" title="我的博客">
+      <i class="fa fa-chevron-left"></i> 我的博客
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/01/28/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80%E7%B3%BB%E5%88%97-%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E6%9C%AC%E7%BB%84%E6%88%90/" rel="next" title="计算机基础系列-计算机基本组成">
+      计算机基础系列-计算机基本组成 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80-%E6%97%A9%E6%9C%9F%E7%9A%84%E8%AE%A1%E7%AE%97%E5%99%A8"><span class="nav-text">一.早期的计算器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E7%AE%97%E7%9B%98"><span class="nav-text">1.1 算盘</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E7%AE%97%E7%AD%B9"><span class="nav-text">1.2 算筹</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-%E7%BA%B3%E7%9A%AE%E5%B0%94%E7%AE%97%E7%AD%B9"><span class="nav-text">1.3 纳皮尔算筹</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-4-%E8%AE%A1%E7%AE%97%E5%B0%BA"><span class="nav-text">1.4 计算尺</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C-%E6%9C%BA%E6%A2%B0%E8%AE%A1%E7%AE%97%E6%9C%BA"><span class="nav-text">二.机械计算机</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E5%A5%91%E5%85%8B%E5%8D%A1%E5%BE%B7%E7%9A%84%E8%AE%A1%E7%AE%97%E9%92%9F%EF%BC%881623%E5%B9%B4%EF%BC%89"><span class="nav-text">2.1 契克卡德的计算钟（1623年）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E5%B8%95%E6%96%AF%E5%8D%A1%E8%AE%A1%E7%AE%97%E5%99%A8%EF%BC%881642%E5%B9%B4%EF%BC%89"><span class="nav-text">2.2 帕斯卡计算器（1642年）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-%E8%8E%B1%E5%B8%83%E5%B0%BC%E5%85%B9%E6%AD%A5%E8%BF%9B%E8%AE%A1%E7%AE%97%E5%99%A8%EF%BC%881674%E5%B9%B4%EF%BC%89"><span class="nav-text">2.3 莱布尼兹步进计算器（1674年）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89-%E7%8E%B0%E4%BB%A3%E8%AE%A1%E7%AE%97%E6%9C%BA%E9%BC%BB%E7%A5%96-%E6%9F%A5%E5%B0%94%E6%96%AF-%E5%B7%B4%E8%B4%9D%E5%A5%87"><span class="nav-text">三.现代计算机鼻祖-查尔斯.巴贝奇</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-%E5%B7%AE%E5%88%86%E6%80%9D%E6%83%B3"><span class="nav-text">3.1 差分思想</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-%E5%B7%AE%E5%88%86%E6%9C%BA"><span class="nav-text">3.2 差分机</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-%E5%88%86%E6%9E%90%E6%9C%BA"><span class="nav-text">3.3 分析机</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-4-%E7%A9%BF%E5%AD%94%E5%88%B6%E8%A1%A8%E6%9C%BA"><span class="nav-text">3.4 穿孔制表机</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B-%E5%9B%BE%E7%81%B5%E6%9C%BA-%E8%AE%A1%E7%AE%97%E6%9C%BA%E4%B8%96%E7%95%8C%E7%9A%84%E7%90%86%E8%AE%BA%E5%9F%BA%E7%9F%B3"><span class="nav-text">四. 图灵机-计算机世界的理论基石</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94-ENIAC%EF%BC%881945%EF%BC%89"><span class="nav-text">五.ENIAC（1945）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AD-%E5%86%AF%E8%AF%BA%E4%BE%9D%E6%9B%BC%E7%BB%93%E6%9E%84-%E7%8E%B0%E4%BB%A3%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%AF%9E%E7%94%9F"><span class="nav-text">六.冯诺依曼结构-现代计算机诞生</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%83-%E7%AC%AC%E4%BA%8C%E4%BB%A3%E7%94%B5%E5%AD%90%E8%AE%A1%E7%AE%97%E6%9C%BA"><span class="nav-text">七.第二代电子计算机</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AB-%E7%AC%AC%E4%B8%89%E4%BB%A3%E9%9B%86%E6%88%90%E7%94%B5%E8%B7%AF%E8%AE%A1%E7%AE%97%E6%9C%BA"><span class="nav-text">八.第三代集成电路计算机</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B9%9D-%E7%AC%AC%E5%9B%9B%E4%BB%A3%E5%A4%A7%E8%A7%84%E6%A8%A1%E9%9B%86%E6%88%90%E7%94%B5%E8%B7%AF%E8%AE%A1%E7%AE%97%E6%9C%BA%EF%BC%881971-%E8%87%B3%E4%BB%8A%EF%BC%89"><span class="nav-text">九.第四代大规模集成电路计算机（1971-至今）</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Insominac"
+      src="/images/OIP-C.jpg">
+  <p class="site-author-name" itemprop="name">Insominac</p>
+  <div class="site-description" itemprop="description">分享学习，记录自己的成长！</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+          <span class="site-state-item-count">44</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/LangAllover" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;LangAllover" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/705805084@qq.com" title="E-Mail → 705805084@qq.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/ll705805084" title="csdn → https:&#x2F;&#x2F;blog.csdn.net&#x2F;ll705805084" rel="noopener" target="_blank"><i class="fab fa-skype fa-fw"></i>csdn</a>
+      </span>
+  </div>
+
+
+
+<script type="text/javascript" charset="utf-8" src="/js/tagcloud.js"></script>
+<script type="text/javascript" charset="utf-8" src="/js/tagcanvas.js"></script>
+<div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div id="myCanvasContainer" class="widget tagcloud">
+        <canvas width="250" height="250" id="resCanvas" style="width=100%">
+            <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/" rel="tag">Hexo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JVM/" rel="tag">JVM</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java%E5%9F%BA%E7%A1%80/" rel="tag">Java基础</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mysql/" rel="tag">Mysql</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/" rel="tag">Python</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/VS-Code/" rel="tag">VS Code</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Windows/" rel="tag">Windows</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" rel="tag">并发编程</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%96%87%E7%AB%A0/" rel="tag">文章</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/" rel="tag">计算机组成原理</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95/" rel="tag">面试</a><span class="tag-list-count">1</span></li></ul>
+        </canvas>
+    </div>
+</div>
+
+
+      </div>
+      
+    </div>
+    <div id="music163player">
+    <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=1911728484&auto=1&height=66"></iframe>
+  </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2022 – 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Insominac</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">179k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">2:43</span>
+</div>
+
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+
+   <canvas class="fireworks" style="position: fixed;left: 0;top: 0;z-index: 1; pointer-events: none;" ></canvas> 
+   <script type="text/javascript" src="//cdn.bootcss.com/animejs/2.2.0/anime.min.js"></script> 
+   <script type="text/javascript" src="js/fireworks.js"></script>
+
+</html>

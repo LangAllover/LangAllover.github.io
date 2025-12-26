@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"langallover.github.io","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"Available values":"default | flat | mac","style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="JVM指令手册">
+<meta property="og:type" content="article">
+<meta property="og:title" content="性能调优-JVM指令手册">
+<meta property="og:url" content="https://langallover.github.io/2022/02/20/%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98-JVM%E6%8C%87%E4%BB%A4%E6%89%8B%E5%86%8C/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="JVM指令手册">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-02-20T13:48:24.000Z">
+<meta property="article:modified_time" content="2025-12-26T09:24:09.713Z">
+<meta property="article:author" content="Insominac">
+<meta property="article:tag" content="JVM">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://langallover.github.io/2022/02/20/%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98-JVM%E6%8C%87%E4%BB%A4%E6%89%8B%E5%86%8C/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>性能调优-JVM指令手册 | Hexo</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+
+<script type="text/javascript" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <a target="_blank" rel="noopener" href="https://github.com/LangAllover" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Hexo</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://langallover.github.io/2022/02/20/%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98-JVM%E6%8C%87%E4%BB%A4%E6%89%8B%E5%86%8C/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/OIP-C.jpg">
+      <meta itemprop="name" content="Insominac">
+      <meta itemprop="description" content="分享学习，记录自己的成长！">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          性能调优-JVM指令手册
+        </h1>
+
+        <div class="post-meta">
+        
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-02-20 21:48:24" itemprop="dateCreated datePublished" datetime="2022-02-20T21:48:24+08:00">2022-02-20</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-12-26 17:24:09" itemprop="dateModified" datetime="2025-12-26T17:24:09+08:00">2025-12-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JVM/" itemprop="url" rel="index"><span itemprop="name">JVM</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>6.5k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>6 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>JVM指令手册</p>
+<span id="more"></span>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br></pre></td><td class="code"><pre><span class="line">栈和局部变量操作</span><br><span class="line">将常量压入栈的指令</span><br><span class="line">aconst_null 将null对象引用压入栈</span><br><span class="line">iconst_m1 将int类型常量-1压入栈</span><br><span class="line">iconst_0 将int类型常量0压入栈</span><br><span class="line">iconst_1 将int类型常量1压入操作数栈</span><br><span class="line">iconst_2 将int类型常量2压入栈</span><br><span class="line">iconst_3 将int类型常量3压入栈</span><br><span class="line">iconst_4 将int类型常量4压入栈</span><br><span class="line">iconst_5 将int类型常量5压入栈</span><br><span class="line">lconst_0 将long类型常量0压入栈</span><br><span class="line">lconst_1 将long类型常量1压入栈</span><br><span class="line">fconst_0 将<span class="built_in">float</span>类型常量0压入栈</span><br><span class="line">fconst_1 将<span class="built_in">float</span>类型常量1压入栈</span><br><span class="line">dconst_0 将double类型常量0压入栈</span><br><span class="line">dconst_1 将double类型常量1压入栈</span><br><span class="line">bipush 将一个8位带符号整数压入栈</span><br><span class="line">sipush 将16位带符号整数压入栈</span><br><span class="line">ldc 把常量池中的项压入栈</span><br><span class="line">ldc_w 把常量池中的项压入栈（使用宽索引）</span><br><span class="line">ldc2_w 把常量池中long类型或者double类型的项压入栈（使用宽索引）</span><br><span class="line">从栈中的局部变量中装载值的指令（局部变量表-》操作数栈）</span><br><span class="line">iload 从局部变量中装载int类型值</span><br><span class="line">lload 从局部变量中装载long类型值</span><br><span class="line">fload 从局部变量中装载<span class="built_in">float</span>类型值</span><br><span class="line">dload 从局部变量中装载double类型值</span><br><span class="line">aload 从局部变量中装载引用类型值（refernce）</span><br><span class="line">iload_0 从局部变量0中装载int类型值</span><br><span class="line">iload_1 从局部变量1中装载int类型值</span><br><span class="line">iload_2 从局部变量2中装载int类型值</span><br><span class="line">iload_3 从局部变量3中装载int类型值</span><br><span class="line">lload_0 从局部变量0中装载long类型值</span><br><span class="line">lload_1 从局部变量1中装载long类型值</span><br><span class="line">lload_2 从局部变量2中装载long类型值</span><br><span class="line">lload_3 从局部变量3中装载long类型值</span><br><span class="line">fload_0 从局部变量0中装载<span class="built_in">float</span>类型值</span><br><span class="line">fload_1 从局部变量1中装载<span class="built_in">float</span>类型值</span><br><span class="line">fload_2 从局部变量2中装载<span class="built_in">float</span>类型值</span><br><span class="line">fload_3 从局部变量3中装载<span class="built_in">float</span>类型值</span><br><span class="line">dload_0 从局部变量0中装载double类型值</span><br><span class="line">dload_1 从局部变量1中装载double类型值</span><br><span class="line">dload_2 从局部变量2中装载double类型值</span><br><span class="line">dload_3 从局部变量3中装载double类型值</span><br><span class="line">aload_0 从局部变量0中装载引用类型值</span><br><span class="line">aload_1 从局部变量1中装载引用类型值</span><br><span class="line">aload_2 从局部变量2中装载引用类型值</span><br><span class="line">aload_3 从局部变量3中装载引用类型值</span><br><span class="line">iaload 从数组中装载int类型值</span><br><span class="line">laload 从数组中装载long类型值</span><br><span class="line">faload 从数组中装载<span class="built_in">float</span>类型值</span><br><span class="line">daload 从数组中装载double类型值</span><br><span class="line">aaload 从数组中装载引用类型值</span><br><span class="line">baload 从数组中装载byte类型或boolean类型值</span><br><span class="line">caload 从数组中装载char类型值</span><br><span class="line">saload 从数组中装载short类型值</span><br><span class="line">将栈中的值存入局部变量的指令（操作数栈-》局部变量表）</span><br><span class="line">istore 将int类型值存入局部变量</span><br><span class="line">lstore 将long类型值存入局部变量</span><br><span class="line">fstore 将<span class="built_in">float</span>类型值存入局部变量</span><br><span class="line">dstore 将double类型值存入局部变量</span><br><span class="line">astore 将将引用类型或returnAddress类型值存入局部变量</span><br><span class="line">istore_0 将int类型值存入局部变量0</span><br><span class="line">istore_1 将int类型值存入局部变量1</span><br><span class="line">istore_2 将int类型值存入局部变量2</span><br><span class="line">istore_3 将int类型值存入局部变量3</span><br><span class="line">lstore_0 将long类型值存入局部变量0</span><br><span class="line">lstore_1 将long类型值存入局部变量1</span><br><span class="line">lstore_2 将long类型值存入局部变量2</span><br><span class="line">lstore_3 将long类型值存入局部变量3</span><br><span class="line">fstore_0 将<span class="built_in">float</span>类型值存入局部变量0</span><br><span class="line">fstore_1 将<span class="built_in">float</span>类型值存入局部变量1</span><br><span class="line">fstore_2 将<span class="built_in">float</span>类型值存入局部变量2</span><br><span class="line">fstore_3 将<span class="built_in">float</span>类型值存入局部变量3</span><br><span class="line">dstore_0 将double类型值存入局部变量0</span><br><span class="line">dstore_1 将double类型值存入局部变量1</span><br><span class="line">dstore_2 将double类型值存入局部变量2</span><br><span class="line">dstore_3 将double类型值存入局部变量3</span><br><span class="line">astore_0 将引用类型或returnAddress类型值存入局部变量0</span><br><span class="line">astore_1 将引用类型或returnAddress类型值存入局部变量1</span><br><span class="line">astore_2 将引用类型或returnAddress类型值存入局部变量2</span><br><span class="line">astore_3 将引用类型或returnAddress类型值存入局部变量3</span><br><span class="line">iastore 将int类型值存入数组中</span><br><span class="line">lastore 将long类型值存入数组中</span><br><span class="line">fastore 将<span class="built_in">float</span>类型值存入数组中</span><br><span class="line">dastore 将double类型值存入数组中</span><br><span class="line">aastore 将引用类型值存入数组中</span><br><span class="line">bastore 将byte类型或者boolean类型值存入数组中</span><br><span class="line">castore 将char类型值存入数组中</span><br><span class="line">sastore 将short类型值存入数组中</span><br><span class="line">wide指令</span><br><span class="line">wide 使用附加字节扩展局部变量索引</span><br><span class="line">通用(无类型）栈操作</span><br><span class="line">nop 不做任何操作</span><br><span class="line">pop 弹出栈顶端一个字长的内容</span><br><span class="line">pop2 弹出栈顶端两个字长的内容</span><br><span class="line">dup 复制栈顶部一个字长内容</span><br><span class="line">dup_x1 复制栈顶部一个字长的内容，然后将复制内容及原来弹出的两个字长的内容压入</span><br><span class="line">栈</span><br><span class="line">dup_x2 复制栈顶部一个字长的内容，然后将复制内容及原来弹出的三个字长的内容压入</span><br><span class="line">栈</span><br><span class="line">dup2 复制栈顶部两个字长内容</span><br><span class="line">dup2_x1 复制栈顶部两个字长的内容，然后将复制内容及原来弹出的三个字长的内容压入</span><br><span class="line">栈</span><br><span class="line">dup2_x2 复制栈顶部两个字长的内容，然后将复制内容及原来弹出的四个字长的内容压入</span><br><span class="line">栈</span><br><span class="line">swap 交换栈顶部两个字长内容</span><br><span class="line">类型转换</span><br><span class="line">i2l 把int类型的数据转化为long类型</span><br><span class="line">i2f 把int类型的数据转化为<span class="built_in">float</span>类型</span><br><span class="line">i2d 把int类型的数据转化为double类型</span><br><span class="line">l2i 把long类型的数据转化为int类型</span><br><span class="line">l2f 把long类型的数据转化为<span class="built_in">float</span>类型</span><br><span class="line">l2d 把long类型的数据转化为double类型</span><br><span class="line">f2i 把<span class="built_in">float</span>类型的数据转化为int类型</span><br><span class="line">f2l 把<span class="built_in">float</span>类型的数据转化为long类型</span><br><span class="line">f2d 把<span class="built_in">float</span>类型的数据转化为double类型</span><br><span class="line">d2i 把double类型的数据转化为int类型</span><br><span class="line">d2l 把double类型的数据转化为long类型</span><br><span class="line">d2f 把double类型的数据转化为<span class="built_in">float</span>类型</span><br><span class="line">i2b 把int类型的数据转化为byte类型</span><br><span class="line">i2c 把int类型的数据转化为char类型</span><br><span class="line">i2s 把int类型的数据转化为short类型</span><br><span class="line">整数运算</span><br><span class="line">iadd 执行int类型的加法</span><br><span class="line">ladd 执行long类型的加法</span><br><span class="line">isub 执行int类型的减法</span><br><span class="line">lsub 执行long类型的减法</span><br><span class="line">imul 执行int类型的乘法</span><br><span class="line">lmul 执行long类型的乘法</span><br><span class="line">idiv 执行int类型的除法</span><br><span class="line">ldiv 执行long类型的除法</span><br><span class="line">irem 计算int类型除法的余数</span><br><span class="line">lrem 计算long类型除法的余数</span><br><span class="line">ineg 对一个int类型值进行取反操作</span><br><span class="line">lneg 对一个long类型值进行取反操作</span><br><span class="line">iinc 把一个常量值加到一个int类型的局部变量上</span><br><span class="line">逻辑运算</span><br><span class="line">移位操作</span><br><span class="line">ishl 执行int类型的向左移位操作</span><br><span class="line">lshl 执行long类型的向左移位操作</span><br><span class="line">ishr 执行int类型的向右移位操作</span><br><span class="line">lshr 执行long类型的向右移位操作</span><br><span class="line">iushr 执行int类型的向右逻辑移位操作</span><br><span class="line">lushr 执行long类型的向右逻辑移位操作</span><br><span class="line">按位布尔运算</span><br><span class="line">iand 对int类型值进行“逻辑与”操作</span><br><span class="line">land 对long类型值进行“逻辑与”操作</span><br><span class="line">ior 对int类型值进行“逻辑或”操作</span><br><span class="line">lor 对long类型值进行“逻辑或”操作</span><br><span class="line">ixor 对int类型值进行“逻辑异或”操作</span><br><span class="line">lxor 对long类型值进行“逻辑异或”操作</span><br><span class="line">浮点运算</span><br><span class="line">fadd 执行<span class="built_in">float</span>类型的加法</span><br><span class="line">dadd 执行double类型的加法</span><br><span class="line">fsub 执行<span class="built_in">float</span>类型的减法</span><br><span class="line">dsub 执行double类型的减法</span><br><span class="line">fmul 执行<span class="built_in">float</span>类型的乘法</span><br><span class="line">dmul 执行double类型的乘法</span><br><span class="line">fdiv 执行<span class="built_in">float</span>类型的除法</span><br><span class="line">ddiv 执行double类型的除法</span><br><span class="line">frem 计算<span class="built_in">float</span>类型除法的余数</span><br><span class="line">drem 计算double类型除法的余数</span><br><span class="line">fneg 将一个<span class="built_in">float</span>类型的数值取反</span><br><span class="line">dneg 将一个double类型的数值取反</span><br><span class="line">对象和数组</span><br><span class="line">对象操作指令</span><br><span class="line">new 创建一个新对象</span><br><span class="line">checkcast 确定对象为所给定的类型</span><br><span class="line">getfield 从对象中获取字段</span><br><span class="line">putfield 设置对象中字段的值</span><br><span class="line">getstatic 从类中获取静态字段</span><br><span class="line">putstatic 设置类中静态字段的值</span><br><span class="line">instanceof 判断对象是否为给定的类型</span><br><span class="line">数组操作指令</span><br><span class="line">newarray 分配数据成员类型为基本上数据类型的新数组</span><br><span class="line">anewarray 分配数据成员类型为引用类型的新数组</span><br><span class="line">arraylength 获取数组长度</span><br><span class="line">multianewarray 分配新的多维数组</span><br><span class="line">控制流</span><br><span class="line">条件分支指令</span><br><span class="line">ifeq 如果等于0，则跳转</span><br><span class="line">ifne 如果不等于0，则跳转</span><br><span class="line">iflt 如果小于0，则跳转</span><br><span class="line">ifge 如果大于等于0，则跳转</span><br><span class="line">ifgt 如果大于0，则跳转</span><br><span class="line">ifle 如果小于等于0，则跳转</span><br><span class="line">if_icmpcq 如果两个int值相等，则跳转</span><br><span class="line">if_icmpne 如果两个int类型值不相等，则跳转</span><br><span class="line">if_icmplt 如果一个int类型值小于另外一个int类型值，则跳转</span><br><span class="line">if_icmpge 如果一个int类型值大于或者等于另外一个int类型值，则跳转</span><br><span class="line">if_icmpgt 如果一个int类型值大于另外一个int类型值，则跳转</span><br><span class="line">if_icmple 如果一个int类型值小于或者等于另外一个int类型值，则跳转</span><br><span class="line">ifnull 如果等于null，则跳转</span><br><span class="line">ifnonnull 如果不等于null，则跳转</span><br><span class="line">if_acmpeq 如果两个对象引用相等，则跳转</span><br><span class="line">if_acmpnc 如果两个对象引用不相等，则跳转</span><br><span class="line">比较指令</span><br><span class="line">lcmp 比较long类型值</span><br><span class="line">fcmpl 比较<span class="built_in">float</span>类型值（当遇到NaN时，返回-1）</span><br><span class="line">fcmpg 比较<span class="built_in">float</span>类型值（当遇到NaN时，返回1）</span><br><span class="line">dcmpl 比较double类型值（当遇到NaN时，返回-1）</span><br><span class="line">dcmpg 比较double类型值（当遇到NaN时，返回1）</span><br><span class="line">无条件转移指令</span><br><span class="line">goto 无条件跳转</span><br><span class="line">goto_w 无条件跳转（宽索引）</span><br><span class="line">表跳转指令</span><br><span class="line">tableswitch 通过索引访问跳转表，并跳转</span><br><span class="line">lookupswitch 通过键值匹配访问跳转表，并执行跳转操作</span><br><span class="line">异常</span><br><span class="line">athrow 抛出异常或错误</span><br><span class="line">finally子句</span><br><span class="line">jsr 跳转到子例程</span><br><span class="line">jsr_w 跳转到子例程（宽索引）</span><br><span class="line">rct 从子例程返回</span><br><span class="line">方法调用与返回</span><br><span class="line">方法调用指令</span><br><span class="line">invokcvirtual 运行时按照对象的类来调用实例方法</span><br><span class="line">invokespecial 根据编译时类型来调用实例方法</span><br><span class="line">invokestatic 调用类（静态）方法</span><br><span class="line">invokcinterface 调用接口方法</span><br><span class="line">方法返回指令</span><br><span class="line">ireturn 从方法中返回int类型的数据</span><br><span class="line">lreturn 从方法中返回long类型的数据</span><br><span class="line">freturn 从方法中返回<span class="built_in">float</span>类型的数据</span><br><span class="line">dreturn 从方法中返回double类型的数据</span><br><span class="line">areturn 从方法中返回引用类型的数据</span><br><span class="line"><span class="built_in">return</span> 从方法中返回，返回值为void</span><br><span class="line">线程同步</span><br><span class="line">montiorenter 进入并获取对象监视器</span><br><span class="line">monitorexit 释放并退出对象监视器</span><br><span class="line">JVM指令助记符</span><br><span class="line">变量到操作数栈：iload,iload_,lload,lload_,fload,fload_,dload,dload_,aload,aload_</span><br><span class="line">操作数栈到变量：</span><br><span class="line">istore,istore_,lstore,lstore_,fstore,fstore_,dstore,dstor_,astore,astore_</span><br><span class="line">常数到操作数栈：</span><br><span class="line">bipush,sipush,ldc,ldc_w,ldc2_w,aconst_null,iconst_ml,iconst_,lconst_,fconst_,dconst_</span><br><span class="line">加：iadd,ladd,fadd,dadd</span><br><span class="line">减：isub,lsub,fsub,dsub</span><br><span class="line">乘：imul,lmul,fmul,dmul</span><br><span class="line">除：idiv,ldiv,fdiv,ddiv</span><br><span class="line">余数：irem,lrem,frem,drem</span><br><span class="line">取负：ineg,lneg,fneg,dneg</span><br><span class="line">移位：ishl,lshr,iushr,lshl,lshr,lushr</span><br><span class="line">按位或：ior,lor</span><br><span class="line">按位与：iand,land</span><br><span class="line">按位异或：ixor,lxor</span><br><span class="line">类型转换：i2l,i2f,i2d,l2f,l2d,f2d(放宽数值转换)</span><br><span class="line">i2b,i2c,i2s,l2i,f2i,f2l,d2i,d2l,d2f(缩窄数值转换)</span><br><span class="line">创建类实便：new</span><br><span class="line">创建新数组：newarray,anewarray,multianwarray</span><br><span class="line">访问类的域和类实例域：getfield,putfield,getstatic,putstatic</span><br><span class="line">把数据装载到操作数栈：baload,caload,saload,iaload,laload,faload,daload,aaload</span><br><span class="line">从操作数栈存存储到数组：</span><br><span class="line">bastore,castore,sastore,iastore,lastore,fastore,dastore,aastore</span><br><span class="line">获取数组长度：arraylength</span><br><span class="line">检相类实例或数组属性：instanceof,checkcast</span><br><span class="line">操作数栈管理：pop,pop2,dup,dup2,dup_xl,dup2_xl,dup_x2,dup2_x2,swap</span><br><span class="line">有条件转移：ifeq,iflt,ifle,ifne,ifgt,ifge,ifnull,ifnonnull,if_icmpeq,if_icmpene,</span><br><span class="line">if_icmplt,if_icmpgt,if_icmple,if_icmpge,if_acmpeq,if_acmpne,lcmp,fcmpl</span><br><span class="line">fcmpg,dcmpl,dcmpg</span><br><span class="line">复合条件转移：tableswitch,lookupswitch</span><br><span class="line">无条件转移：goto,goto_w,jsr,jsr_w,ret</span><br><span class="line">调度对象的实便方法：invokevirtual</span><br><span class="line">调用由接口实现的方法：invokeinterface</span><br><span class="line">调用需要特殊处理的实例方法：invokespecial</span><br><span class="line">调用命名类中的静态方法：invokestatic</span><br><span class="line">方法返回：ireturn,lreturn,freturn,dreturn,areturn,<span class="built_in">return</span></span><br><span class="line">异常：athrow</span><br><span class="line">finally关键字的实现使用：jsr,jsr_w,ret</span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+    <div>
+      
+        <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+      
+    </div>
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Insominac
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://langallover.github.io/2022/02/20/%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98-JVM%E6%8C%87%E4%BB%A4%E6%89%8B%E5%86%8C/" title="性能调优-JVM指令手册">https://langallover.github.io/2022/02/20/性能调优-JVM指令手册/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/JVM/" rel="tag"><i class="fa fa-tag"></i><i class="fa fa-tag"></i> JVM</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/02/20/%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98-JVM%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%E6%B7%B1%E5%BA%A6%E5%89%96%E6%9E%90%E4%B8%8E%E4%BC%98%E5%8C%96/" rel="prev" title="性能调优-JVM内存模型深度剖析与优化">
+      <i class="fa fa-chevron-left"></i> 性能调优-JVM内存模型深度剖析与优化
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/02/21/%E9%9D%A2%E8%AF%95%E5%B0%8F%E7%9F%A5%E8%AF%86%E4%B8%80/" rel="next" title="面试小知识一">
+      面试小知识一 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Insominac"
+      src="/images/OIP-C.jpg">
+  <p class="site-author-name" itemprop="name">Insominac</p>
+  <div class="site-description" itemprop="description">分享学习，记录自己的成长！</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+          <span class="site-state-item-count">44</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/LangAllover" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;LangAllover" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/705805084@qq.com" title="E-Mail → 705805084@qq.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/ll705805084" title="csdn → https:&#x2F;&#x2F;blog.csdn.net&#x2F;ll705805084" rel="noopener" target="_blank"><i class="fab fa-skype fa-fw"></i>csdn</a>
+      </span>
+  </div>
+
+
+
+<script type="text/javascript" charset="utf-8" src="/js/tagcloud.js"></script>
+<script type="text/javascript" charset="utf-8" src="/js/tagcanvas.js"></script>
+<div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div id="myCanvasContainer" class="widget tagcloud">
+        <canvas width="250" height="250" id="resCanvas" style="width=100%">
+            <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/" rel="tag">Hexo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JVM/" rel="tag">JVM</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java%E5%9F%BA%E7%A1%80/" rel="tag">Java基础</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mysql/" rel="tag">Mysql</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/" rel="tag">Python</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/VS-Code/" rel="tag">VS Code</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Windows/" rel="tag">Windows</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" rel="tag">并发编程</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%96%87%E7%AB%A0/" rel="tag">文章</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/" rel="tag">计算机组成原理</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95/" rel="tag">面试</a><span class="tag-list-count">1</span></li></ul>
+        </canvas>
+    </div>
+</div>
+
+
+      </div>
+      
+    </div>
+    <div id="music163player">
+    <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=1911728484&auto=1&height=66"></iframe>
+  </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2022 – 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Insominac</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">179k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">2:43</span>
+</div>
+
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+
+   <canvas class="fireworks" style="position: fixed;left: 0;top: 0;z-index: 1; pointer-events: none;" ></canvas> 
+   <script type="text/javascript" src="//cdn.bootcss.com/animejs/2.2.0/anime.min.js"></script> 
+   <script type="text/javascript" src="js/fireworks.js"></script>
+
+</html>

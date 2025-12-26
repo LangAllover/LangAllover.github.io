@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"langallover.github.io","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"Available values":"default | flat | mac","style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="JVM内存模型深度剖析与优化">
+<meta property="og:type" content="article">
+<meta property="og:title" content="性能调优-JVM内存模型深度剖析与优化">
+<meta property="og:url" content="https://langallover.github.io/2022/02/20/%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98-JVM%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%E6%B7%B1%E5%BA%A6%E5%89%96%E6%9E%90%E4%B8%8E%E4%BC%98%E5%8C%96/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="JVM内存模型深度剖析与优化">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://langallover.github.io/images/JDK%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84.png">
+<meta property="og:image" content="https://langallover.github.io/images/Java%E8%B7%A8%E5%B9%B3%E5%8F%B0.png">
+<meta property="og:image" content="https://langallover.github.io/images/Java%E6%96%87%E4%BB%B6%E5%9C%A8JVM%E4%B8%AD%E6%89%A7%E8%A1%8C.png">
+<meta property="og:image" content="https://langallover.github.io/images/%E7%BA%BF%E7%A8%8B%E6%A0%88.png">
+<meta property="article:published_time" content="2022-02-20T11:24:03.000Z">
+<meta property="article:modified_time" content="2025-12-26T09:24:06.015Z">
+<meta property="article:author" content="Insominac">
+<meta property="article:tag" content="JVM">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://langallover.github.io/images/JDK%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84.png">
+
+<link rel="canonical" href="https://langallover.github.io/2022/02/20/%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98-JVM%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%E6%B7%B1%E5%BA%A6%E5%89%96%E6%9E%90%E4%B8%8E%E4%BC%98%E5%8C%96/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>性能调优-JVM内存模型深度剖析与优化 | Hexo</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+
+<script type="text/javascript" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <a target="_blank" rel="noopener" href="https://github.com/LangAllover" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Hexo</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://langallover.github.io/2022/02/20/%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98-JVM%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%E6%B7%B1%E5%BA%A6%E5%89%96%E6%9E%90%E4%B8%8E%E4%BC%98%E5%8C%96/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/OIP-C.jpg">
+      <meta itemprop="name" content="Insominac">
+      <meta itemprop="description" content="分享学习，记录自己的成长！">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          性能调优-JVM内存模型深度剖析与优化
+        </h1>
+
+        <div class="post-meta">
+        
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-02-20 19:24:03" itemprop="dateCreated datePublished" datetime="2022-02-20T19:24:03+08:00">2022-02-20</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-12-26 17:24:06" itemprop="dateModified" datetime="2025-12-26T17:24:06+08:00">2025-12-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JVM/" itemprop="url" rel="index"><span itemprop="name">JVM</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.1k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>JVM内存模型深度剖析与优化</p>
+<span id="more"></span>
+
+<p>JDK体系结构<br><img src="/images/JDK%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84.png"></p>
+<p>Java语言的跨平台特性<br><img src="/images/Java%E8%B7%A8%E5%B9%B3%E5%8F%B0.png"></p>
+<p>JVM怎么做到跨平台？<br>其实我们一开始下载JDK的时候我们就选择了平台，比如windows版本的JDK，Linux版本的JDK还有Mac等，不同的平台的JDK，里面就有特定该平台的JVM实现。</p>
+<p>Java文件在JVM中执行<br><img src="/images/Java%E6%96%87%E4%BB%B6%E5%9C%A8JVM%E4%B8%AD%E6%89%A7%E8%A1%8C.png"></p>
+<p>首先通过类加载机制（类装载子系统，c++实现），把我们的字节码文件丢到了Java虚拟机的内存区域，最后再通过我们的字节码执行引擎(c++实现)执行内存区域的代码。核心内容是图中第二块区域这里，调优这里是重点。</p>
+<ul>
+<li>类装载子系统：把字节码文件丢到了内存区。Class loader只管加载，只要符合文件结构就加载，至于能否运行，它不负责，那是有Exectution Engine 负责的</li>
+<li>字节码执行引擎：执行内存区的代码</li>
+<li>堆内存（线程共享）：new出来的对象一般放在堆。对象先放到eden区，当eden区对象放满时，字节码执行引擎会开始minor gc，如果是垃圾对象直接GC回收，如果是非垃圾对象就会复制到s0，一个对象如果经历过一次GC还存活着他的分代年龄会加1（分代年龄存在对象头），如果eden区又满了会在gc垃圾的对象，存活的对象会在s0跟s1轮流存放分代年龄增加，当分代年龄到了（一般15）会把这个对象挪到老年代。</li>
+<li>栈(桶，线程)内存（线程私有）：存放局部变量。也可以称为线程栈，比如我们的main方法，只要有线程运行，Java虚拟机就会在线程栈内为当前线程开辟一个自己独立的内存空间，用来存放我们方法执行过程当中需要用到的局部变量，如果线程当中有多个方法，那么在栈内存当中就会一个方法一个栈帧（结构类似数组，除了放局部变量表，操作数栈，动态链接，方法出口）来隔开。根据数据结构栈的特点FILO，后进入的方法先执行完然后释放掉内存。栈中如果有局部变量是对象的话，那值是在堆里面，栈里面存的是对应堆里面的内存地址，看下面有两个箭头的图。</li>
+<li>程序计数器（线程私有）：每一个线程独有的内存空间，跟栈一样，用来放我们程序正在运行或是马上就要运行的那一行代码的内存位置（行号），比如下面转汇编命令打开txt后里面compute()方法下的代码对应的数字0 1 2 3 。。。这样的数字，实际存的是这行代码在内存方法区中的地址。</li>
+<li>方法区/元空间（线程共享）：常量池，静态变量，类信息，如果有些静态变量的值是对象，那么同样的那值是在堆里面，栈里面存的是对应堆里面的内存地址，看下面有两个箭头的图</li>
+<li>本地方法栈（线程私有）：native方法，之前JDK很多都是C语言实现的，会找本地xxx.dll文件，跨源调用其他语言方法，相对于的方法执行也是要开辟内存，就放在本地方法栈中</li>
+</ul>
+<p>设计程序计数器的作用？<br>每次执行完一行代码，字节码执行引擎都会去修改程序计数器里面的值，当一个线程执行代码到一半时，突然被另外一个优先级更高的线程把cpu时间片抢过去，那这个线程就会被挂起，那等到下次恢复执行的时候就会从上次暂停的位置继续执行，而程序计数器就是记录这个位置的。</p>
+<p><img src="/images/%E7%BA%BF%E7%A8%8B%E6%A0%88.png"></p>
+<p>下图是代码例子：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">package com.study;</span><br><span class="line"></span><br><span class="line">public class Math &#123;</span><br><span class="line"></span><br><span class="line">    public static final int initData = 666;</span><br><span class="line">    public static TestOne one = new TestOne();</span><br><span class="line"></span><br><span class="line">    public int <span class="function"><span class="title">compute</span></span>() &#123; //一个方法对应一块栈帧内存区域</span><br><span class="line">        int a = 1;</span><br><span class="line">        int b = 2;</span><br><span class="line">        int c = (a + b) * 10;</span><br><span class="line">        <span class="built_in">return</span> c;</span><br><span class="line">    &#125;</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        Math math = new Math();</span><br><span class="line">        System.out.println(math.compute());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>用javap命令把我们的Math.class文件（打开里面cafe babe开头）转为汇编指令查看，javap -v会更详细，运行好之后会显示常量池信息，放在我们的方法区，在这叫运行时常量池。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">javap -c Math.class &gt;Math.txt</span><br></pre></td></tr></table></figure>
+<p>查看txt文件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line">Compiled from <span class="string">&quot;Math.java&quot;</span></span><br><span class="line">public class com.study.Math &#123;</span><br><span class="line">  public static final int initData;</span><br><span class="line"></span><br><span class="line">  public static com.study.TestOne one;</span><br><span class="line"></span><br><span class="line">  public com.study.Math();</span><br><span class="line">    Code:</span><br><span class="line">       0: aload_0</span><br><span class="line">       1: invokespecial <span class="comment">#1                  // Method java/lang/Object.&quot;&lt;init&gt;&quot;:()V</span></span><br><span class="line">       4: <span class="built_in">return</span></span><br><span class="line"></span><br><span class="line">  public int compute();</span><br><span class="line">    Code:</span><br><span class="line">       0: iconst_1</span><br><span class="line">       1: istore_1</span><br><span class="line">       2: iconst_2</span><br><span class="line">       3: istore_2</span><br><span class="line">       4: iload_1</span><br><span class="line">       5: iload_2</span><br><span class="line">       6: iadd</span><br><span class="line">       7: bipush        10</span><br><span class="line">       9: imul</span><br><span class="line">      10: istore_3</span><br><span class="line">      11: iload_3</span><br><span class="line">      12: ireturn</span><br><span class="line"></span><br><span class="line">  public static void main(java.lang.String[]);</span><br><span class="line">    Code:</span><br><span class="line">       0: new           <span class="comment">#2                  // class com/study/Math</span></span><br><span class="line">       3: dup</span><br><span class="line">       4: invokespecial <span class="comment">#3                  // Method &quot;&lt;init&gt;&quot;:()V</span></span><br><span class="line">       7: astore_1</span><br><span class="line">       8: getstatic     <span class="comment">#4                  // Field java/lang/System.out:Ljava/io/PrintStream;</span></span><br><span class="line">      11: aload_1</span><br><span class="line">      12: invokevirtual <span class="comment">#5                  // Method compute:()I</span></span><br><span class="line">      15: invokevirtual <span class="comment">#6                  // Method java/io/PrintStream.println:(I)V</span></span><br><span class="line">      18: <span class="built_in">return</span></span><br><span class="line"></span><br><span class="line">  static &#123;&#125;;</span><br><span class="line">    Code:</span><br><span class="line">       0: new           <span class="comment">#7                  // class com/study/TestOne</span></span><br><span class="line">       3: dup</span><br><span class="line">       4: invokespecial <span class="comment">#8                  // Method com/study/TestOne.&quot;&lt;init&gt;&quot;:()V</span></span><br><span class="line">       7: putstatic     <span class="comment">#9                  // Field one:Lcom/study/TestOne;</span></span><br><span class="line">      10: <span class="built_in">return</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>当我们一个应用程序7x24小时运行时，肯定会不断产生新的对象，新的对象会存放在堆中，当堆中对象存放不下字节码执行引擎就会触发gc回收，释放掉无用的对象。</p>
+<p>什么样的对象会最终到老年代？<br>静态变量引用的变量，比如对象池，缓存对象，spring容器里面的对象</p>
+<p>在GC过程当中会触发STW（stop the world）事件，停止掉用户线程（用户操作发起的），minor gc是字节码引擎开启的后台线程，STW后用户使用会工具卡顿，影响体验和性能，主要还是减少full gc，因为full gc收集推信息时间较长，所以它的STM时间会长。</p>
+<p>为什么要有STW机制（不停止掉用户线程）？<br> 因为gc过程当中就是为了找一些非垃圾对象。当发生full gc时，在找局部变量和静态变量过程当中，线程代码依然往下执行，当执行结束时，栈内存空间里面的局部变量线程一结束就会释放，占内存空间也会销毁掉，那之前堆中找的局部变量和静态变量对应的在栈中的指针也被销毁掉了，那他们就变成垃圾对象了，gc都没结束他们就变成垃圾对象，那之前的gc过程就白做了，所以在gc找对象的过程当中会让你不要变动。</p>
+
+    </div>
+
+    
+    
+    
+    <div>
+      
+        <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+      
+    </div>
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Insominac
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://langallover.github.io/2022/02/20/%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98-JVM%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%E6%B7%B1%E5%BA%A6%E5%89%96%E6%9E%90%E4%B8%8E%E4%BC%98%E5%8C%96/" title="性能调优-JVM内存模型深度剖析与优化">https://langallover.github.io/2022/02/20/性能调优-JVM内存模型深度剖析与优化/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/JVM/" rel="tag"><i class="fa fa-tag"></i><i class="fa fa-tag"></i> JVM</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/02/19/%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98-%E4%BB%8EJDK%E6%BA%90%E7%A0%81%E7%BA%A7%E5%88%AB%E5%BD%BB%E5%BA%95%E5%89%96%E6%9E%90JVM%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6/" rel="prev" title="性能调优-从JDK源码级别彻底剖析JVM类加载机制">
+      <i class="fa fa-chevron-left"></i> 性能调优-从JDK源码级别彻底剖析JVM类加载机制
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/02/20/%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98-JVM%E6%8C%87%E4%BB%A4%E6%89%8B%E5%86%8C/" rel="next" title="性能调优-JVM指令手册">
+      性能调优-JVM指令手册 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Insominac"
+      src="/images/OIP-C.jpg">
+  <p class="site-author-name" itemprop="name">Insominac</p>
+  <div class="site-description" itemprop="description">分享学习，记录自己的成长！</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+          <span class="site-state-item-count">44</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/LangAllover" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;LangAllover" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/705805084@qq.com" title="E-Mail → 705805084@qq.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/ll705805084" title="csdn → https:&#x2F;&#x2F;blog.csdn.net&#x2F;ll705805084" rel="noopener" target="_blank"><i class="fab fa-skype fa-fw"></i>csdn</a>
+      </span>
+  </div>
+
+
+
+<script type="text/javascript" charset="utf-8" src="/js/tagcloud.js"></script>
+<script type="text/javascript" charset="utf-8" src="/js/tagcanvas.js"></script>
+<div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div id="myCanvasContainer" class="widget tagcloud">
+        <canvas width="250" height="250" id="resCanvas" style="width=100%">
+            <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/" rel="tag">Hexo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JVM/" rel="tag">JVM</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java%E5%9F%BA%E7%A1%80/" rel="tag">Java基础</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mysql/" rel="tag">Mysql</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/" rel="tag">Python</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/VS-Code/" rel="tag">VS Code</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Windows/" rel="tag">Windows</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" rel="tag">并发编程</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%96%87%E7%AB%A0/" rel="tag">文章</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/" rel="tag">计算机组成原理</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95/" rel="tag">面试</a><span class="tag-list-count">1</span></li></ul>
+        </canvas>
+    </div>
+</div>
+
+
+      </div>
+      
+    </div>
+    <div id="music163player">
+    <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=1911728484&auto=1&height=66"></iframe>
+  </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2022 – 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Insominac</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">179k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">2:43</span>
+</div>
+
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+
+   <canvas class="fireworks" style="position: fixed;left: 0;top: 0;z-index: 1; pointer-events: none;" ></canvas> 
+   <script type="text/javascript" src="//cdn.bootcss.com/animejs/2.2.0/anime.min.js"></script> 
+   <script type="text/javascript" src="js/fireworks.js"></script>
+
+</html>

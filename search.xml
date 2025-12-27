@@ -12,6 +12,40 @@
       </tags>
   </entry>
   <entry>
+    <title>Java基础-HelloWorld</title>
+    <url>/2023/10/21/Java%E5%9F%BA%E7%A1%80-HelloWorld/</url>
+    <content><![CDATA[<p>HelloWorld</p>
+<span id="more"></span>
+
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">//class:是类的意思，关键字</span><br><span class="line">//HelloWorld:是类名，是自己起的名字，都是标识符</span><br><span class="line">public class HelloWorld&#123;</span><br><span class="line">	/*</span><br><span class="line">	1,public : 访问修饰符 </span><br><span class="line">	2，static: 静态的意思</span><br><span class="line">	3，void :表示这个方法没有返回值</span><br><span class="line">	4，main: 表示方法名，而且是特殊的，主方法，	</span><br><span class="line">	5,String[] args:方法的参数列表，[]是数组的意思；（）方法的标识</span><br><span class="line">	*/</span><br><span class="line">	public static void main(String[] args)&#123;//main方法是程序的入口</span><br><span class="line">		//打印双引号里面的内容</span><br><span class="line">		//System.out.println:打印，之后换行</span><br><span class="line">		System.out.println(<span class="string">&quot;Hello,Java&quot;</span>);</span><br><span class="line">		//System.out.print:打印，之后不换行</span><br><span class="line">		System.out.print(<span class="string">&quot;hello,&quot;</span>);</span><br><span class="line">		System.out.println(<span class="string">&quot;world!!&quot;</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>笔记：<a href="https://www.yuque.com/books/share/a1b9ed08-c795-438c-8c9e-260573fae4f2#">https://www.yuque.com/books/share/a1b9ed08-c795-438c-8c9e-260573fae4f2?#</a> </p>
+]]></content>
+      <categories>
+        <category>Java基础</category>
+      </categories>
+      <tags>
+        <tag>Java基础</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>GC插件</title>
+    <url>/2022/02/22/GC%E6%8F%92%E4%BB%B6/</url>
+    <content><![CDATA[<p>JDC自带的调优诊断工具Visualvm</p>
+<span id="more"></span>
+<p>启动cmd输入jvisualvm启动工具</p>
+<p><img src="/images/gc%E5%B7%A5%E5%85%B7.png"><br>给jdk自带的jvisualvm安装Visual GC插件，遇到We’re sorry the java.net site has<br>closed（我们很抱歉java.net网站已经关闭）<br>1、找到新的更新地址<br>visualvm新访问地址：<a href="https://visualvm.github.io/index.html">https://visualvm.github.io/index.html</a></p>
+<p><img src="/images/gc%E6%8F%92%E4%BB%B6.png"><br>进入jvisualvm的插件管理”工具” - “插件”<br>在”设置”中修改url地址为刚才我们在github上找到的对应我们JDK版本的地址，修改成功后，可用插件即可刷新出来，重启即可看到VisualGC</p>
+<p>一：整个区域分为三部分：spaces、graphs、histogram<br>1，spaces区域：代表虚拟机内存分布情况。从图中可以看出，虚拟机被分为Perm、<br>Old、Eden、S0、S1<br>注意：如果对每个区域基本概念不是很熟悉的可以先了解下java虚拟机运行时数据区这篇<br>文字。<br>1.1）perm：英文叫做Permanent Generation，我们称之为永久代。(根据深入java虚拟<br>机作者说明，这里说法不是不是很正确，因为hotspot虚拟机的设计团队选择把GC分代收<br>集扩展至此而已，正确的应该叫做方法区或者非堆)。<br>1.1.1）通过VM Args:-XX:PermSize=128m -XX:MaxPermSize=256m 设置初始值与最<br>大值<br>1.2）heap：java堆(java heap)。它包括老年代(图中Old区域)和新生代(图中Eden/S0/S1<br>三个统称新生代，分为Eden区和两个Survivor区域)，他们默认是8:1分配内存<br>1.2.1）通过VM Args:-xms512m -Xmx512m -XX:+HeapDumpOnOutofMemoryError<br>-Xmn100m -XX:SurvivorRatio=8 设置初始堆内存、最大堆内存、内存异常打印dump、<br>新生代内存、新生代内存分配比例(8:1:1)，因为Heap分为新生代跟老年代，所以512M100M=412M，老年代就是412M(初始内存跟最大内存最好相等，防止内存不够时扩充内<br>存或者Full GC，导致性能降低)<br>2，Graphs区域：内存使用详细介绍<br>2.1）Compile Time(编译时间)：6368compiles 表示编译总数，4.407s表示编译累计<br>时间。一个脉冲表示一次JIT编译，窄脉冲表示持续时间短，宽脉冲表示持续时间长。<br>2.2）Class Loader Time(类加载时间): 20869loaded表示加载类数量, 139 unloaded<br>表示卸载的类数量，40.630s表示类加载花费的时间<br>2.3）GC Time(GC Time)：2392collections表示垃圾收集的总次数，37.454s表示垃圾<br>收集花费的时间，last cause表示最近垃圾收集的原因<br>2.4）Eden Space(Eden 区)：括号内的31.500M表示最大容量，9.750M表示当前容<br>量，后面的4.362M表示当前使用情况，2313collections表示垃圾收集次数，8.458s表示垃<br>圾收集花费时间<br>2.5）Survivor 0/Survivor 1(S0和S1区)：括号内的3.938M表示最大容量，1.188M表示<br>当前容量，之后的值是当前使用情况<br>2.6）Old Gen(老年代)：括号内的472.625M表示最大容量，145.031M表示当前容量，<br>之后的87.031表示当前使用情况，79collections表示垃圾收集次数 ，28.996s表示垃圾收<br>集花费时间<br>2.7）Perm Gen(永久代)：括号内的256.000M表示最大容量，105.250M表示当前容<br>量，之后的105.032M表示当前使用情况<br>3，Histogram区域：survivor区域参数跟年龄柱状图<br>3.1）Tenuring Threshold：表示新生代年龄大于当前值则进入老年代<br>3.2）Max Tenuring Threshold：表示新生代最大年龄值。<br>3.3）Tenuring Threshold与Max Tenuring Threshold区别：Max Tenuring<br>Threshold是一个最大限定，所有的新生代年龄都不能超过当前值，而Tenuring<br>Threshold是个动态计算出来的临时值，一般情况与Max Tenuring Threshold相等，如果<br>在Suivivor空间中，相同年龄所有对象大小的总和大于Survivor空间的一半，则年龄大于或<br>者等于该年龄的对象就都可以直接进入老年代(如果计算出来年龄段是5，则Tenuring<br>Threshold=5，age&gt;=5的Suivivor对象都符合要求)，它才是新生代是否进入老年代判断的<br>依据。<br>3.4）Desired Survivor Size：Survivor空间大小验证阙值(默认是survivor空间的一<br>半)，用于Tenuring Threshold判断对象是否提前进入老年代。<br>3.5）Current Survivor Size：当前survivor空间大小<br>3.6）histogram柱状图：表示年龄段对象的存储柱状图<br>3.7）如果显示指定-XX:+UseParallelGC –新生代并行、老年代串行收集器 ，则<br>histogram柱状图不支持当前收集器</p>
+]]></content>
+      <categories>
+        <category>JVM</category>
+      </categories>
+      <tags>
+        <tag>JVM</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Expalin详解与索引最佳实践</title>
     <url>/2022/04/25/Expalin%E8%AF%A6%E8%A7%A3%E4%B8%8E%E7%B4%A2%E5%BC%95%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/</url>
     <content><![CDATA[<p>explain详解与索引最佳实践<br>使用EXPLAIN关键字可以模拟优化器执行SQL语句，分析你的查询语句或是结构的性能瓶颈；</p>
@@ -195,40 +229,6 @@
       </tags>
   </entry>
   <entry>
-    <title>GC插件</title>
-    <url>/2022/02/22/GC%E6%8F%92%E4%BB%B6/</url>
-    <content><![CDATA[<p>JDC自带的调优诊断工具Visualvm</p>
-<span id="more"></span>
-<p>启动cmd输入jvisualvm启动工具</p>
-<p><img src="/images/gc%E5%B7%A5%E5%85%B7.png"><br>给jdk自带的jvisualvm安装Visual GC插件，遇到We’re sorry the java.net site has<br>closed（我们很抱歉java.net网站已经关闭）<br>1、找到新的更新地址<br>visualvm新访问地址：<a href="https://visualvm.github.io/index.html">https://visualvm.github.io/index.html</a></p>
-<p><img src="/images/gc%E6%8F%92%E4%BB%B6.png"><br>进入jvisualvm的插件管理”工具” - “插件”<br>在”设置”中修改url地址为刚才我们在github上找到的对应我们JDK版本的地址，修改成功后，可用插件即可刷新出来，重启即可看到VisualGC</p>
-<p>一：整个区域分为三部分：spaces、graphs、histogram<br>1，spaces区域：代表虚拟机内存分布情况。从图中可以看出，虚拟机被分为Perm、<br>Old、Eden、S0、S1<br>注意：如果对每个区域基本概念不是很熟悉的可以先了解下java虚拟机运行时数据区这篇<br>文字。<br>1.1）perm：英文叫做Permanent Generation，我们称之为永久代。(根据深入java虚拟<br>机作者说明，这里说法不是不是很正确，因为hotspot虚拟机的设计团队选择把GC分代收<br>集扩展至此而已，正确的应该叫做方法区或者非堆)。<br>1.1.1）通过VM Args:-XX:PermSize=128m -XX:MaxPermSize=256m 设置初始值与最<br>大值<br>1.2）heap：java堆(java heap)。它包括老年代(图中Old区域)和新生代(图中Eden/S0/S1<br>三个统称新生代，分为Eden区和两个Survivor区域)，他们默认是8:1分配内存<br>1.2.1）通过VM Args:-xms512m -Xmx512m -XX:+HeapDumpOnOutofMemoryError<br>-Xmn100m -XX:SurvivorRatio=8 设置初始堆内存、最大堆内存、内存异常打印dump、<br>新生代内存、新生代内存分配比例(8:1:1)，因为Heap分为新生代跟老年代，所以512M100M=412M，老年代就是412M(初始内存跟最大内存最好相等，防止内存不够时扩充内<br>存或者Full GC，导致性能降低)<br>2，Graphs区域：内存使用详细介绍<br>2.1）Compile Time(编译时间)：6368compiles 表示编译总数，4.407s表示编译累计<br>时间。一个脉冲表示一次JIT编译，窄脉冲表示持续时间短，宽脉冲表示持续时间长。<br>2.2）Class Loader Time(类加载时间): 20869loaded表示加载类数量, 139 unloaded<br>表示卸载的类数量，40.630s表示类加载花费的时间<br>2.3）GC Time(GC Time)：2392collections表示垃圾收集的总次数，37.454s表示垃圾<br>收集花费的时间，last cause表示最近垃圾收集的原因<br>2.4）Eden Space(Eden 区)：括号内的31.500M表示最大容量，9.750M表示当前容<br>量，后面的4.362M表示当前使用情况，2313collections表示垃圾收集次数，8.458s表示垃<br>圾收集花费时间<br>2.5）Survivor 0/Survivor 1(S0和S1区)：括号内的3.938M表示最大容量，1.188M表示<br>当前容量，之后的值是当前使用情况<br>2.6）Old Gen(老年代)：括号内的472.625M表示最大容量，145.031M表示当前容量，<br>之后的87.031表示当前使用情况，79collections表示垃圾收集次数 ，28.996s表示垃圾收<br>集花费时间<br>2.7）Perm Gen(永久代)：括号内的256.000M表示最大容量，105.250M表示当前容<br>量，之后的105.032M表示当前使用情况<br>3，Histogram区域：survivor区域参数跟年龄柱状图<br>3.1）Tenuring Threshold：表示新生代年龄大于当前值则进入老年代<br>3.2）Max Tenuring Threshold：表示新生代最大年龄值。<br>3.3）Tenuring Threshold与Max Tenuring Threshold区别：Max Tenuring<br>Threshold是一个最大限定，所有的新生代年龄都不能超过当前值，而Tenuring<br>Threshold是个动态计算出来的临时值，一般情况与Max Tenuring Threshold相等，如果<br>在Suivivor空间中，相同年龄所有对象大小的总和大于Survivor空间的一半，则年龄大于或<br>者等于该年龄的对象就都可以直接进入老年代(如果计算出来年龄段是5，则Tenuring<br>Threshold=5，age&gt;=5的Suivivor对象都符合要求)，它才是新生代是否进入老年代判断的<br>依据。<br>3.4）Desired Survivor Size：Survivor空间大小验证阙值(默认是survivor空间的一<br>半)，用于Tenuring Threshold判断对象是否提前进入老年代。<br>3.5）Current Survivor Size：当前survivor空间大小<br>3.6）histogram柱状图：表示年龄段对象的存储柱状图<br>3.7）如果显示指定-XX:+UseParallelGC –新生代并行、老年代串行收集器 ，则<br>histogram柱状图不支持当前收集器</p>
-]]></content>
-      <categories>
-        <category>JVM</category>
-      </categories>
-      <tags>
-        <tag>JVM</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Java基础-HelloWorld</title>
-    <url>/2023/10/21/Java%E5%9F%BA%E7%A1%80-HelloWorld/</url>
-    <content><![CDATA[<p>HelloWorld</p>
-<span id="more"></span>
-
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">//class:是类的意思，关键字</span><br><span class="line">//HelloWorld:是类名，是自己起的名字，都是标识符</span><br><span class="line">public class HelloWorld&#123;</span><br><span class="line">	/*</span><br><span class="line">	1,public : 访问修饰符 </span><br><span class="line">	2，static: 静态的意思</span><br><span class="line">	3，void :表示这个方法没有返回值</span><br><span class="line">	4，main: 表示方法名，而且是特殊的，主方法，	</span><br><span class="line">	5,String[] args:方法的参数列表，[]是数组的意思；（）方法的标识</span><br><span class="line">	*/</span><br><span class="line">	public static void main(String[] args)&#123;//main方法是程序的入口</span><br><span class="line">		//打印双引号里面的内容</span><br><span class="line">		//System.out.println:打印，之后换行</span><br><span class="line">		System.out.println(<span class="string">&quot;Hello,Java&quot;</span>);</span><br><span class="line">		//System.out.print:打印，之后不换行</span><br><span class="line">		System.out.print(<span class="string">&quot;hello,&quot;</span>);</span><br><span class="line">		System.out.println(<span class="string">&quot;world!!&quot;</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>笔记：<a href="https://www.yuque.com/books/share/a1b9ed08-c795-438c-8c9e-260573fae4f2#">https://www.yuque.com/books/share/a1b9ed08-c795-438c-8c9e-260573fae4f2?#</a> </p>
-]]></content>
-      <categories>
-        <category>Java基础</category>
-      </categories>
-      <tags>
-        <tag>Java基础</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Java基础-基础语法</title>
     <url>/2023/10/21/Java%E5%9F%BA%E7%A1%80-%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/</url>
     <content><![CDATA[<p>一、关键字<br>关键字<br>定义：被Java 语言赋予了特殊含义，用做专门用途的字符串（单词）。<br>特点： 关键字中所有字母都为小写。<br>例子：class、interface、 enum 、byte 、short、 int 、long、 float、 double、 char、boolean、 void<span id="more"></span></p>
@@ -265,22 +265,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Java基础-面向对象（一）</title>
-    <url>/2023/10/21/Java%E5%9F%BA%E7%A1%80-%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%EF%BC%88%E4%B8%80%EF%BC%89/</url>
-    <content><![CDATA[<p>修饰符：public，static<br>返回值：一个方法执行之后，返回给调用处的结果。可能有，也可能没有。<span id="more"></span><br>有：在方法定义的时候，写清楚方法要返回的数据的类型。<br>没有：void，表示这个方法执行结束之后，没有返回值给调用处。<br>方法名：也是一种标识符。首字母小写，驼峰式命名。<br>()：方法的标志。括号里：参数列表<br>{}：方法体<br>参数列表：方法在运算过程中的未知数据，调用者调用方法时传递<br>return ：将方法执行后的结果带给调用者，方法执行到 return ，整体方法运行结束</p>
-<p>static的方法：静态方法<br>类名.方法名()，本类中类名可以省略。<br>非static的方法：非静态方法<br>创建该类的对象，通过对象调用方法。<br>类名 对象名 = new 类名();<br>对象.方法名()<br>调用一个方法,如果是类的方法，可以用类名直接调用<br>//倘若是在本类中，那么类名可以省略</p>
-<p>注意点：<br>1.如果一个方法声明了有返回值(非void)，那么方法中一定要使用return语句返回结果。<br>2.定义方法的时候，声明的返回值类型，一定得和return后实际上返回的数值类型一致。<br>3.如果一个方法声明了有返回值，如果方法中有分支语句或者循环语句，那么要保证无论执行哪个分<br>支，都要有return可以被执行到。<br>4.如果一个方法声明没有返回值(void)，那么方法中也可以使用return语句，用于强制结束方法的执<br>行。</p>
-<p>方法的重载和重写：<br>方法的重载和重写都是实现多态的方式。重载发生在一个类中，同名的方法如果有不同的参数列表（参数类型不同、参数个数不同、顺序不同），不同返回类型（也可以相同）则视为重载；重写发生在子类与父类之间，重写要求子类被重写方法与父类被重写方法有相同的参数列表，返回值和形参都不能改变。即外壳不变，核心重写！重写方法不能抛出新的检查异常或者比被重写方法申明更加宽泛的异常。例如： 父类的一个方法申明了一个检查异常 IOException，但是在重写这个方法的时候不能抛出 Exception 异常，因为 Exception 是 IOException 的父类，抛出 IOException 异常或者 IOException 的子类异常。</p>
-<p>this关键字<br>this代表所在类的当前对象的引用（地址值），即对象自己的引用。<br>方法被哪个对象调用，方法中的this就代表那个对象。即谁在调用，this就代表谁。</p>
-]]></content>
-      <categories>
-        <category>Java基础</category>
-      </categories>
-      <tags>
-        <tag>Java基础</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Java基础-数组与异常处理</title>
     <url>/2023/10/25/Java%E5%9F%BA%E7%A1%80-%E6%95%B0%E7%BB%84%E4%B8%8E%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/</url>
     <content><![CDATA[<p>数组拷贝<br>浅拷贝：拷贝的是内存地址，<br>int[] nums = new int[3];<br>int[] arr = nums;//拷贝的是内存地址，原数组值会变。<span id="more"></span></p>
@@ -300,6 +284,22 @@
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">int[] arr6 = &#123;4,43,6,4,7&#125;;</span><br><span class="line">Arrays.sort(arr6);</span><br><span class="line">System.out.println(Arrays.toString(arr6));//[4, 4, 6, 7, 43]</span><br></pre></td></tr></table></figure>
 
 <p>异常</p>
+]]></content>
+      <categories>
+        <category>Java基础</category>
+      </categories>
+      <tags>
+        <tag>Java基础</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Java基础-面向对象（一）</title>
+    <url>/2023/10/21/Java%E5%9F%BA%E7%A1%80-%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%EF%BC%88%E4%B8%80%EF%BC%89/</url>
+    <content><![CDATA[<p>修饰符：public，static<br>返回值：一个方法执行之后，返回给调用处的结果。可能有，也可能没有。<span id="more"></span><br>有：在方法定义的时候，写清楚方法要返回的数据的类型。<br>没有：void，表示这个方法执行结束之后，没有返回值给调用处。<br>方法名：也是一种标识符。首字母小写，驼峰式命名。<br>()：方法的标志。括号里：参数列表<br>{}：方法体<br>参数列表：方法在运算过程中的未知数据，调用者调用方法时传递<br>return ：将方法执行后的结果带给调用者，方法执行到 return ，整体方法运行结束</p>
+<p>static的方法：静态方法<br>类名.方法名()，本类中类名可以省略。<br>非static的方法：非静态方法<br>创建该类的对象，通过对象调用方法。<br>类名 对象名 = new 类名();<br>对象.方法名()<br>调用一个方法,如果是类的方法，可以用类名直接调用<br>//倘若是在本类中，那么类名可以省略</p>
+<p>注意点：<br>1.如果一个方法声明了有返回值(非void)，那么方法中一定要使用return语句返回结果。<br>2.定义方法的时候，声明的返回值类型，一定得和return后实际上返回的数值类型一致。<br>3.如果一个方法声明了有返回值，如果方法中有分支语句或者循环语句，那么要保证无论执行哪个分<br>支，都要有return可以被执行到。<br>4.如果一个方法声明没有返回值(void)，那么方法中也可以使用return语句，用于强制结束方法的执<br>行。</p>
+<p>方法的重载和重写：<br>方法的重载和重写都是实现多态的方式。重载发生在一个类中，同名的方法如果有不同的参数列表（参数类型不同、参数个数不同、顺序不同），不同返回类型（也可以相同）则视为重载；重写发生在子类与父类之间，重写要求子类被重写方法与父类被重写方法有相同的参数列表，返回值和形参都不能改变。即外壳不变，核心重写！重写方法不能抛出新的检查异常或者比被重写方法申明更加宽泛的异常。例如： 父类的一个方法申明了一个检查异常 IOException，但是在重写这个方法的时候不能抛出 Exception 异常，因为 Exception 是 IOException 的父类，抛出 IOException 异常或者 IOException 的子类异常。</p>
+<p>this关键字<br>this代表所在类的当前对象的引用（地址值），即对象自己的引用。<br>方法被哪个对象调用，方法中的this就代表那个对象。即谁在调用，this就代表谁。</p>
 ]]></content>
       <categories>
         <category>Java基础</category>
@@ -778,58 +778,6 @@ transient volatile int cellsBusy;
       </tags>
   </entry>
   <entry>
-    <title>并发编程-ForkJoin工作原理分析</title>
-    <url>/2022/04/06/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B-ForkJoin%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90/</url>
-    <content><![CDATA[<p>ForkJoin工作原理分析</p>
-<span id="more"></span>
-<p>首先要知道为什么用到ForkJoin，我们线程池的使用怎么合理的设置线程数？<br>主要的目的是为了充分并合理地使用 CPU 和内存等资源，从而最大限度地提高程序的性能。</p>
-<p>线程数计算方法:<br>线程数 = CPU 核心数 *（1+平均等待时间/平均工作时间）</p>
-<p>如果任务的平均等待时间长，线程数就随之增加，而如果平均工作时间长，线程数就随之减少。线程太多和太少都会对系统运行有影响，实际会通过监控JVM的线程情况以及CPU的负载情况，衡量应该创建的线程数，才能合理并充分利用资源。</p>
-<p>分治算法<br>分治算法的基本思想是将一个规模为N的问题分解为K个规模较小的子问题，这些子问题相互独立且与原问题性质相同。求出子问题的解，就可得到原问题的解。<br>分治算法的步骤如下：</p>
-<ul>
-<li>分解：将要解决的问题划分成若干规模较小的同类问题；</li>
-<li>求解：当子问题划分得足够小时，用较简单的方法解决；</li>
-<li>合并：按原问题的要求，将子问题的解逐层合并构成原问题的解。</li>
-</ul>
-<p>Java 并发包里提供了一种叫做 Fork/Join 的并行计算框架，就是用来支持分治这种业务场景。</p>
-<p>Fork/Join框架</p>
-<p>传统线程池ThreadPoolExecutor有两个明显的缺点：</p>
-<ul>
-<li>无法对大任务进行拆分，对于某个任务只能由单线程执行；</li>
-<li>工作线程从队列中获取任务时存在竞争情况<br>这些缺点会影响任务的执行效率，所以在Java7中引入Fork/Join框架。</li>
-</ul>
-<p>Fork/Join框架的核心是ForkJoinPool类，ForkJoinPool允许其他线程向它提交任务，并根据设定将这些任务拆分为粒度更细的子任务，这些子任务将由ForkJoinPool内部的工作线程来并行执行，并且工作线程之间可以窃取彼此之间的任务。<br>ForkJoinPool最适合计算密集型任务，最好是非阻塞任务。ForkJoinPool是ThreadPoolExecutor线程池的一种补充，是对计算密集型场景需求的实现。</p>
-<p>Fork/Join的使用</p>
-<ul>
-<li>分治任务的线程池ForkJoinPool</li>
-<li>分治任务ForkJoinTask</li>
-</ul>
-<p>ForkJoinPool是用于执行ForkJoinTask任务的执行池，通过维护一个队列数组WorkQueue[]来减少提交任务和任务线程时产生的碰撞。<br>ForkJoinPool.png</p>
-<p>ForkJoinPool核心参数：<br>int parallelism：指定并行级别（parallelism level）。ForkJoinPool将根据这个设定，决定工作线程的数量。如果未设置的话，将使用Runtime.getRuntime().availableProcessors()来设置并行级别；</p>
-<p>ForkJoinWorkerThreadFactory factory：ForkJoinPool在创建线程时，会通过factory来创建。注意，这里需要实现的是ForkJoinWorkerThreadFactory，而不是ThreadFactory。如果你不指定factory，那么将由默认DefaultForkJoinWorkerThreadFactory负责线程的创建工作；</p>
-<p>UncaughtExceptionHandler handler：指定异常处理器，当任务在运行中出错时，将由设定的处理器处理；</p>
-<p>boolean asyncMode：设置队列的工作模式：asyncMode ? FIFO_QUEUE :LIFO_QUEUE。当asyncMode为true时，将使用先进先出队列，而为false时则使用后进<br>先出的模式。</p>
-<p>ForkJoinPool的提交任务方式：<br>1.提交异步执行，void没有返回值。<br>execute.png</p>
-<p>2.等待并获取结果，有返回值。<br>invoke.png</p>
-<p>3.提交执行任务，返回Future结果。<br>submit.png</p>
-<p>ForkJoinTask<br>是ForkJoinPool的重要抽象类，定义了任务执行时的具体逻辑和拆分逻辑。ForkJoinTask继承了Future接口。</p>
-<p>ForkJoinTask最核心方法：<br>1.fork()<br>提交任务，用于向当前任务所运行的线程池中提交任务。</p>
-<p>2.join()<br>获取任务执行完返回的结果，调用join()时，将阻塞当前线程直到对应的子任务完成运行并返回结果。</p>
-<p>使用ForkJoinTask：<br>不用继承ForkJoinTask，而是继承它的子类，有三个对应不同的场景。</p>
-<ul>
-<li>RecursiveAction：用于递归执行但不需要返回结果的任务。</li>
-<li>RecursiveTask ：用于递归执行需要返回结果的任务。</li>
-<li>CountedCompleter<T> ：在任务完成执行后会触发执行一个自定义的钩子函数</li>
-</ul>
-]]></content>
-      <categories>
-        <category>并发编程</category>
-      </categories>
-      <tags>
-        <tag>并发编程</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>并发编程-Java并发线程池底层原理详解与源码分析</title>
     <url>/2022/04/12/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B-Java%E5%B9%B6%E5%8F%91%E7%BA%BF%E7%A8%8B%E6%B1%A0%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3%E4%B8%8E%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/</url>
     <content><![CDATA[<p>线程池<br>解释起来可以理解为线程缓存，不能被无限制的创建，否则不仅会消耗系统资源，还会降低系统的稳定性，因此Java中提供线程池对线程进行统一分配、调优和监控</p>
@@ -928,30 +876,49 @@ transient volatile int cellsBusy;
       </tags>
   </entry>
   <entry>
-    <title>并发编程-Java并发设计模式</title>
-    <url>/2022/04/17/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B-Java%E5%B9%B6%E5%8F%91%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/</url>
-    <content><![CDATA[<p>Immutability模式</p>
+    <title>并发编程-ForkJoin工作原理分析</title>
+    <url>/2022/04/06/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B-ForkJoin%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90/</url>
+    <content><![CDATA[<p>ForkJoin工作原理分析</p>
 <span id="more"></span>
-
-<p>将一个类所有的属性都设置成final的，并且只允许存在只读方法，那么这个类基本上就具备不可变性了。更严格的做法是这个类本身也是final的，也就是不允许继承。因为子类可以覆盖父类的方法，有可能改变不可变性,所以推荐在实际工作中，使用这种更严格的做法。<br>可以利用享元模式避免创建重复对象，Long、Integer、Short、Byte等这些基本数据类型的包装类都用到了享元模式这也是基本上所有的基础类型的包装类都不适合做锁的原因：它们内部用到了享元模式，这会导致看上去私有的锁，其实是共有的。在Java语言中，final修饰的属性一旦被赋值，就不可以再修改，但是如果属性的类型是普通对象，那么这个普通对象的属性是可以被修改的。所以，在使用Immutability模式的时候一定要确认保持不变性的边界在哪里，是否要求属性对象也具备不可变性。</p>
-<p>Copy-On-Write模式</p>
-<p>CopyOnWrite机制<br>核心思想：读写分离，空间换时间，避免为保证并发安全导致的激烈的锁竞争。<br>1、CopyOnWrite适用于读多写少的情况，最大程度的提高读的效率；<br>2、CopyOnWrite是最终一致性，在写的过程中，原有的读的数据是不会发生更新的，只有新的读才能读到最新数据；<br>3、如何使其他线程能够及时读到新的数据，需要使用volatile变量；<br>4、写的时候不能并发写，需要对写操作进行加锁；<br>CopyOnWrite.png</p>
-<p>Copy-on-Write 才是最简单的并发解决方案，很多人都在无意中把它忽视了。它是如此简单，以至于 Java 中的基本数据类型 String、Integer、Long 等都是基于 Copy-on-Write 方案实现的。<br>Copy-on-Write 缺点就是消耗内存，每次修改都需要复制一个新的对象出来，好在随着自<br>动垃圾回收（GC）算法的成熟以及硬件的发展，这种内存消耗已经渐渐可以接受了。所以在实<br>际工作中，如果写操作非常少（读多写少的场景），可以尝试使用 Copy-on-Write。</p>
-<p>线程本地存储模式<br>在Java标准类库中，ThreadLocal 类实现了该模式，线程本地存储模式本质上是一种避免共享的方案，由于没有共享，所以自然也就没有并发问题。如果你需要在并发场景中使用一个线程不安全的工具类，最简单的方案就是避免共享。避免共享有两种方案，一种方案是将这个工具类作为局部变量使用，另外一种方案就是线程本地存储模式。这两种方案，局部变量方案的缺点是在高并发场景下会频繁创建对象，而线程本地存储方案，每个线程只需要创建一个工具类的实例，所以不存在频繁创建对象的问题。</p>
-<p>GuardedSuspension：等待唤醒机制的规范实现<br>概念：<br>”多线程版本的if“，需要等待，而且必须要等到条件为真<br>场景：<br>多用来异步转同步<br>案例：<br>用户通过浏览器发过来一个请求，会被转换成一个异步消息发送给MQ，等MQ返回结果后，再将这个结果返回至浏览器。<br>给MQ发送消息的线程是处理Web请求的线程T1，但消费MQ结果的线程并不是线程T1，那线程T1如何等待MQ的返回结果呢？<br>GuardedSuspension.png</p>
-<p>Balking模式<br>同为”多线程版本的if“，但不是所有场景都需要一直等待到条件成立，所以出现此模式，可以快速放弃。<br>案例：<br>各种编辑器提供的自动保存功能；<br>自动保存功能的实现逻辑一般都是隔一定时间自动执行存盘操作；<br>存盘操作的前提是文件做过修改，如果文件没有执行过修改操作，就需要快速放弃存盘操作<br>这里可以使用synchronized将读写共享变量changed的方法autoSave()和edit()都加互斥锁。这样做虽然简单，但是性能很差，原因是锁的范围太大了。可以将锁的范围缩小，只在读写共享变量changed的地方加锁。</p>
-<p>常见的应用场景：<br>1.sychronized轻量级锁膨胀逻辑， 只需要一个线程膨胀获取monitor对象<br>2.DCL单例实现<br>3.服务组件的初始化</p>
-<p>多线程分工模式<br>Thread-Per-Message 模式、Worker Thread 模式和生产者 - 消费者模式属于多线程分工模式。<br>Thread-Per-Message 模式需要注意线程的创建，销毁以及是否会导致OOM。<br>Worker Thread 模式需要注意死锁问题，提交的任务之间不要有依赖性。<br>生产者 - 消费者模式可以直接使用线程池来实现</p>
-<p>Thread-Per-Message 模式——最简单实用的分工方法<br>Thread-Per-Message 模式就是为每个任务分配一个独立的线程，这是一种最简单的分工方法。</p>
-<p>使用场景：<br>对于一些并发度没那么高的异步场景，例如定时任务，采用 Thread-Per-Message 模式是完全没有问题的。</p>
-<p>Worker Thread模式——如何避免重复创建线程<br>可以有效避免线程的频繁创建、销毁以及 OOM 问题，用阻塞队列做任务池，然后创建固定数量的线程消费阻塞队列中的任务，类似车间工作。<br>Worker Thread.png<br>可以使用线程池来实现此方案，提交到相同线程池中的任务一定要是相互独立的，否则就一定要慎重，避免死锁</p>
-<p>两阶段终止模式：优雅地终止线程<br>在一个线程T1中，终止线程T2，终止时不是立马就结束它，而是给它一个做后事的机会，将终止过程分成两个阶段，其中第一个阶段主要是线程T1向线程T2发送终止指令，而第二阶段则是线程T2响应终止指令。</p>
-<p>使用场景：<br>用两阶段终止模式终止监控操作，监控系统发送采集指令给被监控系统的监控代理，监控代理接收到指令之后，从监控目标收集数据，然后回传给监控系统：<br>监控系统.png</p>
-<p>shutdown()方法是一种很保守的关闭线程池的方法。线程池执行shutdown()后，就会拒绝接收新的任务，但是会等待线程池中正在执行的任务和已经进入阻塞队列的任务都执行完之后才最终关闭线程池。<br>shutdownNow()则会拒绝接收新的任务，同时还会中断线程池中正在执行的任务，已经进入阻塞队列的任务也被剥夺了执行的机会，不过这些被剥夺执行机会的任务会作为shutdownNow()方法的返回值返回。因为shutdownNow()方法会中断正在执行的线程，所以提交到线程池的任务，如果需要优雅地结束，就需要正确地处理线程中断。<br>线程池的shutdown()和shutdownNow()方法实质上使用的也是两阶段终止模式，只是终止指令的范围不同而已：前者只影响阻塞队列接收任务，后者范围扩大到线程池中所有的任务。</p>
-<p>生产者-消费者模式：用流水线思想提高效率<br>Worker Thread模式类比的是工厂里车间工人的工作模式<br>但其实在现实世界，工厂里还有一种流水线的工作模式，类比到编程领域，就是生产者-消费者模式</p>
-<p>好处：平衡生产者和消费者的速度差异,支持异步处理。</p>
-<p>使用场景：<br>1.批量执行场景<br>如要在数据库里INSERT 1000条数据，有两种方案：<br>一种方案是用1000个线程并发执行，每个线程INSERT一条数据；第二种方案是用1个线程，执行一个批量的SQL，一次性把1000条数据INSERT进去。这两种方案，显然是第二种方案效率更高</p>
-<p>2.支持分阶段提交<br>写文件如果同步刷盘性能会很慢，所以对于不是很重要的数据，往往采用异步刷盘的方式：<br>写入日志的方法可以通过创建日志任务并添加到阻塞队列中来实现，调用此方法的线程是生产者，而真正将日志写入文件的是消费者线程</p>
+<p>首先要知道为什么用到ForkJoin，我们线程池的使用怎么合理的设置线程数？<br>主要的目的是为了充分并合理地使用 CPU 和内存等资源，从而最大限度地提高程序的性能。</p>
+<p>线程数计算方法:<br>线程数 = CPU 核心数 *（1+平均等待时间/平均工作时间）</p>
+<p>如果任务的平均等待时间长，线程数就随之增加，而如果平均工作时间长，线程数就随之减少。线程太多和太少都会对系统运行有影响，实际会通过监控JVM的线程情况以及CPU的负载情况，衡量应该创建的线程数，才能合理并充分利用资源。</p>
+<p>分治算法<br>分治算法的基本思想是将一个规模为N的问题分解为K个规模较小的子问题，这些子问题相互独立且与原问题性质相同。求出子问题的解，就可得到原问题的解。<br>分治算法的步骤如下：</p>
+<ul>
+<li>分解：将要解决的问题划分成若干规模较小的同类问题；</li>
+<li>求解：当子问题划分得足够小时，用较简单的方法解决；</li>
+<li>合并：按原问题的要求，将子问题的解逐层合并构成原问题的解。</li>
+</ul>
+<p>Java 并发包里提供了一种叫做 Fork/Join 的并行计算框架，就是用来支持分治这种业务场景。</p>
+<p>Fork/Join框架</p>
+<p>传统线程池ThreadPoolExecutor有两个明显的缺点：</p>
+<ul>
+<li>无法对大任务进行拆分，对于某个任务只能由单线程执行；</li>
+<li>工作线程从队列中获取任务时存在竞争情况<br>这些缺点会影响任务的执行效率，所以在Java7中引入Fork/Join框架。</li>
+</ul>
+<p>Fork/Join框架的核心是ForkJoinPool类，ForkJoinPool允许其他线程向它提交任务，并根据设定将这些任务拆分为粒度更细的子任务，这些子任务将由ForkJoinPool内部的工作线程来并行执行，并且工作线程之间可以窃取彼此之间的任务。<br>ForkJoinPool最适合计算密集型任务，最好是非阻塞任务。ForkJoinPool是ThreadPoolExecutor线程池的一种补充，是对计算密集型场景需求的实现。</p>
+<p>Fork/Join的使用</p>
+<ul>
+<li>分治任务的线程池ForkJoinPool</li>
+<li>分治任务ForkJoinTask</li>
+</ul>
+<p>ForkJoinPool是用于执行ForkJoinTask任务的执行池，通过维护一个队列数组WorkQueue[]来减少提交任务和任务线程时产生的碰撞。<br>ForkJoinPool.png</p>
+<p>ForkJoinPool核心参数：<br>int parallelism：指定并行级别（parallelism level）。ForkJoinPool将根据这个设定，决定工作线程的数量。如果未设置的话，将使用Runtime.getRuntime().availableProcessors()来设置并行级别；</p>
+<p>ForkJoinWorkerThreadFactory factory：ForkJoinPool在创建线程时，会通过factory来创建。注意，这里需要实现的是ForkJoinWorkerThreadFactory，而不是ThreadFactory。如果你不指定factory，那么将由默认DefaultForkJoinWorkerThreadFactory负责线程的创建工作；</p>
+<p>UncaughtExceptionHandler handler：指定异常处理器，当任务在运行中出错时，将由设定的处理器处理；</p>
+<p>boolean asyncMode：设置队列的工作模式：asyncMode ? FIFO_QUEUE :LIFO_QUEUE。当asyncMode为true时，将使用先进先出队列，而为false时则使用后进<br>先出的模式。</p>
+<p>ForkJoinPool的提交任务方式：<br>1.提交异步执行，void没有返回值。<br>execute.png</p>
+<p>2.等待并获取结果，有返回值。<br>invoke.png</p>
+<p>3.提交执行任务，返回Future结果。<br>submit.png</p>
+<p>ForkJoinTask<br>是ForkJoinPool的重要抽象类，定义了任务执行时的具体逻辑和拆分逻辑。ForkJoinTask继承了Future接口。</p>
+<p>ForkJoinTask最核心方法：<br>1.fork()<br>提交任务，用于向当前任务所运行的线程池中提交任务。</p>
+<p>2.join()<br>获取任务执行完返回的结果，调用join()时，将阻塞当前线程直到对应的子任务完成运行并返回结果。</p>
+<p>使用ForkJoinTask：<br>不用继承ForkJoinTask，而是继承它的子类，有三个对应不同的场景。</p>
+<ul>
+<li>RecursiveAction：用于递归执行但不需要返回结果的任务。</li>
+<li>RecursiveTask ：用于递归执行需要返回结果的任务。</li>
+<li>CountedCompleter<T> ：在任务完成执行后会触发执行一个自定义的钩子函数</li>
+</ul>
 ]]></content>
       <categories>
         <category>并发编程</category>
@@ -1112,6 +1079,112 @@ transient volatile int cellsBusy;
       </tags>
   </entry>
   <entry>
+    <title>并发编程-Java并发设计模式</title>
+    <url>/2022/04/17/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B-Java%E5%B9%B6%E5%8F%91%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/</url>
+    <content><![CDATA[<p>Immutability模式</p>
+<span id="more"></span>
+
+<p>将一个类所有的属性都设置成final的，并且只允许存在只读方法，那么这个类基本上就具备不可变性了。更严格的做法是这个类本身也是final的，也就是不允许继承。因为子类可以覆盖父类的方法，有可能改变不可变性,所以推荐在实际工作中，使用这种更严格的做法。<br>可以利用享元模式避免创建重复对象，Long、Integer、Short、Byte等这些基本数据类型的包装类都用到了享元模式这也是基本上所有的基础类型的包装类都不适合做锁的原因：它们内部用到了享元模式，这会导致看上去私有的锁，其实是共有的。在Java语言中，final修饰的属性一旦被赋值，就不可以再修改，但是如果属性的类型是普通对象，那么这个普通对象的属性是可以被修改的。所以，在使用Immutability模式的时候一定要确认保持不变性的边界在哪里，是否要求属性对象也具备不可变性。</p>
+<p>Copy-On-Write模式</p>
+<p>CopyOnWrite机制<br>核心思想：读写分离，空间换时间，避免为保证并发安全导致的激烈的锁竞争。<br>1、CopyOnWrite适用于读多写少的情况，最大程度的提高读的效率；<br>2、CopyOnWrite是最终一致性，在写的过程中，原有的读的数据是不会发生更新的，只有新的读才能读到最新数据；<br>3、如何使其他线程能够及时读到新的数据，需要使用volatile变量；<br>4、写的时候不能并发写，需要对写操作进行加锁；<br>CopyOnWrite.png</p>
+<p>Copy-on-Write 才是最简单的并发解决方案，很多人都在无意中把它忽视了。它是如此简单，以至于 Java 中的基本数据类型 String、Integer、Long 等都是基于 Copy-on-Write 方案实现的。<br>Copy-on-Write 缺点就是消耗内存，每次修改都需要复制一个新的对象出来，好在随着自<br>动垃圾回收（GC）算法的成熟以及硬件的发展，这种内存消耗已经渐渐可以接受了。所以在实<br>际工作中，如果写操作非常少（读多写少的场景），可以尝试使用 Copy-on-Write。</p>
+<p>线程本地存储模式<br>在Java标准类库中，ThreadLocal 类实现了该模式，线程本地存储模式本质上是一种避免共享的方案，由于没有共享，所以自然也就没有并发问题。如果你需要在并发场景中使用一个线程不安全的工具类，最简单的方案就是避免共享。避免共享有两种方案，一种方案是将这个工具类作为局部变量使用，另外一种方案就是线程本地存储模式。这两种方案，局部变量方案的缺点是在高并发场景下会频繁创建对象，而线程本地存储方案，每个线程只需要创建一个工具类的实例，所以不存在频繁创建对象的问题。</p>
+<p>GuardedSuspension：等待唤醒机制的规范实现<br>概念：<br>”多线程版本的if“，需要等待，而且必须要等到条件为真<br>场景：<br>多用来异步转同步<br>案例：<br>用户通过浏览器发过来一个请求，会被转换成一个异步消息发送给MQ，等MQ返回结果后，再将这个结果返回至浏览器。<br>给MQ发送消息的线程是处理Web请求的线程T1，但消费MQ结果的线程并不是线程T1，那线程T1如何等待MQ的返回结果呢？<br>GuardedSuspension.png</p>
+<p>Balking模式<br>同为”多线程版本的if“，但不是所有场景都需要一直等待到条件成立，所以出现此模式，可以快速放弃。<br>案例：<br>各种编辑器提供的自动保存功能；<br>自动保存功能的实现逻辑一般都是隔一定时间自动执行存盘操作；<br>存盘操作的前提是文件做过修改，如果文件没有执行过修改操作，就需要快速放弃存盘操作<br>这里可以使用synchronized将读写共享变量changed的方法autoSave()和edit()都加互斥锁。这样做虽然简单，但是性能很差，原因是锁的范围太大了。可以将锁的范围缩小，只在读写共享变量changed的地方加锁。</p>
+<p>常见的应用场景：<br>1.sychronized轻量级锁膨胀逻辑， 只需要一个线程膨胀获取monitor对象<br>2.DCL单例实现<br>3.服务组件的初始化</p>
+<p>多线程分工模式<br>Thread-Per-Message 模式、Worker Thread 模式和生产者 - 消费者模式属于多线程分工模式。<br>Thread-Per-Message 模式需要注意线程的创建，销毁以及是否会导致OOM。<br>Worker Thread 模式需要注意死锁问题，提交的任务之间不要有依赖性。<br>生产者 - 消费者模式可以直接使用线程池来实现</p>
+<p>Thread-Per-Message 模式——最简单实用的分工方法<br>Thread-Per-Message 模式就是为每个任务分配一个独立的线程，这是一种最简单的分工方法。</p>
+<p>使用场景：<br>对于一些并发度没那么高的异步场景，例如定时任务，采用 Thread-Per-Message 模式是完全没有问题的。</p>
+<p>Worker Thread模式——如何避免重复创建线程<br>可以有效避免线程的频繁创建、销毁以及 OOM 问题，用阻塞队列做任务池，然后创建固定数量的线程消费阻塞队列中的任务，类似车间工作。<br>Worker Thread.png<br>可以使用线程池来实现此方案，提交到相同线程池中的任务一定要是相互独立的，否则就一定要慎重，避免死锁</p>
+<p>两阶段终止模式：优雅地终止线程<br>在一个线程T1中，终止线程T2，终止时不是立马就结束它，而是给它一个做后事的机会，将终止过程分成两个阶段，其中第一个阶段主要是线程T1向线程T2发送终止指令，而第二阶段则是线程T2响应终止指令。</p>
+<p>使用场景：<br>用两阶段终止模式终止监控操作，监控系统发送采集指令给被监控系统的监控代理，监控代理接收到指令之后，从监控目标收集数据，然后回传给监控系统：<br>监控系统.png</p>
+<p>shutdown()方法是一种很保守的关闭线程池的方法。线程池执行shutdown()后，就会拒绝接收新的任务，但是会等待线程池中正在执行的任务和已经进入阻塞队列的任务都执行完之后才最终关闭线程池。<br>shutdownNow()则会拒绝接收新的任务，同时还会中断线程池中正在执行的任务，已经进入阻塞队列的任务也被剥夺了执行的机会，不过这些被剥夺执行机会的任务会作为shutdownNow()方法的返回值返回。因为shutdownNow()方法会中断正在执行的线程，所以提交到线程池的任务，如果需要优雅地结束，就需要正确地处理线程中断。<br>线程池的shutdown()和shutdownNow()方法实质上使用的也是两阶段终止模式，只是终止指令的范围不同而已：前者只影响阻塞队列接收任务，后者范围扩大到线程池中所有的任务。</p>
+<p>生产者-消费者模式：用流水线思想提高效率<br>Worker Thread模式类比的是工厂里车间工人的工作模式<br>但其实在现实世界，工厂里还有一种流水线的工作模式，类比到编程领域，就是生产者-消费者模式</p>
+<p>好处：平衡生产者和消费者的速度差异,支持异步处理。</p>
+<p>使用场景：<br>1.批量执行场景<br>如要在数据库里INSERT 1000条数据，有两种方案：<br>一种方案是用1000个线程并发执行，每个线程INSERT一条数据；第二种方案是用1个线程，执行一个批量的SQL，一次性把1000条数据INSERT进去。这两种方案，显然是第二种方案效率更高</p>
+<p>2.支持分阶段提交<br>写文件如果同步刷盘性能会很慢，所以对于不是很重要的数据，往往采用异步刷盘的方式：<br>写入日志的方法可以通过创建日志任务并添加到阻塞队列中来实现，调用此方法的线程是生产者，而真正将日志写入文件的是消费者线程</p>
+]]></content>
+      <categories>
+        <category>并发编程</category>
+      </categories>
+      <tags>
+        <tag>并发编程</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>并发编程-深入理解AQS之CyclicBarrier&amp;ReentrantReadWriteLock</title>
+    <url>/2022/03/26/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B-%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3AQS%E4%B9%8BCyclicBarrier&amp;ReentrantReadWriteLock/</url>
+    <content><![CDATA[<p>读写锁介绍</p>
+<span id="more"></span>
+
+<p>现实中有这样一种场景：对共享资源有读和写的操作，且写操作没有读操作那么频繁（读多写少）。在没有写操作的时候，多个线程同时读一个资源没有任何问题，所以应该允许多个线程同时读取共享资源（读读可以并发）；但是如果一个线程想去写这些共享资源，就不应该允许其他线程对该资源进行读和写操作了（读写，写读，写写互斥）。在读多于写的情况下，读写锁能够提供比排它锁更好的并发性和吞吐量。</p>
+<p>针对这种场景，JAVA的并发包提供了读写锁ReentrantReadWriteLock，它内部，维护了一对相关的锁，一个用于只读操作，称为读锁；一个用于写入操作，称为写锁，描述如下：线程进入读锁的前提条件：<br>没有其他线程的写锁</p>
+<ul>
+<li>没有写请求或者有写请求，但调用线程和持有锁的线程是同一个。</li>
+<li>线程进入写锁的前提条件：</li>
+<li>没有其他线程的读锁</li>
+<li>没有其他线程的写锁</li>
+<li>而读写锁有以下三个重要的特性：</li>
+<li>公平选择性：支持非公平（默认）和公平的锁获取方式，吞吐量还是非公平优于公平。</li>
+<li>可重入：读锁和写锁都支持线程重入。以读写线程为例：读线程获取读锁后，能够再次获取读锁。写线程在获取写锁之后能够再次获取写锁，同时也可以获取读锁。</li>
+<li>锁降级：遵循获取写锁、再获取读锁最后释放写锁的次序，写锁能够降级成为读锁。</li>
+</ul>
+<p>ReentrantReadWriteLock的使用<br>读写锁接口ReadWriteLock<br>ReadWriteLock.png<br>两个方法，分别获得读锁和写锁 Lock 对象。</p>
+<p>ReentrantReadWriteLock类结构<br>ReentrantReadWriteLock是可重入的读写锁实现类。在它内部，维护了一对相关的锁，一个用于只读操作，另一个用于写入操作。只要没有 Writer 线程，读锁可以由多个 Reader 线程同时持有。也就是说，写锁是独占的，读锁是共享的。<br>ReentrantReadWriteLock.png</p>
+<p>使用读写锁</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">private ReadWriteLock readWriteLock = new ReentrantReadWriteLock();</span><br><span class="line">private Lock r = readWriteLock.readLock();</span><br><span class="line">private Lock w = readWriteLock.writeLock();</span><br><span class="line">// 读操作上读锁</span><br><span class="line">public Data get(String key) &#123;</span><br><span class="line">r.lock();</span><br><span class="line">try &#123;</span><br><span class="line">// TODO 业务逻辑</span><br><span class="line">&#125;finally &#123;</span><br><span class="line">r.unlock();</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br><span class="line">// 写操作上写锁</span><br><span class="line">public Data put(String key, Data value) &#123;</span><br><span class="line">w.lock();</span><br><span class="line">try &#123;</span><br><span class="line">// TODO 业务逻辑</span><br><span class="line">&#125;finally &#123;</span><br><span class="line">w.unlock();</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>注意：</p>
+<ul>
+<li>读锁不支持条件变量</li>
+<li>重入时升级不支持：持有读锁的情况下去获取写锁，会导致获取永久等待</li>
+<li>重入时支持降级： 持有写锁的情况下可以去获取读锁</li>
+</ul>
+<p>应用场景<br>ReentrantReadWriteLock适合读多写少的场景</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">public class ReentrantReadWriteLockDemo &#123;</span><br><span class="line">    static Map&lt;String, Object&gt; map = new HashMap&lt;String, Object&gt;();</span><br><span class="line">    static ReentrantReadWriteLock rwl = new ReentrantReadWriteLock();</span><br><span class="line">    static Lock r = rwl.readLock();</span><br><span class="line">    static Lock w = rwl.writeLock();</span><br><span class="line"></span><br><span class="line">    // 获取一个key对应的value</span><br><span class="line">    public static final Object get(String key) &#123;</span><br><span class="line">        r.lock();</span><br><span class="line">        try &#123;</span><br><span class="line">            <span class="built_in">return</span> map.get(key);</span><br><span class="line">        &#125; finally &#123;</span><br><span class="line">            r.unlock();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    // 设置key对应的value，并返回旧的value</span><br><span class="line">    public static final Object put(String key, Object value) &#123;</span><br><span class="line">        w.lock();</span><br><span class="line">        try &#123;</span><br><span class="line">            <span class="built_in">return</span> map.put(key, value);</span><br><span class="line">        &#125; finally &#123;</span><br><span class="line">            w.unlock();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    // 清空所有的内容</span><br><span class="line">    public static final void <span class="function"><span class="title">clear</span></span>() &#123;</span><br><span class="line">        w.lock();</span><br><span class="line">        try &#123;</span><br><span class="line">            map.clear();</span><br><span class="line">        &#125; finally &#123;</span><br><span class="line">            w.unlock();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>ReentrantReadWriteLockDemo是用非线程安全的HashMap作为缓存的实现，同时使用读写锁的读锁和写锁来保证Cache是线程安全的。在读操作get(String key)方法中，需要获取读锁，这使得并发访问该方法时不会被阻塞。写操作put(String key,Object value)方法和clear()方法，在更新 HashMap时必须提前获取写锁，当获取写锁后，其他线程对于读锁和写锁的获取均被阻塞，而 只有写锁被释放之后，其他读写操作才能继续。Cache使用读写锁提升读操作的并发性，也保证每次写操作对所有的读写操作的可见性，同时简化了编程方式</p>
+<p>锁降级<br>锁降级指的是写锁降级成为读锁。如果当前线程拥有写锁，然后将其释放，最后再获取读锁，这种分段完成的过程不能称之为锁降级。锁降级是指把持住（当前拥有的）写锁，再获取到读锁，随后释放（先前拥有的）写锁的过程。锁降级可以帮助我们拿到当前线程修改后的结果而不被其他线程所破坏，防止更新丢失。</p>
+<p>锁降级的使用示例<br>因为数据不常变化，所以多个线程可以并发地进行数据处理，当数据变更后，如果当前线程感知到数据变化，则进行数据的准备工作，同时其他处理线程被阻塞，直到当前线程完成数据的准备工作。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">public class ReentrantReadWriteLockDemo &#123;</span><br><span class="line">    private final ReentrantReadWriteLock rwl = new ReentrantReadWriteLock();</span><br><span class="line">    private final Lock readLock = rwl.readLock();</span><br><span class="line">    private final Lock writeLock = rwl.writeLock();</span><br><span class="line">    private volatile boolean update = <span class="literal">false</span>;</span><br><span class="line">    public void <span class="function"><span class="title">processData</span></span>() &#123;</span><br><span class="line">        readLock.lock();</span><br><span class="line">        //读操作锁住</span><br><span class="line">        <span class="keyword">if</span> (!update) &#123;</span><br><span class="line">            // 必须先释放读锁</span><br><span class="line">            readLock.unlock();</span><br><span class="line">            // 锁降级从写锁获取到开始</span><br><span class="line">            writeLock.lock();</span><br><span class="line">            try &#123;</span><br><span class="line">                //writeLock.lock();获取到写锁基础上，把持住写锁，然后获取到读锁</span><br><span class="line">                <span class="keyword">if</span> (!update) &#123;</span><br><span class="line">                    // TODO 准备数据的流程（略）</span><br><span class="line">                    update = <span class="literal">true</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                readLock.lock();</span><br><span class="line">            &#125; finally &#123;</span><br><span class="line">                //完成之后释放写锁</span><br><span class="line">                writeLock.unlock();</span><br><span class="line">            &#125;</span><br><span class="line">            // 锁降级完成，写锁降级为读锁</span><br><span class="line">        &#125;</span><br><span class="line">        try &#123;</span><br><span class="line">            //TODO 使用数据的流程（略）</span><br><span class="line">        &#125; finally &#123;</span><br><span class="line">            readLock.unlock();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>锁降级中读锁的获取是否必要呢？答案是必要的。主要是为了保证数据的可见性，如果当前线程不获取读锁而是直接释放写锁，假设此刻另一个线程（记作线程T）获取了写锁并修改了数据，那么当前线程无法感知线程T的数据更新。如果当前线程获取读锁，即遵循锁降级的步骤，则线程T将会被阻塞，直到当前线程使用数据并释放读锁之后，线程T才能获取写锁进行数据更新。<br>RentrantReadWriteLock不支持锁升级（把持读锁、获取写锁，最后释放读锁的过程）。目的也是保证数据可见性，如果读锁已被多个线程获取，其中任意线程成功获取了写锁并更新了数据，则其更新对其他获取到读锁的线程是不可见的。</p>
+<p>ReentrantReadWriteLock结构.png<br>红色线内置类，蓝色线父子类，绿色线实现接口。</p>
+<p>实现一把锁锁该如何设计？</p>
+<p>1.CAS加上自旋，自旋到一定次数就阻塞，操作是修改state状态0-》1<br>2.通过管程，Synchronized<br>3.借鉴AQS的实现，CAS加上同步队列，操作是修改state状态0-》1，CAS获取锁成功就操作，失败就阻塞到同步队列，释放锁1-》0<br>如果锁是独占锁，就调用tryAcquired方法，共享锁就调用tryAcquiredShared</p>
+<p>设计分布式锁？<br>是否跨jvm进程？分布式情景下不同的节点是不同的jvm进程，java实现的AQS不能跨jvm进程，但是可以借鉴，实现进程之前的通信，java有JMM，线程与线程有个共享的区域，我们可以有个进程的共享区域，那可以redis，zk，mysql等，把状态交给redis去管理，进程和进程之间都可以操作这个共享的区域。redis里面可以用hash的结构，具体实现还是比较麻烦，可以借鉴工具。</p>
+<p>读写状态的设计<br>设计的精髓：用一个变量如何维护多种状态在 ReentrantLock 中，使用 Sync ( 实际是 AQS )的 int 类型的 state 来表示同步状态，表示锁被一个线程重复获取的次数。但是，读写锁 ReentrantReadWriteLock 内部维护着一对读写锁，如果要用一个变量维护多种状态，需要采用“按位切割使用”的方式来维护这个变量，将其切分为两部分：高16为表示读，低16为表示写。分割之后，读写锁是如何迅速确定读锁和写锁的状态呢？通过位运算。假如当前同步状态为S，那么：</p>
+<ul>
+<li>写状态，等于 S &amp; 0x0000FFFF（将高 16 位全部抹去）。 当写状态加1，等于S+1.</li>
+<li>读状态，等于 S &gt;&gt;&gt; 16 (无符号补 0 右移 16 位)。当读状态加1，等于S+（1&lt;&lt;16）,也就是S+0x00010000<br>根据状态的划分能得出一个推论：S不等于0时，当写状态（S&amp;0x0000FFFF）等于0时，则读状态（S&gt;&gt;&gt;16）大于0，即读锁已被获取。</li>
+</ul>
+<p>HoldCounter 计数器<br>读锁的内在机制其实就是一个共享锁。一次共享锁的操作就相当于对HoldCounter 计数器的操作。获取共享锁，则该计数器 + 1，释放共享锁，该计数器 - 1。只有当线程获取共享锁后才能对共享锁进行释放、重入操作。</p>
+<p>通过 ThreadLocalHoldCounter 类，HoldCounter 与线程进行绑定。HoldCounter 是绑定线程的一个计数器，而 ThreadLocalHoldCounter 则是线程绑定的 ThreadLocal。HoldCounter是用来记录读锁重入数的对象<br>ThreadLocalHoldCounter是ThreadLocal变量，用来存放不是第一个获取读锁的线程的其他线程的读锁重入数对象</p>
+<p>写锁的获取<br>写锁是一个支持重进入的排它锁。如果当前线程已经获取了写锁，则增加写状态。如果当前线程在获取写锁时，读锁已经被获取（读状态不为0）或者该线程不是已经获取写锁的线程，则当前线程进入等待状态。写锁的获取是通过重写AQS中的tryAcquire方法实现的。</p>
+<ul>
+<li>读写互斥</li>
+<li>写写互斥</li>
+<li>写锁支持同一个线程重入</li>
+<li>writerShouldBlock写锁是否阻塞实现取决公平与非公平的策略（FairSync和NonfairSync）<br>ReentrantReadWriteLock写锁获取.png</li>
+</ul>
+<p>写锁的释放<br>写锁释放通过重写AQS的tryRelease方法实现<br>ReentrantReadWriteLock写锁释放.png</p>
+<p>读锁的获取<br>实现共享式同步组件的同步语义需要通过重写AQS的tryAcquireShared方法和tryReleaseShared方法。</p>
+<ul>
+<li>读锁共享，读读不互斥</li>
+<li>读锁可重入，每个获取读锁的线程都会记录对应的重入数</li>
+<li>读写互斥，锁降级场景除外</li>
+<li>支持锁降级，持有写锁的线程，可以获取读锁，但是后续要记得把读锁和写锁读释放</li>
+<li>readerShouldBlock读锁是否阻塞实现取决公平与非公平的策略（FairSync和NonfairSync）<br>ReentrantReadWriteLock读锁获取.png</li>
+</ul>
+<p>读锁的释放<br>获取到读锁，执行完临界区后，要记得释放读锁（如果重入多次要释放对应的次数），不然会阻塞其他线程的写操作。<br>读锁释放的实现主要通过方法tryReleaseShared。<br>ReentrantReadWriteLock读锁.png</p>
+]]></content>
+      <categories>
+        <category>并发编程</category>
+      </categories>
+      <tags>
+        <tag>并发编程</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>并发编程-深入理解AQS之Semaphorer&amp;CountDownLatch&amp;Cyclic详解</title>
     <url>/2022/03/25/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B-%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3AQS%E4%B9%8BSemaphorer&amp;CountDownLatch&amp;Cyclic%E8%AF%A6%E8%A7%A3/</url>
     <content><![CDATA[<p>Semaphore介绍</p>
@@ -1193,70 +1266,77 @@ transient volatile int cellsBusy;
       </tags>
   </entry>
   <entry>
-    <title>并发编程-深入理解AQS之CyclicBarrier&amp;ReentrantReadWriteLock</title>
-    <url>/2022/03/26/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B-%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3AQS%E4%B9%8BCyclicBarrier&amp;ReentrantReadWriteLock/</url>
-    <content><![CDATA[<p>读写锁介绍</p>
-<span id="more"></span>
-
-<p>现实中有这样一种场景：对共享资源有读和写的操作，且写操作没有读操作那么频繁（读多写少）。在没有写操作的时候，多个线程同时读一个资源没有任何问题，所以应该允许多个线程同时读取共享资源（读读可以并发）；但是如果一个线程想去写这些共享资源，就不应该允许其他线程对该资源进行读和写操作了（读写，写读，写写互斥）。在读多于写的情况下，读写锁能够提供比排它锁更好的并发性和吞吐量。</p>
-<p>针对这种场景，JAVA的并发包提供了读写锁ReentrantReadWriteLock，它内部，维护了一对相关的锁，一个用于只读操作，称为读锁；一个用于写入操作，称为写锁，描述如下：线程进入读锁的前提条件：<br>没有其他线程的写锁</p>
+    <title>并发编程-深入理解AQS之独占锁ReentrantLock源码分析</title>
+    <url>/2022/03/25/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B-%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3AQS%E4%B9%8B%E7%8B%AC%E5%8D%A0%E9%94%81ReentrantLock%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/</url>
+    <content><![CDATA[<p>深入理解AQS之独占锁ReentrantLock源码分析<span id="more"></span><br>什么是AQS<br>java.util.concurrent包中的大多数同步器实现都是围绕着共同的基础行为，比如等待队列、条件队列、独占获取、共享获取等，而这些行为的抽象就是基于AbstractQueuedSynchronizer（简称AQS）实现的，AQS是一个抽象同步框架，可以用来实现一个依赖状态的同步器。JDK中提供的大多数的同步器如Lock, Latch, Barrier等，都是基于AQS框架来实现的</p>
+<p>一般是通过一个内部类Sync继承 AQS将同步器所有调用都映射到Sync对应的方法</p>
+<p>AQS具备的特性：</p>
 <ul>
-<li>没有写请求或者有写请求，但调用线程和持有锁的线程是同一个。</li>
-<li>线程进入写锁的前提条件：</li>
-<li>没有其他线程的读锁</li>
-<li>没有其他线程的写锁</li>
-<li>而读写锁有以下三个重要的特性：</li>
-<li>公平选择性：支持非公平（默认）和公平的锁获取方式，吞吐量还是非公平优于公平。</li>
-<li>可重入：读锁和写锁都支持线程重入。以读写线程为例：读线程获取读锁后，能够再次获取读锁。写线程在获取写锁之后能够再次获取写锁，同时也可以获取读锁。</li>
-<li>锁降级：遵循获取写锁、再获取读锁最后释放写锁的次序，写锁能够降级成为读锁。</li>
+<li>阻塞等待队列</li>
+<li>共享/独占</li>
+<li>公平/非公平</li>
+<li>可重入</li>
+<li>允许中断</li>
 </ul>
-<p>ReentrantReadWriteLock的使用<br>读写锁接口ReadWriteLock<br>ReadWriteLock.png<br>两个方法，分别获得读锁和写锁 Lock 对象。</p>
-<p>ReentrantReadWriteLock类结构<br>ReentrantReadWriteLock是可重入的读写锁实现类。在它内部，维护了一对相关的锁，一个用于只读操作，另一个用于写入操作。只要没有 Writer 线程，读锁可以由多个 Reader 线程同时持有。也就是说，写锁是独占的，读锁是共享的。<br>ReentrantReadWriteLock.png</p>
-<p>使用读写锁</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">private ReadWriteLock readWriteLock = new ReentrantReadWriteLock();</span><br><span class="line">private Lock r = readWriteLock.readLock();</span><br><span class="line">private Lock w = readWriteLock.writeLock();</span><br><span class="line">// 读操作上读锁</span><br><span class="line">public Data get(String key) &#123;</span><br><span class="line">r.lock();</span><br><span class="line">try &#123;</span><br><span class="line">// TODO 业务逻辑</span><br><span class="line">&#125;finally &#123;</span><br><span class="line">r.unlock();</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br><span class="line">// 写操作上写锁</span><br><span class="line">public Data put(String key, Data value) &#123;</span><br><span class="line">w.lock();</span><br><span class="line">try &#123;</span><br><span class="line">// TODO 业务逻辑</span><br><span class="line">&#125;finally &#123;</span><br><span class="line">w.unlock();</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>注意：</p>
+<p>AQS内部维护属性volatile int state<br>state表示资源的可用状态<br>State三种访问方式：</p>
 <ul>
-<li>读锁不支持条件变量</li>
-<li>重入时升级不支持：持有读锁的情况下去获取写锁，会导致获取永久等待</li>
-<li>重入时支持降级： 持有写锁的情况下可以去获取读锁</li>
+<li>getState()</li>
+<li>setState()</li>
+<li>compareAndSetState()</li>
 </ul>
-<p>应用场景<br>ReentrantReadWriteLock适合读多写少的场景</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">public class ReentrantReadWriteLockDemo &#123;</span><br><span class="line">    static Map&lt;String, Object&gt; map = new HashMap&lt;String, Object&gt;();</span><br><span class="line">    static ReentrantReadWriteLock rwl = new ReentrantReadWriteLock();</span><br><span class="line">    static Lock r = rwl.readLock();</span><br><span class="line">    static Lock w = rwl.writeLock();</span><br><span class="line"></span><br><span class="line">    // 获取一个key对应的value</span><br><span class="line">    public static final Object get(String key) &#123;</span><br><span class="line">        r.lock();</span><br><span class="line">        try &#123;</span><br><span class="line">            <span class="built_in">return</span> map.get(key);</span><br><span class="line">        &#125; finally &#123;</span><br><span class="line">            r.unlock();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    // 设置key对应的value，并返回旧的value</span><br><span class="line">    public static final Object put(String key, Object value) &#123;</span><br><span class="line">        w.lock();</span><br><span class="line">        try &#123;</span><br><span class="line">            <span class="built_in">return</span> map.put(key, value);</span><br><span class="line">        &#125; finally &#123;</span><br><span class="line">            w.unlock();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    // 清空所有的内容</span><br><span class="line">    public static final void <span class="function"><span class="title">clear</span></span>() &#123;</span><br><span class="line">        w.lock();</span><br><span class="line">        try &#123;</span><br><span class="line">            map.clear();</span><br><span class="line">        &#125; finally &#123;</span><br><span class="line">            w.unlock();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>ReentrantReadWriteLockDemo是用非线程安全的HashMap作为缓存的实现，同时使用读写锁的读锁和写锁来保证Cache是线程安全的。在读操作get(String key)方法中，需要获取读锁，这使得并发访问该方法时不会被阻塞。写操作put(String key,Object value)方法和clear()方法，在更新 HashMap时必须提前获取写锁，当获取写锁后，其他线程对于读锁和写锁的获取均被阻塞，而 只有写锁被释放之后，其他读写操作才能继续。Cache使用读写锁提升读操作的并发性，也保证每次写操作对所有的读写操作的可见性，同时简化了编程方式</p>
-<p>锁降级<br>锁降级指的是写锁降级成为读锁。如果当前线程拥有写锁，然后将其释放，最后再获取读锁，这种分段完成的过程不能称之为锁降级。锁降级是指把持住（当前拥有的）写锁，再获取到读锁，随后释放（先前拥有的）写锁的过程。锁降级可以帮助我们拿到当前线程修改后的结果而不被其他线程所破坏，防止更新丢失。</p>
-<p>锁降级的使用示例<br>因为数据不常变化，所以多个线程可以并发地进行数据处理，当数据变更后，如果当前线程感知到数据变化，则进行数据的准备工作，同时其他处理线程被阻塞，直到当前线程完成数据的准备工作。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">public class ReentrantReadWriteLockDemo &#123;</span><br><span class="line">    private final ReentrantReadWriteLock rwl = new ReentrantReadWriteLock();</span><br><span class="line">    private final Lock readLock = rwl.readLock();</span><br><span class="line">    private final Lock writeLock = rwl.writeLock();</span><br><span class="line">    private volatile boolean update = <span class="literal">false</span>;</span><br><span class="line">    public void <span class="function"><span class="title">processData</span></span>() &#123;</span><br><span class="line">        readLock.lock();</span><br><span class="line">        //读操作锁住</span><br><span class="line">        <span class="keyword">if</span> (!update) &#123;</span><br><span class="line">            // 必须先释放读锁</span><br><span class="line">            readLock.unlock();</span><br><span class="line">            // 锁降级从写锁获取到开始</span><br><span class="line">            writeLock.lock();</span><br><span class="line">            try &#123;</span><br><span class="line">                //writeLock.lock();获取到写锁基础上，把持住写锁，然后获取到读锁</span><br><span class="line">                <span class="keyword">if</span> (!update) &#123;</span><br><span class="line">                    // TODO 准备数据的流程（略）</span><br><span class="line">                    update = <span class="literal">true</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                readLock.lock();</span><br><span class="line">            &#125; finally &#123;</span><br><span class="line">                //完成之后释放写锁</span><br><span class="line">                writeLock.unlock();</span><br><span class="line">            &#125;</span><br><span class="line">            // 锁降级完成，写锁降级为读锁</span><br><span class="line">        &#125;</span><br><span class="line">        try &#123;</span><br><span class="line">            //TODO 使用数据的流程（略）</span><br><span class="line">        &#125; finally &#123;</span><br><span class="line">            readLock.unlock();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>锁降级中读锁的获取是否必要呢？答案是必要的。主要是为了保证数据的可见性，如果当前线程不获取读锁而是直接释放写锁，假设此刻另一个线程（记作线程T）获取了写锁并修改了数据，那么当前线程无法感知线程T的数据更新。如果当前线程获取读锁，即遵循锁降级的步骤，则线程T将会被阻塞，直到当前线程使用数据并释放读锁之后，线程T才能获取写锁进行数据更新。<br>RentrantReadWriteLock不支持锁升级（把持读锁、获取写锁，最后释放读锁的过程）。目的也是保证数据可见性，如果读锁已被多个线程获取，其中任意线程成功获取了写锁并更新了数据，则其更新对其他获取到读锁的线程是不可见的。</p>
-<p>ReentrantReadWriteLock结构.png<br>红色线内置类，蓝色线父子类，绿色线实现接口。</p>
-<p>实现一把锁锁该如何设计？</p>
-<p>1.CAS加上自旋，自旋到一定次数就阻塞，操作是修改state状态0-》1<br>2.通过管程，Synchronized<br>3.借鉴AQS的实现，CAS加上同步队列，操作是修改state状态0-》1，CAS获取锁成功就操作，失败就阻塞到同步队列，释放锁1-》0<br>如果锁是独占锁，就调用tryAcquired方法，共享锁就调用tryAcquiredShared</p>
-<p>设计分布式锁？<br>是否跨jvm进程？分布式情景下不同的节点是不同的jvm进程，java实现的AQS不能跨jvm进程，但是可以借鉴，实现进程之前的通信，java有JMM，线程与线程有个共享的区域，我们可以有个进程的共享区域，那可以redis，zk，mysql等，把状态交给redis去管理，进程和进程之间都可以操作这个共享的区域。redis里面可以用hash的结构，具体实现还是比较麻烦，可以借鉴工具。</p>
-<p>读写状态的设计<br>设计的精髓：用一个变量如何维护多种状态在 ReentrantLock 中，使用 Sync ( 实际是 AQS )的 int 类型的 state 来表示同步状态，表示锁被一个线程重复获取的次数。但是，读写锁 ReentrantReadWriteLock 内部维护着一对读写锁，如果要用一个变量维护多种状态，需要采用“按位切割使用”的方式来维护这个变量，将其切分为两部分：高16为表示读，低16为表示写。分割之后，读写锁是如何迅速确定读锁和写锁的状态呢？通过位运算。假如当前同步状态为S，那么：</p>
+<p>AQS定义两种资源共享方式<br>Exclusive-独占，只有一个线程能执行，如ReentrantLock<br>Share-共享，多个线程可以同时执行，如Semaphore/CountDownLatch</p>
+<p>AQS定义两种队列<br>同步等待队列： 主要用于维护获取锁失败时入队的线程<br>条件等待队列： 调用await()的时候会释放锁，然后线程会加入到条件队列，调用signal()唤醒的时候会把条件队列中的线程节点移动到同步队列中，等待再次获得锁</p>
+<p>AQS 定义了5个队列中节点状态：</p>
+<ol>
+<li>值为0，初始化状态，表示当前节点在sync队列中，等待着获取锁。</li>
+<li>CANCELLED，值为1，表示当前的线程被取消；</li>
+<li>SIGNAL，值为-1，表示当前节点的后继节点包含的线程需要运行，也就是unpark；</li>
+<li>CONDITION，值为-2，表示当前节点在等待condition，也就是在condition队列中；</li>
+<li>PROPAGATE，值为-3，表示当前场景下后续的acquireShared能够得以执行；</li>
+</ol>
+<p>不同的自定义同步器竞争共享资源的方式也不同。自定义同步器在实现时只需要实现共享资源state的获取与释放方式即可，至于具体线程等待队列的维护（如获取资源失败入队/唤醒出队等），AQS已经在顶层实现好了。自定义同步器实现时主要实现以下几种方法：</p>
 <ul>
-<li>写状态，等于 S &amp; 0x0000FFFF（将高 16 位全部抹去）。 当写状态加1，等于S+1.</li>
-<li>读状态，等于 S &gt;&gt;&gt; 16 (无符号补 0 右移 16 位)。当读状态加1，等于S+（1&lt;&lt;16）,也就是S+0x00010000<br>根据状态的划分能得出一个推论：S不等于0时，当写状态（S&amp;0x0000FFFF）等于0时，则读状态（S&gt;&gt;&gt;16）大于0，即读锁已被获取。</li>
+<li>isHeldExclusively()：该线程是否正在独占资源。只有用到condition才需要去实现它。</li>
+<li>tryAcquire(int)：独占方式。尝试获取资源，成功则返回true，失败则返回false。</li>
+<li>tryRelease(int)：独占方式。尝试释放资源，成功则返回true，失败则返回false。</li>
+<li>tryAcquireShared(int)：共享方式。尝试获取资源。负数表示失败；0表示成功，但没有剩余可用资源；正数表示成功，且有剩余资源。</li>
+<li>tryReleaseShared(int)：共享方式。尝试释放资源，如果释放后允许唤醒后续等待结点返回true，否则返回false。</li>
 </ul>
-<p>HoldCounter 计数器<br>读锁的内在机制其实就是一个共享锁。一次共享锁的操作就相当于对HoldCounter 计数器的操作。获取共享锁，则该计数器 + 1，释放共享锁，该计数器 - 1。只有当线程获取共享锁后才能对共享锁进行释放、重入操作。</p>
-<p>通过 ThreadLocalHoldCounter 类，HoldCounter 与线程进行绑定。HoldCounter 是绑定线程的一个计数器，而 ThreadLocalHoldCounter 则是线程绑定的 ThreadLocal。HoldCounter是用来记录读锁重入数的对象<br>ThreadLocalHoldCounter是ThreadLocal变量，用来存放不是第一个获取读锁的线程的其他线程的读锁重入数对象</p>
-<p>写锁的获取<br>写锁是一个支持重进入的排它锁。如果当前线程已经获取了写锁，则增加写状态。如果当前线程在获取写锁时，读锁已经被获取（读状态不为0）或者该线程不是已经获取写锁的线程，则当前线程进入等待状态。写锁的获取是通过重写AQS中的tryAcquire方法实现的。</p>
+<p>同步等待队列<br>AQS当中的同步等待队列也称CLH队列，CLH队列是Craig、Landin、Hagersten三人发明的一种基于双向链表数据结构的队列，是FIFO先进先出线程等待队列，Java中的CLH队列是原CLH队列的一个变种,线程由原自旋机制改为阻塞机制。<br>AQS 依赖CLH同步队列来完成同步状态的管理：</p>
 <ul>
-<li>读写互斥</li>
-<li>写写互斥</li>
-<li>写锁支持同一个线程重入</li>
-<li>writerShouldBlock写锁是否阻塞实现取决公平与非公平的策略（FairSync和NonfairSync）<br>ReentrantReadWriteLock写锁获取.png</li>
+<li>当前线程如果获取同步状态失败时，AQS则会将当前线程已经等待状态等信息构造成一个节点（Node）并将其加入到CLH同步队列，同时会阻塞当前线程</li>
+<li>当同步状态释放时，会把首节点唤醒（公平锁），使其再次尝试获取同步状态。</li>
+<li>通过signal或signalAll将条件队列中的节点转移到同步队列。（由条件队列转化为同步队列）</li>
 </ul>
-<p>写锁的释放<br>写锁释放通过重写AQS的tryRelease方法实现<br>ReentrantReadWriteLock写锁释放.png</p>
-<p>读锁的获取<br>实现共享式同步组件的同步语义需要通过重写AQS的tryAcquireShared方法和tryReleaseShared方法。</p>
+<p>CLH队列.png</p>
+<p>条件等待队列<br>AQS中条件队列是使用单向列表保存的，用nextWaiter来连接:</p>
 <ul>
-<li>读锁共享，读读不互斥</li>
-<li>读锁可重入，每个获取读锁的线程都会记录对应的重入数</li>
-<li>读写互斥，锁降级场景除外</li>
-<li>支持锁降级，持有写锁的线程，可以获取读锁，但是后续要记得把读锁和写锁读释放</li>
-<li>readerShouldBlock读锁是否阻塞实现取决公平与非公平的策略（FairSync和NonfairSync）<br>ReentrantReadWriteLock读锁获取.png</li>
+<li>调用await方法阻塞线程；</li>
+<li>当前线程存在于同步队列的头结点，调用await方法进行阻塞（从同步队列转化到条件队列）</li>
 </ul>
-<p>读锁的释放<br>获取到读锁，执行完临界区后，要记得释放读锁（如果重入多次要释放对应的次数），不然会阻塞其他线程的写操作。<br>读锁释放的实现主要通过方法tryReleaseShared。<br>ReentrantReadWriteLock读锁.png</p>
+<p>Condition接口详解</p>
+<ol>
+<li>调用Condition#await方法会释放当前持有的锁，然后阻塞当前线程，同时向Condition队列尾部添加一个节点，所以调用Condition#await方法的时候必须持有锁。</li>
+<li>调用Condition#signal方法会将Condition队列的首节点移动到阻塞队列尾部，然后唤醒因调用Condition#await方法而阻塞的线程(唤醒之后这个线程就可以去竞争锁了)，所以调用Condition#signal方法的时候必须持有锁，持有锁的线程唤醒被因调用<br>Condition#await方法而阻塞的线程。</li>
+</ol>
+<p>ReentrantLock详解<br>ReentrantLock是一种基于AQS框架的应用实现，是JDK中的一种线程并发访问的同步手段，它的功能类似于synchronized是一种互斥锁，可以保证线程安全。相对于 synchronized， ReentrantLock具备如下特点：</p>
+<ul>
+<li>可中断</li>
+<li>可以设置超时时间</li>
+<li>可以设置为公平锁</li>
+<li>支持多个条件变量</li>
+<li>与 synchronized 一样，都支持可重入</li>
+</ul>
+<p>总结了几点synchronized和ReentrantLock的区别：</p>
+<ul>
+<li>synchronized是JVM层次的锁实现，ReentrantLock是JDK层次的锁实现；</li>
+<li>synchronized的锁状态是无法在代码中直接判断的，但是ReentrantLock可以通过ReentrantLock#isLocked判断；</li>
+<li>synchronized是非公平锁，ReentrantLock是可以是公平也可以是非公平的；</li>
+<li>synchronized是不可以被中断的，而ReentrantLock#lockInterruptibly方法是可以被中断的；</li>
+<li>在发生异常时synchronized会自动释放锁，而ReentrantLock需要开发者在finally块中显示释放锁；</li>
+<li>ReentrantLock获取锁的形式有多种：如立即返回是否成功的tryLock(),以及等待指定时长的获取，更加灵活；</li>
+<li>synchronized在特定的情况下对于已经在等待的线程是后来的线程先获得锁（回顾一下sychronized的唤醒策略），而ReentrantLock对于已经在等待的线程是先来的线程先获得锁</li>
+</ul>
 ]]></content>
       <categories>
         <category>并发编程</category>
@@ -1349,83 +1429,48 @@ transient volatile int cellsBusy;
       </tags>
   </entry>
   <entry>
-    <title>并发编程-深入理解AQS之独占锁ReentrantLock源码分析</title>
-    <url>/2022/03/25/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B-%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3AQS%E4%B9%8B%E7%8B%AC%E5%8D%A0%E9%94%81ReentrantLock%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/</url>
-    <content><![CDATA[<p>深入理解AQS之独占锁ReentrantLock源码分析<span id="more"></span><br>什么是AQS<br>java.util.concurrent包中的大多数同步器实现都是围绕着共同的基础行为，比如等待队列、条件队列、独占获取、共享获取等，而这些行为的抽象就是基于AbstractQueuedSynchronizer（简称AQS）实现的，AQS是一个抽象同步框架，可以用来实现一个依赖状态的同步器。JDK中提供的大多数的同步器如Lock, Latch, Barrier等，都是基于AQS框架来实现的</p>
-<p>一般是通过一个内部类Sync继承 AQS将同步器所有调用都映射到Sync对应的方法</p>
-<p>AQS具备的特性：</p>
+    <title>性能调优-JVM内存分配</title>
+    <url>/2022/02/21/%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98-JVM%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D/</url>
+    <content><![CDATA[<h2 id="JVM内存分配"><a href="#JVM内存分配" class="headerlink" title="JVM内存分配"></a>JVM内存分配</h2><span id="more"></span>
+
+<p>JVM内存参数设置</p>
+<p><img src="/images/JVM%E5%86%85%E5%AD%98%E5%8F%82%E6%95%B0%E8%AE%BE%E7%BD%AE.png"></p>
+<p>Spring Boot程序的JVM参数设置格式(Tomcat启动直接加在bin目录下catalina.sh文件里)：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">java ‐Xms2048M ‐Xmx2048M ‐Xmn1024M ‐Xss512K ‐XX:MetaspaceSize=256M ‐XX:MaxMetaspaceSize=256M ‐jar microservice‐eurek</span><br><span class="line">a‐server.jar</span><br></pre></td></tr></table></figure>
+
+<p>关于元空间的JVM参数有两个：-XX:MetaspaceSize=N和 -XX:MaxMetaspaceSize=N<br>-XX：MaxMetaspaceSize： 设置元空间最大值， 默认是-1， 即不限制， 或者说只受限于本地内存大小。<br>-XX：MetaspaceSize： 指定元空间触发Fullgc的初始阈值(元空间无固定初始大小)， 以字节为单位，默认是21M，达到该值就会触发<br>full gc进行类型卸载，不仅会回收推，还会回收方法区， 同时收集器会对该值进行调整（方法区容量大小自动收缩扩容）： 如果释放（回收）了大量的空间， 就适当降低该值，比如从之前21降为15； 如果释放了很少的空间， 那么在不超过-XX：MaxMetaspaceSize（如果设置了的话） 的情况下， 适当提高该值，可能在之前21变为30,或40。这个跟早期jdk版本的-XX:PermSize参数意思不一样，-XX:PermSize代表永久代的初始容量。<br>Xss512K是指一个栈线程的大小，可以自己指定，-Xss设置越小count值越小，说明一个线程栈里能分配的栈帧就越少，但是对JVM整体来说能开启的线程数会更多</p>
+<p>元空间在JDK1.8之前叫永久代、持久代，它用的是直接内存，也就是物理内存，我们的内存条，假如我们8G的内存，4G分配给了堆栈等其他的，那么剩下的内存如果对上面两个参数不设置的话就会全部占用其剩余内存。由于调整元空间的大小需要Full GC，这是非常昂贵的操作，如果应用在启动的时候发生大量Full GC，通常都是由于永久代或元空间发生了大小调整，基于这种情况，一般建议在JVM参数中将MetaspaceSize和MaxMetaspaceSize设置成一样的值，并设置得比初始值要大，对于8G物理内存的机器来说，一般我会将这两个值都设置为256M。</p>
+<h2 id="对象的创建"><a href="#对象的创建" class="headerlink" title="对象的创建"></a>对象的创建</h2><p><img src="/images/%E5%88%9B%E5%BB%BA%E5%AF%B9%E8%B1%A1%E8%BF%87%E7%A8%8B.png"></p>
+<p>1.1.类加载检查<br>虚拟机遇到一条new指令时，首先将去检查这个指令的参数是否能在常量池中定位到一个类的符号引用，并且检查这个符号引用代表的类是否已被加载、解析和初始化过。如果没有，那必须先执行相应的类加载过程。new指令对应到语言层面上讲是，new关键词、对象克隆、对象序列化等。<br>1.2.分配内存<br>在类加载检查通过后，接下来虚拟机将为新生对象分配内存。对象所需内存的大小在类 加载完成后便可完全确定，为对象分配空间的任务等同于把 一块确定大小的内存从Java堆中划分出来。<br>这个步骤有两个问题：</p>
 <ul>
-<li>阻塞等待队列</li>
-<li>共享/独占</li>
-<li>公平/非公平</li>
-<li>可重入</li>
-<li>允许中断</li>
+<li>1.如何划分内存。</li>
+<li>2.在并发情况下， 可能出现正在给对象A分配内存，指针还没来得及修改，对象B又同时使用了原来的指针来分配内存的<br>情况。<br>划分内存的方法：<br>“指针碰撞”（Bump the Pointer）(默认用指针碰撞)如果Java堆中内存是绝对规整的，所有用过的内存都放在一边，空闲的内存放在另一边，中间放着一个指针作为分界点的指示器，那所分配内存就仅仅是把那个指针向空闲空间那边挪动一段与对象大小相等的距离。<br>“空闲列表”（Free List）<br>如果Java堆中的内存并不是规整的，已使用的内存和空 闲的内存相互交错，那就没有办法简单地进行指针碰撞了，虚拟<br>机就必须维护一个列表，记 录上哪些内存块是可用的，在分配的时候从列表中找到一块足够大的空间划分给对象实例，<br>并更新列表上的记录<br>解决并发问题的方法：<br>CAS（compare and swap）<br>虚拟机采用CAS配上失败重试的方式保证更新操作的原子性来对分配内存空间的动作进行同步处理。本地线程分配缓冲（Thread Local Allocation Buffer,TLAB）把内存分配的动作按照线程划分在不同的空间之中进行，即每个线程在Java堆中预先分配一小块内存。通过­XX:+/­UseTLAB参数来设定虚拟机是否使用TLAB(JVM会默认开启­XX:+UseTLAB)，­XX:TLABSize 指定TLAB大小。<br>TLAB全称Thread Local Allocation Buffer，即线程本地分配缓存区，是一个线程专用的内存分配区域。在线程初始化时，虚拟机会为每个线程分配一块TLAB空间，只给当前线程使用。jdk1.8默认使用的就是该种方式。<br>TLAB是虚拟机在堆内存的eden划分出来的一块专用空间线程专属。在虚拟机的TLAB功能启动的情况下，在线程初始化时，虚拟机会为每个线程分配一块TLAB空间，只给当前线程使用，这样每个线程都单独拥有一个空间，如需要分配内存，在自己的空间上分配，在不存在竞争的情况大大提升分配效率。<br>　　上面描述中”线程专属”、”只给当前线程使用”、”每个线程单独拥有”的描述怎么理解呢？因TLAB技术，堆内存并不是完完全全的线程共享，其eden区域中还是有一部分空间是分配给线程独享的。TLAB是线程独享的，但只在“分配”这个动作上是线程独享，在读取、垃圾回收等动作上是线程共享，且在使用上也没有什么区别。</li>
 </ul>
-<p>AQS内部维护属性volatile int state<br>state表示资源的可用状态<br>State三种访问方式：</p>
-<ul>
-<li>getState()</li>
-<li>setState()</li>
-<li>compareAndSetState()</li>
-</ul>
-<p>AQS定义两种资源共享方式<br>Exclusive-独占，只有一个线程能执行，如ReentrantLock<br>Share-共享，多个线程可以同时执行，如Semaphore/CountDownLatch</p>
-<p>AQS定义两种队列<br>同步等待队列： 主要用于维护获取锁失败时入队的线程<br>条件等待队列： 调用await()的时候会释放锁，然后线程会加入到条件队列，调用signal()唤醒的时候会把条件队列中的线程节点移动到同步队列中，等待再次获得锁</p>
-<p>AQS 定义了5个队列中节点状态：</p>
-<ol>
-<li>值为0，初始化状态，表示当前节点在sync队列中，等待着获取锁。</li>
-<li>CANCELLED，值为1，表示当前的线程被取消；</li>
-<li>SIGNAL，值为-1，表示当前节点的后继节点包含的线程需要运行，也就是unpark；</li>
-<li>CONDITION，值为-2，表示当前节点在等待condition，也就是在condition队列中；</li>
-<li>PROPAGATE，值为-3，表示当前场景下后续的acquireShared能够得以执行；</li>
-</ol>
-<p>不同的自定义同步器竞争共享资源的方式也不同。自定义同步器在实现时只需要实现共享资源state的获取与释放方式即可，至于具体线程等待队列的维护（如获取资源失败入队/唤醒出队等），AQS已经在顶层实现好了。自定义同步器实现时主要实现以下几种方法：</p>
-<ul>
-<li>isHeldExclusively()：该线程是否正在独占资源。只有用到condition才需要去实现它。</li>
-<li>tryAcquire(int)：独占方式。尝试获取资源，成功则返回true，失败则返回false。</li>
-<li>tryRelease(int)：独占方式。尝试释放资源，成功则返回true，失败则返回false。</li>
-<li>tryAcquireShared(int)：共享方式。尝试获取资源。负数表示失败；0表示成功，但没有剩余可用资源；正数表示成功，且有剩余资源。</li>
-<li>tryReleaseShared(int)：共享方式。尝试释放资源，如果释放后允许唤醒后续等待结点返回true，否则返回false。</li>
-</ul>
-<p>同步等待队列<br>AQS当中的同步等待队列也称CLH队列，CLH队列是Craig、Landin、Hagersten三人发明的一种基于双向链表数据结构的队列，是FIFO先进先出线程等待队列，Java中的CLH队列是原CLH队列的一个变种,线程由原自旋机制改为阻塞机制。<br>AQS 依赖CLH同步队列来完成同步状态的管理：</p>
-<ul>
-<li>当前线程如果获取同步状态失败时，AQS则会将当前线程已经等待状态等信息构造成一个节点（Node）并将其加入到CLH同步队列，同时会阻塞当前线程</li>
-<li>当同步状态释放时，会把首节点唤醒（公平锁），使其再次尝试获取同步状态。</li>
-<li>通过signal或signalAll将条件队列中的节点转移到同步队列。（由条件队列转化为同步队列）</li>
-</ul>
-<p>CLH队列.png</p>
-<p>条件等待队列<br>AQS中条件队列是使用单向列表保存的，用nextWaiter来连接:</p>
-<ul>
-<li>调用await方法阻塞线程；</li>
-<li>当前线程存在于同步队列的头结点，调用await方法进行阻塞（从同步队列转化到条件队列）</li>
-</ul>
-<p>Condition接口详解</p>
-<ol>
-<li>调用Condition#await方法会释放当前持有的锁，然后阻塞当前线程，同时向Condition队列尾部添加一个节点，所以调用Condition#await方法的时候必须持有锁。</li>
-<li>调用Condition#signal方法会将Condition队列的首节点移动到阻塞队列尾部，然后唤醒因调用Condition#await方法而阻塞的线程(唤醒之后这个线程就可以去竞争锁了)，所以调用Condition#signal方法的时候必须持有锁，持有锁的线程唤醒被因调用<br>Condition#await方法而阻塞的线程。</li>
-</ol>
-<p>ReentrantLock详解<br>ReentrantLock是一种基于AQS框架的应用实现，是JDK中的一种线程并发访问的同步手段，它的功能类似于synchronized是一种互斥锁，可以保证线程安全。相对于 synchronized， ReentrantLock具备如下特点：</p>
-<ul>
-<li>可中断</li>
-<li>可以设置超时时间</li>
-<li>可以设置为公平锁</li>
-<li>支持多个条件变量</li>
-<li>与 synchronized 一样，都支持可重入</li>
-</ul>
-<p>总结了几点synchronized和ReentrantLock的区别：</p>
-<ul>
-<li>synchronized是JVM层次的锁实现，ReentrantLock是JDK层次的锁实现；</li>
-<li>synchronized的锁状态是无法在代码中直接判断的，但是ReentrantLock可以通过ReentrantLock#isLocked判断；</li>
-<li>synchronized是非公平锁，ReentrantLock是可以是公平也可以是非公平的；</li>
-<li>synchronized是不可以被中断的，而ReentrantLock#lockInterruptibly方法是可以被中断的；</li>
-<li>在发生异常时synchronized会自动释放锁，而ReentrantLock需要开发者在finally块中显示释放锁；</li>
-<li>ReentrantLock获取锁的形式有多种：如立即返回是否成功的tryLock(),以及等待指定时长的获取，更加灵活；</li>
-<li>synchronized在特定的情况下对于已经在等待的线程是后来的线程先获得锁（回顾一下sychronized的唤醒策略），而ReentrantLock对于已经在等待的线程是先来的线程先获得锁</li>
-</ul>
+<p>1.3.初始化<br>内存分配完成后，虚拟机需要将分配到的内存空间都初始化为零值（不包括对象头）， 如果使用TLAB，这一工作过程也可以提前至TLAB分配时进行。这一步操作保证了对象的实例字段在Java代码中可以不赋初始值就直接使用，程序能访问到这些字段的数据类型所对应的零值。<br>1.4.设置对象头<br>初始化零值之后，虚拟机要对对象进行必要的设置，例如这个对象是哪个类的实例、如何才能找到类的元数据信息、对象的哈希码、对象的GC分代年龄等信息。这些信息存放在对象的对象头Object Header之中。在HotSpot虚拟机中，对象在内存中存储的布局可以分为3块区域：对象头（Header）、 实例数据（Instance Data）和对齐填充（Padding）。 HotSpot虚拟机的对象头包括两部分信息，第一部分用于存储对象自身的运行时数据， 如哈希码（HashCode）、GC分代年龄、锁状态标志、线程持有的锁、偏向线程ID、偏向时 间戳等。对象头的另外一部分是类型指针，即对象指向它的类元数据的指针，虚拟机通过这个指针来确定这个对象是哪个类的实例。</p>
+<p>1.5.执行init方法<br>执行init方法，即对象按照程序员的意愿进行初始化。对应到语言层面上讲，就是为属性赋值（注意，这与上面的赋零值不同，这是由程序员赋的值），和执行构造方法。</p>
+<p>对象大小与指针压缩<br>对象大小可以用jol­core包查看，引入依赖</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line"> &lt;groupId&gt;org.openjdk.jol&lt;/groupId&gt;</span><br><span class="line"> &lt;artifactId&gt;jol‐core&lt;/artifactId&gt;</span><br><span class="line"> &lt;version&gt;0.9&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br></pre></td></tr></table></figure>
+<p>代码查看</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">public class JOLSample &#123;</span><br><span class="line"> public static void main(String[] args) &#123;</span><br><span class="line"> ClassLayout layout = ClassLayout.parseInstance(new Object());</span><br><span class="line"> System.out.println(layout.toPrintable());</span><br><span class="line"> System.out.println();</span><br><span class="line"> ClassLayout layout1 = ClassLayout.parseInstance(new int[]&#123;&#125;);</span><br><span class="line"> System.out.println(layout1.toPrintable());</span><br><span class="line"> System.out.println();</span><br><span class="line"> ClassLayout layout2 = ClassLayout.parseInstance(new A());</span><br><span class="line"> System.out.println(layout2.toPrintable());</span><br><span class="line"> &#125;</span><br><span class="line"> // ‐XX:+UseCompressedOops 默认开启的压缩所有指针</span><br><span class="line"> // ‐XX:+UseCompressedClassPointers 默认开启的压缩对象头里的类型指针Klass Pointer</span><br><span class="line"> // Oops : Ordinary Object Pointers</span><br><span class="line"> public static class A &#123;</span><br><span class="line"> //8B mark word</span><br><span class="line"> //4B Klass Pointer 如果关闭压缩‐XX:‐UseCompressedClassPointers或‐XX:‐UseCompressedOops，则占用8B</span><br><span class="line"> int id; //4B</span><br><span class="line"> String name; //4B 如果关闭压缩‐XX:‐UseCompressedOops，则占用8B</span><br><span class="line"> byte b; //1B</span><br><span class="line"> Object o; //4B 如果关闭压缩‐XX:‐UseCompressedOops，则占用8B</span><br><span class="line"> &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>什么是java对象的指针压缩？<br>1.jdk1.6 update14开始，在64bit操作系统中，JVM支持指针压缩<br>2.jvm配置参数:UseCompressedOops，compressed­­压缩、oop(ordinary object pointer)­­对象指针<br>3.启用指针压缩:­XX:+UseCompressedOops(默认开启)，禁止指针压缩:­XX:­UseCompressedOops</p>
+<p>为什么要进行指针压缩？<br>1.在64位平台的HotSpot中使用32位指针，内存使用会多出1.5倍左右，使用较大指针在主内存和缓存之间移动数据，占用较大宽带，同时GC也会承受较大压力<br>2.为了减少64位平台下内存的消耗，启用指针压缩功能<br>3.在jvm中，32位地址最大支持4G内存(2的32次方)，可以通过对对象指针的压缩编码、解码方式进行优化，使得jvm只用32位地址就可以支持更大的内存配置(小于等于32G)<br>4.堆内存小于4G时，不需要启用指针压缩，jvm会直接去除高32位地址，即使用低虚拟地址空间<br>5.堆内存大于32G时，压缩指针会失效，会强制使用64位(即8字节)来对java对象寻址，这就会出现1的问题，所以堆内存不要大于32G为好</p>
+<h2 id="对象内存分配"><a href="#对象内存分配" class="headerlink" title="对象内存分配"></a>对象内存分配</h2><p>我们通过JVM内存分配可以知道JAVA中的对象都是在堆上进行分配，当对象没有被引用的时候，需要依靠GC进行回收内<br>存，如果对象数量较多的时候，会给GC带来较大压力，也间接影响了应用的性能。为了减少临时对象在堆内分配的数<br>量，JVM通过逃逸分析确定该对象不会被外部访问。如果不会逃逸可以将该对象在栈上分配内存，这样该对象所占用的<br>内存空间就可以随栈帧出栈而销毁，就减轻了垃圾回收的压力。<br>对象逃逸分析：就是分析对象动态作用域，当一个对象在方法中被定义后，它可能被外部方法所引用，例如作为调用参<br>数传递到其他地方中。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">class ExtClass&#123;</span><br><span class="line">    public TestThree <span class="function"><span class="title">A</span></span>()&#123;</span><br><span class="line">        TestThree od=new TestThree();</span><br><span class="line">        od.setA(1);</span><br><span class="line">        od.setName(<span class="string">&quot;Mike&quot;</span>);</span><br><span class="line">        <span class="built_in">return</span>  od;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void <span class="function"><span class="title">B</span></span>()&#123;</span><br><span class="line">        TestThree od=new TestThree();</span><br><span class="line">        od.setA(2);</span><br><span class="line">        od.setName(<span class="string">&quot;Roy&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面A方法中的od对象被返回了，这个对象的作用域范围不确定，B方法中的od对象我们可以确定当方法结束这个对象就可以认为是无效对象了，对于这样的对象我们其实可以将其分配在栈内存里，让其在方法结束时跟随栈内存一起被回收掉。JVM对于这种情况可以通过开启逃逸分析参数(-XX:+DoEscapeAnalysis)来优化对象内存分配位置，使其通过标量替换优先分配在栈上(栈上分配)，JDK7之后默认开启逃逸分析，如果要关闭使用参数(-XX:-DoEscapeAnalysis)标量替换：通过逃逸分析确定该对象不会被外部访问，并且对象可以被进一步分解时，JVM不会创建该对象，而是将该对象成员变量分解若干个被这个方法使用的成员变量所代替，这些代替的成员变量在栈帧或寄存器上分配空间，这样就不会因为没有一大块连续空间导致对象内存不够分配。开启标量替换参数(-XX:+EliminateAllocations)，JDK7之后默认开启。<br>标量与聚合量：标量即不可被进一步分解的量，而JAVA的基本数据类型就是标量（如：int，long等基本数据类型以及reference类型等），标量的对立就是可以被进一步分解的量，而这种量称之为聚合量。而在JAVA中对象就是可以被进一步分解的聚合量。</p>
+<p>总结：如果栈上分配对象就会依赖于逃逸分析和标量替换</p>
+<p>对象在Eden区分配<br>大多数情况下，对象在新生代中 Eden 区分配。当 Eden 区没有足够空间进行分配时，虚拟机将发起一次Minor GC。<br>Minor GC/Young GC：指发生新生代的的垃圾收集动作，Minor GC非常频繁，回收速度一般也比较快。<br>Major GC/Full GC：一般会回收老年代 ，年轻代，方法区的垃圾，Major GC的速度一般会比Minor GC的慢10倍以上。Eden与Survivor区默认8:1:1</p>
+<p>大量的对象被分配在eden区，eden区满了后会触发minor gc，可能会有99%以上的对象成为垃圾被回收掉，剩余存活<br>的对象会被挪到为空的那块survivor区，下一次eden区满了后又会触发minor gc，把eden区和survivor区垃圾对象回<br>收，把剩余存活的对象一次性挪动到另外一块为空的survivor区，因为新生代的对象都是朝生夕死的，存活时间很短，所<br>以JVM默认的8:1:1的比例是很合适的，让eden区尽量的大，survivor区够用即可，<br>JVM默认有这个参数-XX:+UseAdaptiveSizePolicy(默认开启)，会导致这个8:1:1比例自动变化，如果不想这个比例有变<br>化可以设置参数-XX:-UseAdaptiveSizePolicy</p>
+<p>大对象直接进入老年代：<br>大对象就是需要大量连续内存空间的对象（比如：字符串、数组）。JVM参数 -XX:PretenureSizeThreshold 可以设置大对象的大小，如果对象超过设置大小会直接进入老年代，不会进入年轻代，这个参数只在 Serial 和ParNew两个收集器下有效。比如设置JVM参数：-XX:PretenureSizeThreshold=1000000 (单位是字节) -XX:+UseSerialGC ，设置大小后，判断对象只要超过这个大小就会进入老年代。</p>
+<p>为什么要这样呢？<br>为了避免为大对象分配内存时的复制操作而降低效率。</p>
+<p>长期存活的对象将进入老年代：<br>既然虚拟机采用了分代收集的思想来管理内存，那么内存回收时就必须能识别哪些对象应放在新生代，哪些对象应放在<br>老年代中。为了做到这一点，虚拟机给每个对象一个对象年龄（Age）计数器。如果对象在 Eden 出生并经过第一次 Minor GC 后仍然能够存活，并且能被 Survivor 容纳的话，将被移动到 Survivor空间中，并将对象年龄设为1。对象在 Survivor 中每熬过一次 MinorGC，年龄就增加1岁，当它的年龄增加到一定程度（默认为15岁，CMS收集器默认6岁，不同的垃圾收集器会略微有点不同），就会被晋升到老年代中。对象晋升到老年代的年龄阈值，可以通过参数 -XX:MaxTenuringThreshold 来设置。那我们就可以自己判断给一个适当的值，让它提前进入老年代，可以起到减少gc消耗的作用，给它减压。</p>
+<p>对象动态年龄判断：<br>当前放对象的Survivor区域里(其中一块区域，放对象的那块s区)，一批对象的总大小大于这块Survivor区域内存大小的<br>50%(-XX:TargetSurvivorRatio可以指定)，那么此时大于等于这批对象年龄最大值的对象，就可以直接进入老年代了，<br>例如Survivor区域里现在有一批对象，年龄1+年龄2+年龄n的多个年龄对象总和超过了Survivor区域的50%，此时就会<br>把年龄n(含)以上的对象都放入老年代。这个规则其实是希望那些可能是长期存活的对象，尽早进入老年代。对象动态年<br>龄判断机制一般是在minor gc之后触发的。</p>
 ]]></content>
       <categories>
-        <category>并发编程</category>
+        <category>JVM</category>
       </categories>
       <tags>
-        <tag>并发编程</tag>
+        <tag>JVM</tag>
       </tags>
   </entry>
   <entry>
@@ -1546,42 +1591,37 @@ transient volatile int cellsBusy;
       </tags>
   </entry>
   <entry>
-    <title>性能调优-JVM内存分配</title>
-    <url>/2022/02/21/%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98-JVM%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D/</url>
-    <content><![CDATA[<h2 id="JVM内存分配"><a href="#JVM内存分配" class="headerlink" title="JVM内存分配"></a>JVM内存分配</h2><span id="more"></span>
+    <title>性能调优-JVM内存模型深度剖析与优化</title>
+    <url>/2022/02/20/%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98-JVM%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%E6%B7%B1%E5%BA%A6%E5%89%96%E6%9E%90%E4%B8%8E%E4%BC%98%E5%8C%96/</url>
+    <content><![CDATA[<p>JVM内存模型深度剖析与优化</p>
+<span id="more"></span>
 
-<p>JVM内存参数设置</p>
-<p><img src="/images/JVM%E5%86%85%E5%AD%98%E5%8F%82%E6%95%B0%E8%AE%BE%E7%BD%AE.png"></p>
-<p>Spring Boot程序的JVM参数设置格式(Tomcat启动直接加在bin目录下catalina.sh文件里)：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">java ‐Xms2048M ‐Xmx2048M ‐Xmn1024M ‐Xss512K ‐XX:MetaspaceSize=256M ‐XX:MaxMetaspaceSize=256M ‐jar microservice‐eurek</span><br><span class="line">a‐server.jar</span><br></pre></td></tr></table></figure>
-
-<p>关于元空间的JVM参数有两个：-XX:MetaspaceSize=N和 -XX:MaxMetaspaceSize=N<br>-XX：MaxMetaspaceSize： 设置元空间最大值， 默认是-1， 即不限制， 或者说只受限于本地内存大小。<br>-XX：MetaspaceSize： 指定元空间触发Fullgc的初始阈值(元空间无固定初始大小)， 以字节为单位，默认是21M，达到该值就会触发<br>full gc进行类型卸载，不仅会回收推，还会回收方法区， 同时收集器会对该值进行调整（方法区容量大小自动收缩扩容）： 如果释放（回收）了大量的空间， 就适当降低该值，比如从之前21降为15； 如果释放了很少的空间， 那么在不超过-XX：MaxMetaspaceSize（如果设置了的话） 的情况下， 适当提高该值，可能在之前21变为30,或40。这个跟早期jdk版本的-XX:PermSize参数意思不一样，-XX:PermSize代表永久代的初始容量。<br>Xss512K是指一个栈线程的大小，可以自己指定，-Xss设置越小count值越小，说明一个线程栈里能分配的栈帧就越少，但是对JVM整体来说能开启的线程数会更多</p>
-<p>元空间在JDK1.8之前叫永久代、持久代，它用的是直接内存，也就是物理内存，我们的内存条，假如我们8G的内存，4G分配给了堆栈等其他的，那么剩下的内存如果对上面两个参数不设置的话就会全部占用其剩余内存。由于调整元空间的大小需要Full GC，这是非常昂贵的操作，如果应用在启动的时候发生大量Full GC，通常都是由于永久代或元空间发生了大小调整，基于这种情况，一般建议在JVM参数中将MetaspaceSize和MaxMetaspaceSize设置成一样的值，并设置得比初始值要大，对于8G物理内存的机器来说，一般我会将这两个值都设置为256M。</p>
-<h2 id="对象的创建"><a href="#对象的创建" class="headerlink" title="对象的创建"></a>对象的创建</h2><p><img src="/images/%E5%88%9B%E5%BB%BA%E5%AF%B9%E8%B1%A1%E8%BF%87%E7%A8%8B.png"></p>
-<p>1.1.类加载检查<br>虚拟机遇到一条new指令时，首先将去检查这个指令的参数是否能在常量池中定位到一个类的符号引用，并且检查这个符号引用代表的类是否已被加载、解析和初始化过。如果没有，那必须先执行相应的类加载过程。new指令对应到语言层面上讲是，new关键词、对象克隆、对象序列化等。<br>1.2.分配内存<br>在类加载检查通过后，接下来虚拟机将为新生对象分配内存。对象所需内存的大小在类 加载完成后便可完全确定，为对象分配空间的任务等同于把 一块确定大小的内存从Java堆中划分出来。<br>这个步骤有两个问题：</p>
+<p>JDK体系结构<br><img src="/images/JDK%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84.png"></p>
+<p>Java语言的跨平台特性<br><img src="/images/Java%E8%B7%A8%E5%B9%B3%E5%8F%B0.png"></p>
+<p>JVM怎么做到跨平台？<br>其实我们一开始下载JDK的时候我们就选择了平台，比如windows版本的JDK，Linux版本的JDK还有Mac等，不同的平台的JDK，里面就有特定该平台的JVM实现。</p>
+<p>Java文件在JVM中执行<br><img src="/images/Java%E6%96%87%E4%BB%B6%E5%9C%A8JVM%E4%B8%AD%E6%89%A7%E8%A1%8C.png"></p>
+<p>首先通过类加载机制（类装载子系统，c++实现），把我们的字节码文件丢到了Java虚拟机的内存区域，最后再通过我们的字节码执行引擎(c++实现)执行内存区域的代码。核心内容是图中第二块区域这里，调优这里是重点。</p>
 <ul>
-<li>1.如何划分内存。</li>
-<li>2.在并发情况下， 可能出现正在给对象A分配内存，指针还没来得及修改，对象B又同时使用了原来的指针来分配内存的<br>情况。<br>划分内存的方法：<br>“指针碰撞”（Bump the Pointer）(默认用指针碰撞)如果Java堆中内存是绝对规整的，所有用过的内存都放在一边，空闲的内存放在另一边，中间放着一个指针作为分界点的指示器，那所分配内存就仅仅是把那个指针向空闲空间那边挪动一段与对象大小相等的距离。<br>“空闲列表”（Free List）<br>如果Java堆中的内存并不是规整的，已使用的内存和空 闲的内存相互交错，那就没有办法简单地进行指针碰撞了，虚拟<br>机就必须维护一个列表，记 录上哪些内存块是可用的，在分配的时候从列表中找到一块足够大的空间划分给对象实例，<br>并更新列表上的记录<br>解决并发问题的方法：<br>CAS（compare and swap）<br>虚拟机采用CAS配上失败重试的方式保证更新操作的原子性来对分配内存空间的动作进行同步处理。本地线程分配缓冲（Thread Local Allocation Buffer,TLAB）把内存分配的动作按照线程划分在不同的空间之中进行，即每个线程在Java堆中预先分配一小块内存。通过­XX:+/­UseTLAB参数来设定虚拟机是否使用TLAB(JVM会默认开启­XX:+UseTLAB)，­XX:TLABSize 指定TLAB大小。<br>TLAB全称Thread Local Allocation Buffer，即线程本地分配缓存区，是一个线程专用的内存分配区域。在线程初始化时，虚拟机会为每个线程分配一块TLAB空间，只给当前线程使用。jdk1.8默认使用的就是该种方式。<br>TLAB是虚拟机在堆内存的eden划分出来的一块专用空间线程专属。在虚拟机的TLAB功能启动的情况下，在线程初始化时，虚拟机会为每个线程分配一块TLAB空间，只给当前线程使用，这样每个线程都单独拥有一个空间，如需要分配内存，在自己的空间上分配，在不存在竞争的情况大大提升分配效率。<br>　　上面描述中”线程专属”、”只给当前线程使用”、”每个线程单独拥有”的描述怎么理解呢？因TLAB技术，堆内存并不是完完全全的线程共享，其eden区域中还是有一部分空间是分配给线程独享的。TLAB是线程独享的，但只在“分配”这个动作上是线程独享，在读取、垃圾回收等动作上是线程共享，且在使用上也没有什么区别。</li>
+<li>类装载子系统：把字节码文件丢到了内存区。Class loader只管加载，只要符合文件结构就加载，至于能否运行，它不负责，那是有Exectution Engine 负责的</li>
+<li>字节码执行引擎：执行内存区的代码</li>
+<li>堆内存（线程共享）：new出来的对象一般放在堆。对象先放到eden区，当eden区对象放满时，字节码执行引擎会开始minor gc，如果是垃圾对象直接GC回收，如果是非垃圾对象就会复制到s0，一个对象如果经历过一次GC还存活着他的分代年龄会加1（分代年龄存在对象头），如果eden区又满了会在gc垃圾的对象，存活的对象会在s0跟s1轮流存放分代年龄增加，当分代年龄到了（一般15）会把这个对象挪到老年代。</li>
+<li>栈(桶，线程)内存（线程私有）：存放局部变量。也可以称为线程栈，比如我们的main方法，只要有线程运行，Java虚拟机就会在线程栈内为当前线程开辟一个自己独立的内存空间，用来存放我们方法执行过程当中需要用到的局部变量，如果线程当中有多个方法，那么在栈内存当中就会一个方法一个栈帧（结构类似数组，除了放局部变量表，操作数栈，动态链接，方法出口）来隔开。根据数据结构栈的特点FILO，后进入的方法先执行完然后释放掉内存。栈中如果有局部变量是对象的话，那值是在堆里面，栈里面存的是对应堆里面的内存地址，看下面有两个箭头的图。</li>
+<li>程序计数器（线程私有）：每一个线程独有的内存空间，跟栈一样，用来放我们程序正在运行或是马上就要运行的那一行代码的内存位置（行号），比如下面转汇编命令打开txt后里面compute()方法下的代码对应的数字0 1 2 3 。。。这样的数字，实际存的是这行代码在内存方法区中的地址。</li>
+<li>方法区/元空间（线程共享）：常量池，静态变量，类信息，如果有些静态变量的值是对象，那么同样的那值是在堆里面，栈里面存的是对应堆里面的内存地址，看下面有两个箭头的图</li>
+<li>本地方法栈（线程私有）：native方法，之前JDK很多都是C语言实现的，会找本地xxx.dll文件，跨源调用其他语言方法，相对于的方法执行也是要开辟内存，就放在本地方法栈中</li>
 </ul>
-<p>1.3.初始化<br>内存分配完成后，虚拟机需要将分配到的内存空间都初始化为零值（不包括对象头）， 如果使用TLAB，这一工作过程也可以提前至TLAB分配时进行。这一步操作保证了对象的实例字段在Java代码中可以不赋初始值就直接使用，程序能访问到这些字段的数据类型所对应的零值。<br>1.4.设置对象头<br>初始化零值之后，虚拟机要对对象进行必要的设置，例如这个对象是哪个类的实例、如何才能找到类的元数据信息、对象的哈希码、对象的GC分代年龄等信息。这些信息存放在对象的对象头Object Header之中。在HotSpot虚拟机中，对象在内存中存储的布局可以分为3块区域：对象头（Header）、 实例数据（Instance Data）和对齐填充（Padding）。 HotSpot虚拟机的对象头包括两部分信息，第一部分用于存储对象自身的运行时数据， 如哈希码（HashCode）、GC分代年龄、锁状态标志、线程持有的锁、偏向线程ID、偏向时 间戳等。对象头的另外一部分是类型指针，即对象指向它的类元数据的指针，虚拟机通过这个指针来确定这个对象是哪个类的实例。</p>
-<p>1.5.执行init方法<br>执行init方法，即对象按照程序员的意愿进行初始化。对应到语言层面上讲，就是为属性赋值（注意，这与上面的赋零值不同，这是由程序员赋的值），和执行构造方法。</p>
-<p>对象大小与指针压缩<br>对象大小可以用jol­core包查看，引入依赖</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line"> &lt;groupId&gt;org.openjdk.jol&lt;/groupId&gt;</span><br><span class="line"> &lt;artifactId&gt;jol‐core&lt;/artifactId&gt;</span><br><span class="line"> &lt;version&gt;0.9&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br></pre></td></tr></table></figure>
-<p>代码查看</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">public class JOLSample &#123;</span><br><span class="line"> public static void main(String[] args) &#123;</span><br><span class="line"> ClassLayout layout = ClassLayout.parseInstance(new Object());</span><br><span class="line"> System.out.println(layout.toPrintable());</span><br><span class="line"> System.out.println();</span><br><span class="line"> ClassLayout layout1 = ClassLayout.parseInstance(new int[]&#123;&#125;);</span><br><span class="line"> System.out.println(layout1.toPrintable());</span><br><span class="line"> System.out.println();</span><br><span class="line"> ClassLayout layout2 = ClassLayout.parseInstance(new A());</span><br><span class="line"> System.out.println(layout2.toPrintable());</span><br><span class="line"> &#125;</span><br><span class="line"> // ‐XX:+UseCompressedOops 默认开启的压缩所有指针</span><br><span class="line"> // ‐XX:+UseCompressedClassPointers 默认开启的压缩对象头里的类型指针Klass Pointer</span><br><span class="line"> // Oops : Ordinary Object Pointers</span><br><span class="line"> public static class A &#123;</span><br><span class="line"> //8B mark word</span><br><span class="line"> //4B Klass Pointer 如果关闭压缩‐XX:‐UseCompressedClassPointers或‐XX:‐UseCompressedOops，则占用8B</span><br><span class="line"> int id; //4B</span><br><span class="line"> String name; //4B 如果关闭压缩‐XX:‐UseCompressedOops，则占用8B</span><br><span class="line"> byte b; //1B</span><br><span class="line"> Object o; //4B 如果关闭压缩‐XX:‐UseCompressedOops，则占用8B</span><br><span class="line"> &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>什么是java对象的指针压缩？<br>1.jdk1.6 update14开始，在64bit操作系统中，JVM支持指针压缩<br>2.jvm配置参数:UseCompressedOops，compressed­­压缩、oop(ordinary object pointer)­­对象指针<br>3.启用指针压缩:­XX:+UseCompressedOops(默认开启)，禁止指针压缩:­XX:­UseCompressedOops</p>
-<p>为什么要进行指针压缩？<br>1.在64位平台的HotSpot中使用32位指针，内存使用会多出1.5倍左右，使用较大指针在主内存和缓存之间移动数据，占用较大宽带，同时GC也会承受较大压力<br>2.为了减少64位平台下内存的消耗，启用指针压缩功能<br>3.在jvm中，32位地址最大支持4G内存(2的32次方)，可以通过对对象指针的压缩编码、解码方式进行优化，使得jvm只用32位地址就可以支持更大的内存配置(小于等于32G)<br>4.堆内存小于4G时，不需要启用指针压缩，jvm会直接去除高32位地址，即使用低虚拟地址空间<br>5.堆内存大于32G时，压缩指针会失效，会强制使用64位(即8字节)来对java对象寻址，这就会出现1的问题，所以堆内存不要大于32G为好</p>
-<h2 id="对象内存分配"><a href="#对象内存分配" class="headerlink" title="对象内存分配"></a>对象内存分配</h2><p>我们通过JVM内存分配可以知道JAVA中的对象都是在堆上进行分配，当对象没有被引用的时候，需要依靠GC进行回收内<br>存，如果对象数量较多的时候，会给GC带来较大压力，也间接影响了应用的性能。为了减少临时对象在堆内分配的数<br>量，JVM通过逃逸分析确定该对象不会被外部访问。如果不会逃逸可以将该对象在栈上分配内存，这样该对象所占用的<br>内存空间就可以随栈帧出栈而销毁，就减轻了垃圾回收的压力。<br>对象逃逸分析：就是分析对象动态作用域，当一个对象在方法中被定义后，它可能被外部方法所引用，例如作为调用参<br>数传递到其他地方中。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">class ExtClass&#123;</span><br><span class="line">    public TestThree <span class="function"><span class="title">A</span></span>()&#123;</span><br><span class="line">        TestThree od=new TestThree();</span><br><span class="line">        od.setA(1);</span><br><span class="line">        od.setName(<span class="string">&quot;Mike&quot;</span>);</span><br><span class="line">        <span class="built_in">return</span>  od;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void <span class="function"><span class="title">B</span></span>()&#123;</span><br><span class="line">        TestThree od=new TestThree();</span><br><span class="line">        od.setA(2);</span><br><span class="line">        od.setName(<span class="string">&quot;Roy&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>上面A方法中的od对象被返回了，这个对象的作用域范围不确定，B方法中的od对象我们可以确定当方法结束这个对象就可以认为是无效对象了，对于这样的对象我们其实可以将其分配在栈内存里，让其在方法结束时跟随栈内存一起被回收掉。JVM对于这种情况可以通过开启逃逸分析参数(-XX:+DoEscapeAnalysis)来优化对象内存分配位置，使其通过标量替换优先分配在栈上(栈上分配)，JDK7之后默认开启逃逸分析，如果要关闭使用参数(-XX:-DoEscapeAnalysis)标量替换：通过逃逸分析确定该对象不会被外部访问，并且对象可以被进一步分解时，JVM不会创建该对象，而是将该对象成员变量分解若干个被这个方法使用的成员变量所代替，这些代替的成员变量在栈帧或寄存器上分配空间，这样就不会因为没有一大块连续空间导致对象内存不够分配。开启标量替换参数(-XX:+EliminateAllocations)，JDK7之后默认开启。<br>标量与聚合量：标量即不可被进一步分解的量，而JAVA的基本数据类型就是标量（如：int，long等基本数据类型以及reference类型等），标量的对立就是可以被进一步分解的量，而这种量称之为聚合量。而在JAVA中对象就是可以被进一步分解的聚合量。</p>
-<p>总结：如果栈上分配对象就会依赖于逃逸分析和标量替换</p>
-<p>对象在Eden区分配<br>大多数情况下，对象在新生代中 Eden 区分配。当 Eden 区没有足够空间进行分配时，虚拟机将发起一次Minor GC。<br>Minor GC/Young GC：指发生新生代的的垃圾收集动作，Minor GC非常频繁，回收速度一般也比较快。<br>Major GC/Full GC：一般会回收老年代 ，年轻代，方法区的垃圾，Major GC的速度一般会比Minor GC的慢10倍以上。Eden与Survivor区默认8:1:1</p>
-<p>大量的对象被分配在eden区，eden区满了后会触发minor gc，可能会有99%以上的对象成为垃圾被回收掉，剩余存活<br>的对象会被挪到为空的那块survivor区，下一次eden区满了后又会触发minor gc，把eden区和survivor区垃圾对象回<br>收，把剩余存活的对象一次性挪动到另外一块为空的survivor区，因为新生代的对象都是朝生夕死的，存活时间很短，所<br>以JVM默认的8:1:1的比例是很合适的，让eden区尽量的大，survivor区够用即可，<br>JVM默认有这个参数-XX:+UseAdaptiveSizePolicy(默认开启)，会导致这个8:1:1比例自动变化，如果不想这个比例有变<br>化可以设置参数-XX:-UseAdaptiveSizePolicy</p>
-<p>大对象直接进入老年代：<br>大对象就是需要大量连续内存空间的对象（比如：字符串、数组）。JVM参数 -XX:PretenureSizeThreshold 可以设置大对象的大小，如果对象超过设置大小会直接进入老年代，不会进入年轻代，这个参数只在 Serial 和ParNew两个收集器下有效。比如设置JVM参数：-XX:PretenureSizeThreshold=1000000 (单位是字节) -XX:+UseSerialGC ，设置大小后，判断对象只要超过这个大小就会进入老年代。</p>
-<p>为什么要这样呢？<br>为了避免为大对象分配内存时的复制操作而降低效率。</p>
-<p>长期存活的对象将进入老年代：<br>既然虚拟机采用了分代收集的思想来管理内存，那么内存回收时就必须能识别哪些对象应放在新生代，哪些对象应放在<br>老年代中。为了做到这一点，虚拟机给每个对象一个对象年龄（Age）计数器。如果对象在 Eden 出生并经过第一次 Minor GC 后仍然能够存活，并且能被 Survivor 容纳的话，将被移动到 Survivor空间中，并将对象年龄设为1。对象在 Survivor 中每熬过一次 MinorGC，年龄就增加1岁，当它的年龄增加到一定程度（默认为15岁，CMS收集器默认6岁，不同的垃圾收集器会略微有点不同），就会被晋升到老年代中。对象晋升到老年代的年龄阈值，可以通过参数 -XX:MaxTenuringThreshold 来设置。那我们就可以自己判断给一个适当的值，让它提前进入老年代，可以起到减少gc消耗的作用，给它减压。</p>
-<p>对象动态年龄判断：<br>当前放对象的Survivor区域里(其中一块区域，放对象的那块s区)，一批对象的总大小大于这块Survivor区域内存大小的<br>50%(-XX:TargetSurvivorRatio可以指定)，那么此时大于等于这批对象年龄最大值的对象，就可以直接进入老年代了，<br>例如Survivor区域里现在有一批对象，年龄1+年龄2+年龄n的多个年龄对象总和超过了Survivor区域的50%，此时就会<br>把年龄n(含)以上的对象都放入老年代。这个规则其实是希望那些可能是长期存活的对象，尽早进入老年代。对象动态年<br>龄判断机制一般是在minor gc之后触发的。</p>
+<p>设计程序计数器的作用？<br>每次执行完一行代码，字节码执行引擎都会去修改程序计数器里面的值，当一个线程执行代码到一半时，突然被另外一个优先级更高的线程把cpu时间片抢过去，那这个线程就会被挂起，那等到下次恢复执行的时候就会从上次暂停的位置继续执行，而程序计数器就是记录这个位置的。</p>
+<p><img src="/images/%E7%BA%BF%E7%A8%8B%E6%A0%88.png"></p>
+<p>下图是代码例子：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">package com.study;</span><br><span class="line"></span><br><span class="line">public class Math &#123;</span><br><span class="line"></span><br><span class="line">    public static final int initData = 666;</span><br><span class="line">    public static TestOne one = new TestOne();</span><br><span class="line"></span><br><span class="line">    public int <span class="function"><span class="title">compute</span></span>() &#123; //一个方法对应一块栈帧内存区域</span><br><span class="line">        int a = 1;</span><br><span class="line">        int b = 2;</span><br><span class="line">        int c = (a + b) * 10;</span><br><span class="line">        <span class="built_in">return</span> c;</span><br><span class="line">    &#125;</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        Math math = new Math();</span><br><span class="line">        System.out.println(math.compute());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>用javap命令把我们的Math.class文件（打开里面cafe babe开头）转为汇编指令查看，javap -v会更详细，运行好之后会显示常量池信息，放在我们的方法区，在这叫运行时常量池。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">javap -c Math.class &gt;Math.txt</span><br></pre></td></tr></table></figure>
+<p>查看txt文件</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Compiled from <span class="string">&quot;Math.java&quot;</span></span><br><span class="line">public class com.study.Math &#123;</span><br><span class="line">  public static final int initData;</span><br><span class="line"></span><br><span class="line">  public static com.study.TestOne one;</span><br><span class="line"></span><br><span class="line">  public com.study.Math();</span><br><span class="line">    Code:</span><br><span class="line">       0: aload_0</span><br><span class="line">       1: invokespecial <span class="comment">#1                  // Method java/lang/Object.&quot;&lt;init&gt;&quot;:()V</span></span><br><span class="line">       4: <span class="built_in">return</span></span><br><span class="line"></span><br><span class="line">  public int compute();</span><br><span class="line">    Code:</span><br><span class="line">       0: iconst_1</span><br><span class="line">       1: istore_1</span><br><span class="line">       2: iconst_2</span><br><span class="line">       3: istore_2</span><br><span class="line">       4: iload_1</span><br><span class="line">       5: iload_2</span><br><span class="line">       6: iadd</span><br><span class="line">       7: bipush        10</span><br><span class="line">       9: imul</span><br><span class="line">      10: istore_3</span><br><span class="line">      11: iload_3</span><br><span class="line">      12: ireturn</span><br><span class="line"></span><br><span class="line">  public static void main(java.lang.String[]);</span><br><span class="line">    Code:</span><br><span class="line">       0: new           <span class="comment">#2                  // class com/study/Math</span></span><br><span class="line">       3: dup</span><br><span class="line">       4: invokespecial <span class="comment">#3                  // Method &quot;&lt;init&gt;&quot;:()V</span></span><br><span class="line">       7: astore_1</span><br><span class="line">       8: getstatic     <span class="comment">#4                  // Field java/lang/System.out:Ljava/io/PrintStream;</span></span><br><span class="line">      11: aload_1</span><br><span class="line">      12: invokevirtual <span class="comment">#5                  // Method compute:()I</span></span><br><span class="line">      15: invokevirtual <span class="comment">#6                  // Method java/io/PrintStream.println:(I)V</span></span><br><span class="line">      18: <span class="built_in">return</span></span><br><span class="line"></span><br><span class="line">  static &#123;&#125;;</span><br><span class="line">    Code:</span><br><span class="line">       0: new           <span class="comment">#7                  // class com/study/TestOne</span></span><br><span class="line">       3: dup</span><br><span class="line">       4: invokespecial <span class="comment">#8                  // Method com/study/TestOne.&quot;&lt;init&gt;&quot;:()V</span></span><br><span class="line">       7: putstatic     <span class="comment">#9                  // Field one:Lcom/study/TestOne;</span></span><br><span class="line">      10: <span class="built_in">return</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>当我们一个应用程序7x24小时运行时，肯定会不断产生新的对象，新的对象会存放在堆中，当堆中对象存放不下字节码执行引擎就会触发gc回收，释放掉无用的对象。</p>
+<p>什么样的对象会最终到老年代？<br>静态变量引用的变量，比如对象池，缓存对象，spring容器里面的对象</p>
+<p>在GC过程当中会触发STW（stop the world）事件，停止掉用户线程（用户操作发起的），minor gc是字节码引擎开启的后台线程，STW后用户使用会工具卡顿，影响体验和性能，主要还是减少full gc，因为full gc收集推信息时间较长，所以它的STM时间会长。</p>
+<p>为什么要有STW机制（不停止掉用户线程）？<br> 因为gc过程当中就是为了找一些非垃圾对象。当发生full gc时，在找局部变量和静态变量过程当中，线程代码依然往下执行，当执行结束时，栈内存空间里面的局部变量线程一结束就会释放，占内存空间也会销毁掉，那之前堆中找的局部变量和静态变量对应的在栈中的指针也被销毁掉了，那他们就变成垃圾对象了，gc都没结束他们就变成垃圾对象，那之前的gc过程就白做了，所以在gc找对象的过程当中会让你不要变动。</p>
 ]]></content>
       <categories>
         <category>JVM</category>
@@ -1698,46 +1738,6 @@ transient volatile int cellsBusy;
       </categories>
       <tags>
         <tag>并发编程</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>性能调优-JVM内存模型深度剖析与优化</title>
-    <url>/2022/02/20/%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98-JVM%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%E6%B7%B1%E5%BA%A6%E5%89%96%E6%9E%90%E4%B8%8E%E4%BC%98%E5%8C%96/</url>
-    <content><![CDATA[<p>JVM内存模型深度剖析与优化</p>
-<span id="more"></span>
-
-<p>JDK体系结构<br><img src="/images/JDK%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84.png"></p>
-<p>Java语言的跨平台特性<br><img src="/images/Java%E8%B7%A8%E5%B9%B3%E5%8F%B0.png"></p>
-<p>JVM怎么做到跨平台？<br>其实我们一开始下载JDK的时候我们就选择了平台，比如windows版本的JDK，Linux版本的JDK还有Mac等，不同的平台的JDK，里面就有特定该平台的JVM实现。</p>
-<p>Java文件在JVM中执行<br><img src="/images/Java%E6%96%87%E4%BB%B6%E5%9C%A8JVM%E4%B8%AD%E6%89%A7%E8%A1%8C.png"></p>
-<p>首先通过类加载机制（类装载子系统，c++实现），把我们的字节码文件丢到了Java虚拟机的内存区域，最后再通过我们的字节码执行引擎(c++实现)执行内存区域的代码。核心内容是图中第二块区域这里，调优这里是重点。</p>
-<ul>
-<li>类装载子系统：把字节码文件丢到了内存区。Class loader只管加载，只要符合文件结构就加载，至于能否运行，它不负责，那是有Exectution Engine 负责的</li>
-<li>字节码执行引擎：执行内存区的代码</li>
-<li>堆内存（线程共享）：new出来的对象一般放在堆。对象先放到eden区，当eden区对象放满时，字节码执行引擎会开始minor gc，如果是垃圾对象直接GC回收，如果是非垃圾对象就会复制到s0，一个对象如果经历过一次GC还存活着他的分代年龄会加1（分代年龄存在对象头），如果eden区又满了会在gc垃圾的对象，存活的对象会在s0跟s1轮流存放分代年龄增加，当分代年龄到了（一般15）会把这个对象挪到老年代。</li>
-<li>栈(桶，线程)内存（线程私有）：存放局部变量。也可以称为线程栈，比如我们的main方法，只要有线程运行，Java虚拟机就会在线程栈内为当前线程开辟一个自己独立的内存空间，用来存放我们方法执行过程当中需要用到的局部变量，如果线程当中有多个方法，那么在栈内存当中就会一个方法一个栈帧（结构类似数组，除了放局部变量表，操作数栈，动态链接，方法出口）来隔开。根据数据结构栈的特点FILO，后进入的方法先执行完然后释放掉内存。栈中如果有局部变量是对象的话，那值是在堆里面，栈里面存的是对应堆里面的内存地址，看下面有两个箭头的图。</li>
-<li>程序计数器（线程私有）：每一个线程独有的内存空间，跟栈一样，用来放我们程序正在运行或是马上就要运行的那一行代码的内存位置（行号），比如下面转汇编命令打开txt后里面compute()方法下的代码对应的数字0 1 2 3 。。。这样的数字，实际存的是这行代码在内存方法区中的地址。</li>
-<li>方法区/元空间（线程共享）：常量池，静态变量，类信息，如果有些静态变量的值是对象，那么同样的那值是在堆里面，栈里面存的是对应堆里面的内存地址，看下面有两个箭头的图</li>
-<li>本地方法栈（线程私有）：native方法，之前JDK很多都是C语言实现的，会找本地xxx.dll文件，跨源调用其他语言方法，相对于的方法执行也是要开辟内存，就放在本地方法栈中</li>
-</ul>
-<p>设计程序计数器的作用？<br>每次执行完一行代码，字节码执行引擎都会去修改程序计数器里面的值，当一个线程执行代码到一半时，突然被另外一个优先级更高的线程把cpu时间片抢过去，那这个线程就会被挂起，那等到下次恢复执行的时候就会从上次暂停的位置继续执行，而程序计数器就是记录这个位置的。</p>
-<p><img src="/images/%E7%BA%BF%E7%A8%8B%E6%A0%88.png"></p>
-<p>下图是代码例子：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">package com.study;</span><br><span class="line"></span><br><span class="line">public class Math &#123;</span><br><span class="line"></span><br><span class="line">    public static final int initData = 666;</span><br><span class="line">    public static TestOne one = new TestOne();</span><br><span class="line"></span><br><span class="line">    public int <span class="function"><span class="title">compute</span></span>() &#123; //一个方法对应一块栈帧内存区域</span><br><span class="line">        int a = 1;</span><br><span class="line">        int b = 2;</span><br><span class="line">        int c = (a + b) * 10;</span><br><span class="line">        <span class="built_in">return</span> c;</span><br><span class="line">    &#125;</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        Math math = new Math();</span><br><span class="line">        System.out.println(math.compute());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>用javap命令把我们的Math.class文件（打开里面cafe babe开头）转为汇编指令查看，javap -v会更详细，运行好之后会显示常量池信息，放在我们的方法区，在这叫运行时常量池。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">javap -c Math.class &gt;Math.txt</span><br></pre></td></tr></table></figure>
-<p>查看txt文件</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Compiled from <span class="string">&quot;Math.java&quot;</span></span><br><span class="line">public class com.study.Math &#123;</span><br><span class="line">  public static final int initData;</span><br><span class="line"></span><br><span class="line">  public static com.study.TestOne one;</span><br><span class="line"></span><br><span class="line">  public com.study.Math();</span><br><span class="line">    Code:</span><br><span class="line">       0: aload_0</span><br><span class="line">       1: invokespecial <span class="comment">#1                  // Method java/lang/Object.&quot;&lt;init&gt;&quot;:()V</span></span><br><span class="line">       4: <span class="built_in">return</span></span><br><span class="line"></span><br><span class="line">  public int compute();</span><br><span class="line">    Code:</span><br><span class="line">       0: iconst_1</span><br><span class="line">       1: istore_1</span><br><span class="line">       2: iconst_2</span><br><span class="line">       3: istore_2</span><br><span class="line">       4: iload_1</span><br><span class="line">       5: iload_2</span><br><span class="line">       6: iadd</span><br><span class="line">       7: bipush        10</span><br><span class="line">       9: imul</span><br><span class="line">      10: istore_3</span><br><span class="line">      11: iload_3</span><br><span class="line">      12: ireturn</span><br><span class="line"></span><br><span class="line">  public static void main(java.lang.String[]);</span><br><span class="line">    Code:</span><br><span class="line">       0: new           <span class="comment">#2                  // class com/study/Math</span></span><br><span class="line">       3: dup</span><br><span class="line">       4: invokespecial <span class="comment">#3                  // Method &quot;&lt;init&gt;&quot;:()V</span></span><br><span class="line">       7: astore_1</span><br><span class="line">       8: getstatic     <span class="comment">#4                  // Field java/lang/System.out:Ljava/io/PrintStream;</span></span><br><span class="line">      11: aload_1</span><br><span class="line">      12: invokevirtual <span class="comment">#5                  // Method compute:()I</span></span><br><span class="line">      15: invokevirtual <span class="comment">#6                  // Method java/io/PrintStream.println:(I)V</span></span><br><span class="line">      18: <span class="built_in">return</span></span><br><span class="line"></span><br><span class="line">  static &#123;&#125;;</span><br><span class="line">    Code:</span><br><span class="line">       0: new           <span class="comment">#7                  // class com/study/TestOne</span></span><br><span class="line">       3: dup</span><br><span class="line">       4: invokespecial <span class="comment">#8                  // Method com/study/TestOne.&quot;&lt;init&gt;&quot;:()V</span></span><br><span class="line">       7: putstatic     <span class="comment">#9                  // Field one:Lcom/study/TestOne;</span></span><br><span class="line">      10: <span class="built_in">return</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>当我们一个应用程序7x24小时运行时，肯定会不断产生新的对象，新的对象会存放在堆中，当堆中对象存放不下字节码执行引擎就会触发gc回收，释放掉无用的对象。</p>
-<p>什么样的对象会最终到老年代？<br>静态变量引用的变量，比如对象池，缓存对象，spring容器里面的对象</p>
-<p>在GC过程当中会触发STW（stop the world）事件，停止掉用户线程（用户操作发起的），minor gc是字节码引擎开启的后台线程，STW后用户使用会工具卡顿，影响体验和性能，主要还是减少full gc，因为full gc收集推信息时间较长，所以它的STM时间会长。</p>
-<p>为什么要有STW机制（不停止掉用户线程）？<br> 因为gc过程当中就是为了找一些非垃圾对象。当发生full gc时，在找局部变量和静态变量过程当中，线程代码依然往下执行，当执行结束时，栈内存空间里面的局部变量线程一结束就会释放，占内存空间也会销毁掉，那之前堆中找的局部变量和静态变量对应的在栈中的指针也被销毁掉了，那他们就变成垃圾对象了，gc都没结束他们就变成垃圾对象，那之前的gc过程就白做了，所以在gc找对象的过程当中会让你不要变动。</p>
-]]></content>
-      <categories>
-        <category>JVM</category>
-      </categories>
-      <tags>
-        <tag>JVM</tag>
       </tags>
   </entry>
   <entry>
@@ -1919,76 +1919,6 @@ transient volatile int cellsBusy;
       </tags>
   </entry>
   <entry>
-    <title>性能调优-为Java开疆拓土的ZGC深度剖析</title>
-    <url>/2022/03/08/%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98-%E4%B8%BAJava%E5%BC%80%E7%96%86%E6%8B%93%E5%9C%9F%E7%9A%84ZGC%E6%B7%B1%E5%BA%A6%E5%89%96%E6%9E%90/</url>
-    <content><![CDATA[<p>ZGC出现背景</p>
-<span id="more"></span>
-
-<p>对于Java的项目来说，JVM进行垃圾回收会有一个很大的问题，就是STW，STW的全称是StopTheWorld。Java项目中，如果JVM要进行垃圾回收，会暂停所有的业务线程，也就是项目中的线程，这样会导致业务系统暂停。</p>
-<p>垃圾回收器的发展<br>Java 的 GC 算法也在不停迭代，对于特定的应用，选择其最适合的 GC 算法，才能更高效的帮助业务实现其业务目标。对于这些延迟敏感的应用来说，GC 停顿已经成为阻碍 Java 广泛应用的一大顽疾，需要更适合的 GC 算法以满足这些业务的需求。<br>近些年来，服务器的性能越来越强劲，各种应用可使用的堆内存也越来越大，常见的堆大小从 10G 到百 G 级别，部分机型甚至可以到达 TB 级别，在这类大堆应用上，传统的 GC，如 CMS、G1 的停顿时间也跟随着堆大小的增长而同步增加，即堆大小指数级增长时，停顿时间也会指数级增长。特别是当触发 Full GC 时，停顿可达分钟级别(百GB级别的堆)。当业务应用需要提供高服务级别协议（Service Level Agreement，SLA），例如 99.99% 的响应时间不能超过 100ms，此时 CMS、G1 等就无法满足业务的需求。为满足当前应用对于超低停顿、并应对大堆和超大堆带来的挑战，伴随着 2018 年发布的 JDK 11，ZGC 应运而生。</p>
-<p>ZGC（The Z Garbage Collector）是JDK 11中推出的一款追求极致低延迟的垃圾收集器，它曾经设计目标包括：</p>
-<ul>
-<li>停顿时间不超过10ms（JDK16已经达到不超过1ms）；</li>
-<li>停顿时间不会随着堆的大小，或者活跃对象的大小而增加；</li>
-<li>支持8MB~4TB级别的堆，JDK15后已经可以支持16TB。<br>这么去想，如果使用ZGC来做Java项目，像对STW敏感的证券系统，游戏的系统都可以去用Java来做（以前都是C或者C++的市场），所以ZGC的出现就是为了抢占其他语言的市场（卷他们）。</li>
-</ul>
-<p>ZGC中的内存布局<br>为了细粒度地控制内存的分配，和G1一样，ZGC将内存划分成小的分区，在ZGC中称为页面（page）。ZGC中没有分代的概念（新生代、老年代）ZGC支持3种页面，分别为小页面、中页面和大页面。其中小页面指的是2MB的页面空间，中页面指32MB的页面空间，大页面指受操作系统控制的大页。</p>
-<p>ZGC布局.png</p>
-<p>当对象大小小于等于256KB时，对象分配在小页面。当对象大小在256KB和4M之间，对象分配在中页面。当对象大于4M，对象分配在大页面。ZGC对于不同页面回收的策略也不同。简单地说，小页面优先回收；中页面和大页面则尽量不回收。</p>
-<p>为什么这么设计？<br>标准大页（huge page）是Linux Kernel 2.6引入的，目的是通过使用大页内存来取代传统的4KB内存页面，以适应越来越大的系统内存，让操作系统可以支持现代硬件架构的大页面容量功能。<br>Huge pages 有两种格式大小：2MB 和1GB，2MB 页块大小适合用于GB大小的内存，1GB页块大小适合用于TB级别的内存，2MB 是默认的页大小。所以ZGC这么设置也是为了适应现代硬件架构的发展，提升性能。</p>
-<p>了解下：ZGC是支持NUMA的，在进行小页面分配时会优先从本地内存分配，当不能分配时才会从远端的内存分配。对于中页面和大页面的分配，ZGC并没有要求从本地内存分配，而是直接交给操作系统，由操作系统找到一块能满足ZGC页面的空间。ZGC这样设计的目的在于，对于小页面，存放的都是小对象，从本地内存分配速度很快，且不会造成内存使用的不平衡，而中页面和大页面因为需要的空间大，如果也优先从本地内存分配，极易造成内存使用不均衡，反而影响性能。</p>
-<p>ZGC的核心概念：指针着色技术（Color Pointers）<br>颜色指针可以说是ZGC的核心概念。因为他在指针中借了几个位出来做事情，所以它必须要求在64位的机器上才可以工作。并且因为要求64位的指针，也就不能支持压缩指针。ZGC中低42位表示使用中的堆空间，ZGC借几位高位来做GC相关的事情(快速实现垃圾回收中的并发标记、转移和重定位等)<br>颜色指针.png</p>
-<p>ZGC流程：</p>
-<ul>
-<li>标记阶段(标识垃圾)</li>
-<li>转移阶段(对象复制或移动)</li>
-</ul>
-<p>ZGC流程.png</p>
-<p>根可达算法<br>来判定对象是否存活的。这个算法的基本思路就是通过一系列的称为“GC Roots”的对象作为起始点，从这些节点开始向下搜索，搜索所走过的路径称为引用链（Reference Chain），当一个对象到GC Roots没有任何引用链相连时，则证明此对象是不可用的。</p>
-<p>作为GC Roots的对象主要包括下面4种</p>
-<ul>
-<li>虚拟机栈（栈帧中的本地变量表）：各个线程调用方法堆栈中使用到的参数、局部变量、临时变量等。</li>
-<li>方法区中类静态变量：java类的引用类型静态变量。</li>
-<li>方法区中常量：比如：字符串常量池里的引用。</li>
-<li>本地方法栈中JNI指针：（即一般说的Native方法）。</li>
-</ul>
-<p>ZGC中初始标记和并发标记<br>初始标记：从根集合(GC Roots)出发，找出根集合直接引用的活跃对象(根对象)<br>并发标记：根据初始标记找到的根对象，使用深度优先遍历对象的成员变量进行标记</p>
-<p>ZGC基于指针着色的并发标记算法：</p>
-<ul>
-<li>初始阶段，在ZGC初始化之后，此时地址视图为Remapped，程序正常运行，在内存中分配对象，满足一定条件后垃圾回收启动。</li>
-<li>初始标记，这个阶段需要暂停（STW），初始标记只需要扫描所有GC Roots，其处理时间和GC Roots的数量成正比，停顿时间不会随着堆的大小或者活跃对象的大小而增加。</li>
-<li>并发标记，这个阶段不需要暂停（没有STW），扫描剩余的所有对象，这个处理时间比较长，所以走并发，业务线程与GC线程同时运行。但是这个阶段会产生漏标问题。</li>
-<li>再标记，这个阶段需要暂停（没有STW），主要处理漏标对象，通过SATB算法解决（G1中的解决漏标的方案）。</li>
-</ul>
-<p>ZGC基于指针着色的并发转移算法：<br>ZGC的转移阶段</p>
-<ul>
-<li>并发转移准备(分析最有价值GC分页&lt;无STW &gt; )</li>
-<li>初始转移（转移初始标记的存活对象同时做对象重定位&lt;有STW&gt; ）</li>
-<li>并发转移（对转移并发标记的存活对象做转移&lt;无STW&gt;）</li>
-</ul>
-<p>并发转移.png<br>如何做到并发转移？<br>通过转发表(类似于HashMap)，用来存放新旧地址的地址指针，对象转移和插转发表做原子操作，对并发对象的地址指针做更新操作。</p>
-<p>ZGC基于指针着色的重定位算法<br>并发标记对象的重定位，下次GC中的并发标记（在这个过程中会做上次并发标记对象的重定位，也就是我们漏标的对象给他们重新标记定位）<br>技术上：指针着色中M0和M1区分，比如最开始是M0那么下次就是M1，下下次再是M0，依次这样。<br>重定位算法.png</p>
-<p>ZGC中的读屏障<br>涉及对象：并发转移但还没做对象重定位的对象（着色指针使用M0和M1可以区分）<br>触发时机：在两次GC之间业务线程访问这样的对象<br>触发操作：对象重定位+删除转发表记录（两个一起做原子操作）<br>读屏障是JVM向应用代码插入一小段代码的技术。当应用线程从堆中读取对象引用时，就会执行这段代码。需要注意的是，仅“从堆中读取对象引用”才会触发这段代码，根据转发表把对象的地址指针更新为正确的，然后删掉转发表的对象地址记录（因为没用了）。</p>
-<p>ZGC参数设置<br>ZGC 优势不仅在于其超低的 STW 停顿，也在于其参数的简单，绝大部分生产场景都可以自适应。当然，极端情况下，还是有可能需要对ZGC个别参数做个调整，大致可以分为三类：</p>
-<ul>
-<li>堆大小：Xmx。当分配速率过高，超过回收速率，造成堆内存不够时，会触发 Allocation Stall，这类 Stall 会减缓当前的用户线程。因此，当我们在 GC 日志中看到 Allocation Stall，通常可以认为堆空间偏小或者 concurrent gc threads 数偏小。</li>
-<li>GC触发时机：ZAllocationSpikeTolerance, ZCollectionInterval。ZAllocationSpikeTolerance 用来估算当前的堆内存分配速率，在当前剩余的堆内存下，ZAllocationSpikeTolerance 越大，估算的达到OOM 的时间越快，ZGC 就会更早地进行触发 GC。ZCollectionInterval 用来指定 GC 发生的间隔，以秒为单位触发GC。</li>
-<li>GC线程：ParallelGCThreads，ConcGCThreads。ParallelGCThreads 是设置STW任务的GC线程数目，默认为CPU个数的 60%；ConcGCThreads 是并发阶段GC线程的数目，默认为CPU个数的12.5%。增加GC线程数目可以加快GC完成任务，减少各个阶段的时间，但也会增加CPU的抢占开<br>销，可根据生产情况调整。由上可以看出ZGC需要调整的参数十分简单，通常设置Xmx即可满足业务的需求，大大减轻Java开发者的负<br>担。</li>
-</ul>
-<p>ZGC典型应用场景<br>因为ZGC不支持压缩指针和分代 GC，其内存占用相对于 G1 来说要稍大，在小堆情况下较为明显，而在大堆情况下，这些多占用的内存则显得不那么突出。因此，以下两类应用强烈建议使用 ZGC 来提升业务体验：</p>
-<ul>
-<li>超大堆应用。超大堆（百G以上）下，CMS 或者G1如果发生 Full GC，停顿会在分钟级别，可能会造成业务的终端，强烈推荐使用 ZGC。</li>
-<li>当业务应用需要提供高服务级别协议（Service Level Agreement，SLA），例如 99.99% 的响应时间不能超过 100ms，此类应用无论堆大小，均推荐采用低停顿的 ZGC。</li>
-</ul>
-]]></content>
-      <categories>
-        <category>JVM</category>
-      </categories>
-      <tags>
-        <tag>JVM</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>性能调优-垃圾收集器G1&amp;ZGC详解</title>
     <url>/2022/02/28/%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98-%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8G1&amp;ZGC%E8%AF%A6%E8%A7%A3/</url>
     <content><![CDATA[<p>G1收集器(-XX:+UseG1GC)</p>
@@ -2077,6 +2007,76 @@ transient volatile int cellsBusy;
 <li>4G以下可以用parallel，4-8G可以用ParNew+CMS，8G以上可以用G1，几百G以上用ZGC</li>
 </ol>
 <p>注意：JDK 1.8默认使用 Parallel(年轻代和老年代都是)，JDK 1.9默认使用 G1</p>
+]]></content>
+      <categories>
+        <category>JVM</category>
+      </categories>
+      <tags>
+        <tag>JVM</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>性能调优-为Java开疆拓土的ZGC深度剖析</title>
+    <url>/2022/03/08/%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98-%E4%B8%BAJava%E5%BC%80%E7%96%86%E6%8B%93%E5%9C%9F%E7%9A%84ZGC%E6%B7%B1%E5%BA%A6%E5%89%96%E6%9E%90/</url>
+    <content><![CDATA[<p>ZGC出现背景</p>
+<span id="more"></span>
+
+<p>对于Java的项目来说，JVM进行垃圾回收会有一个很大的问题，就是STW，STW的全称是StopTheWorld。Java项目中，如果JVM要进行垃圾回收，会暂停所有的业务线程，也就是项目中的线程，这样会导致业务系统暂停。</p>
+<p>垃圾回收器的发展<br>Java 的 GC 算法也在不停迭代，对于特定的应用，选择其最适合的 GC 算法，才能更高效的帮助业务实现其业务目标。对于这些延迟敏感的应用来说，GC 停顿已经成为阻碍 Java 广泛应用的一大顽疾，需要更适合的 GC 算法以满足这些业务的需求。<br>近些年来，服务器的性能越来越强劲，各种应用可使用的堆内存也越来越大，常见的堆大小从 10G 到百 G 级别，部分机型甚至可以到达 TB 级别，在这类大堆应用上，传统的 GC，如 CMS、G1 的停顿时间也跟随着堆大小的增长而同步增加，即堆大小指数级增长时，停顿时间也会指数级增长。特别是当触发 Full GC 时，停顿可达分钟级别(百GB级别的堆)。当业务应用需要提供高服务级别协议（Service Level Agreement，SLA），例如 99.99% 的响应时间不能超过 100ms，此时 CMS、G1 等就无法满足业务的需求。为满足当前应用对于超低停顿、并应对大堆和超大堆带来的挑战，伴随着 2018 年发布的 JDK 11，ZGC 应运而生。</p>
+<p>ZGC（The Z Garbage Collector）是JDK 11中推出的一款追求极致低延迟的垃圾收集器，它曾经设计目标包括：</p>
+<ul>
+<li>停顿时间不超过10ms（JDK16已经达到不超过1ms）；</li>
+<li>停顿时间不会随着堆的大小，或者活跃对象的大小而增加；</li>
+<li>支持8MB~4TB级别的堆，JDK15后已经可以支持16TB。<br>这么去想，如果使用ZGC来做Java项目，像对STW敏感的证券系统，游戏的系统都可以去用Java来做（以前都是C或者C++的市场），所以ZGC的出现就是为了抢占其他语言的市场（卷他们）。</li>
+</ul>
+<p>ZGC中的内存布局<br>为了细粒度地控制内存的分配，和G1一样，ZGC将内存划分成小的分区，在ZGC中称为页面（page）。ZGC中没有分代的概念（新生代、老年代）ZGC支持3种页面，分别为小页面、中页面和大页面。其中小页面指的是2MB的页面空间，中页面指32MB的页面空间，大页面指受操作系统控制的大页。</p>
+<p>ZGC布局.png</p>
+<p>当对象大小小于等于256KB时，对象分配在小页面。当对象大小在256KB和4M之间，对象分配在中页面。当对象大于4M，对象分配在大页面。ZGC对于不同页面回收的策略也不同。简单地说，小页面优先回收；中页面和大页面则尽量不回收。</p>
+<p>为什么这么设计？<br>标准大页（huge page）是Linux Kernel 2.6引入的，目的是通过使用大页内存来取代传统的4KB内存页面，以适应越来越大的系统内存，让操作系统可以支持现代硬件架构的大页面容量功能。<br>Huge pages 有两种格式大小：2MB 和1GB，2MB 页块大小适合用于GB大小的内存，1GB页块大小适合用于TB级别的内存，2MB 是默认的页大小。所以ZGC这么设置也是为了适应现代硬件架构的发展，提升性能。</p>
+<p>了解下：ZGC是支持NUMA的，在进行小页面分配时会优先从本地内存分配，当不能分配时才会从远端的内存分配。对于中页面和大页面的分配，ZGC并没有要求从本地内存分配，而是直接交给操作系统，由操作系统找到一块能满足ZGC页面的空间。ZGC这样设计的目的在于，对于小页面，存放的都是小对象，从本地内存分配速度很快，且不会造成内存使用的不平衡，而中页面和大页面因为需要的空间大，如果也优先从本地内存分配，极易造成内存使用不均衡，反而影响性能。</p>
+<p>ZGC的核心概念：指针着色技术（Color Pointers）<br>颜色指针可以说是ZGC的核心概念。因为他在指针中借了几个位出来做事情，所以它必须要求在64位的机器上才可以工作。并且因为要求64位的指针，也就不能支持压缩指针。ZGC中低42位表示使用中的堆空间，ZGC借几位高位来做GC相关的事情(快速实现垃圾回收中的并发标记、转移和重定位等)<br>颜色指针.png</p>
+<p>ZGC流程：</p>
+<ul>
+<li>标记阶段(标识垃圾)</li>
+<li>转移阶段(对象复制或移动)</li>
+</ul>
+<p>ZGC流程.png</p>
+<p>根可达算法<br>来判定对象是否存活的。这个算法的基本思路就是通过一系列的称为“GC Roots”的对象作为起始点，从这些节点开始向下搜索，搜索所走过的路径称为引用链（Reference Chain），当一个对象到GC Roots没有任何引用链相连时，则证明此对象是不可用的。</p>
+<p>作为GC Roots的对象主要包括下面4种</p>
+<ul>
+<li>虚拟机栈（栈帧中的本地变量表）：各个线程调用方法堆栈中使用到的参数、局部变量、临时变量等。</li>
+<li>方法区中类静态变量：java类的引用类型静态变量。</li>
+<li>方法区中常量：比如：字符串常量池里的引用。</li>
+<li>本地方法栈中JNI指针：（即一般说的Native方法）。</li>
+</ul>
+<p>ZGC中初始标记和并发标记<br>初始标记：从根集合(GC Roots)出发，找出根集合直接引用的活跃对象(根对象)<br>并发标记：根据初始标记找到的根对象，使用深度优先遍历对象的成员变量进行标记</p>
+<p>ZGC基于指针着色的并发标记算法：</p>
+<ul>
+<li>初始阶段，在ZGC初始化之后，此时地址视图为Remapped，程序正常运行，在内存中分配对象，满足一定条件后垃圾回收启动。</li>
+<li>初始标记，这个阶段需要暂停（STW），初始标记只需要扫描所有GC Roots，其处理时间和GC Roots的数量成正比，停顿时间不会随着堆的大小或者活跃对象的大小而增加。</li>
+<li>并发标记，这个阶段不需要暂停（没有STW），扫描剩余的所有对象，这个处理时间比较长，所以走并发，业务线程与GC线程同时运行。但是这个阶段会产生漏标问题。</li>
+<li>再标记，这个阶段需要暂停（没有STW），主要处理漏标对象，通过SATB算法解决（G1中的解决漏标的方案）。</li>
+</ul>
+<p>ZGC基于指针着色的并发转移算法：<br>ZGC的转移阶段</p>
+<ul>
+<li>并发转移准备(分析最有价值GC分页&lt;无STW &gt; )</li>
+<li>初始转移（转移初始标记的存活对象同时做对象重定位&lt;有STW&gt; ）</li>
+<li>并发转移（对转移并发标记的存活对象做转移&lt;无STW&gt;）</li>
+</ul>
+<p>并发转移.png<br>如何做到并发转移？<br>通过转发表(类似于HashMap)，用来存放新旧地址的地址指针，对象转移和插转发表做原子操作，对并发对象的地址指针做更新操作。</p>
+<p>ZGC基于指针着色的重定位算法<br>并发标记对象的重定位，下次GC中的并发标记（在这个过程中会做上次并发标记对象的重定位，也就是我们漏标的对象给他们重新标记定位）<br>技术上：指针着色中M0和M1区分，比如最开始是M0那么下次就是M1，下下次再是M0，依次这样。<br>重定位算法.png</p>
+<p>ZGC中的读屏障<br>涉及对象：并发转移但还没做对象重定位的对象（着色指针使用M0和M1可以区分）<br>触发时机：在两次GC之间业务线程访问这样的对象<br>触发操作：对象重定位+删除转发表记录（两个一起做原子操作）<br>读屏障是JVM向应用代码插入一小段代码的技术。当应用线程从堆中读取对象引用时，就会执行这段代码。需要注意的是，仅“从堆中读取对象引用”才会触发这段代码，根据转发表把对象的地址指针更新为正确的，然后删掉转发表的对象地址记录（因为没用了）。</p>
+<p>ZGC参数设置<br>ZGC 优势不仅在于其超低的 STW 停顿，也在于其参数的简单，绝大部分生产场景都可以自适应。当然，极端情况下，还是有可能需要对ZGC个别参数做个调整，大致可以分为三类：</p>
+<ul>
+<li>堆大小：Xmx。当分配速率过高，超过回收速率，造成堆内存不够时，会触发 Allocation Stall，这类 Stall 会减缓当前的用户线程。因此，当我们在 GC 日志中看到 Allocation Stall，通常可以认为堆空间偏小或者 concurrent gc threads 数偏小。</li>
+<li>GC触发时机：ZAllocationSpikeTolerance, ZCollectionInterval。ZAllocationSpikeTolerance 用来估算当前的堆内存分配速率，在当前剩余的堆内存下，ZAllocationSpikeTolerance 越大，估算的达到OOM 的时间越快，ZGC 就会更早地进行触发 GC。ZCollectionInterval 用来指定 GC 发生的间隔，以秒为单位触发GC。</li>
+<li>GC线程：ParallelGCThreads，ConcGCThreads。ParallelGCThreads 是设置STW任务的GC线程数目，默认为CPU个数的 60%；ConcGCThreads 是并发阶段GC线程的数目，默认为CPU个数的12.5%。增加GC线程数目可以加快GC完成任务，减少各个阶段的时间，但也会增加CPU的抢占开<br>销，可根据生产情况调整。由上可以看出ZGC需要调整的参数十分简单，通常设置Xmx即可满足业务的需求，大大减轻Java开发者的负<br>担。</li>
+</ul>
+<p>ZGC典型应用场景<br>因为ZGC不支持压缩指针和分代 GC，其内存占用相对于 G1 来说要稍大，在小堆情况下较为明显，而在大堆情况下，这些多占用的内存则显得不那么突出。因此，以下两类应用强烈建议使用 ZGC 来提升业务体验：</p>
+<ul>
+<li>超大堆应用。超大堆（百G以上）下，CMS 或者G1如果发生 Full GC，停顿会在分钟级别，可能会造成业务的终端，强烈推荐使用 ZGC。</li>
+<li>当业务应用需要提供高服务级别协议（Service Level Agreement，SLA），例如 99.99% 的响应时间不能超过 100ms，此类应用无论堆大小，均推荐采用低停顿的 ZGC。</li>
+</ul>
 ]]></content>
       <categories>
         <category>JVM</category>
@@ -2337,6 +2337,43 @@ transient volatile int cellsBusy;
       </tags>
   </entry>
   <entry>
+    <title>计算机基础系列-计算机如何执行指令</title>
+    <url>/2022/01/28/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80%E7%B3%BB%E5%88%97-%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%A6%82%E4%BD%95%E6%89%A7%E8%A1%8C%E6%8C%87%E4%BB%A4/</url>
+    <content><![CDATA[<p>计算机如何执行指令</p>
+<span id="more"></span>
+<p>学习来源：<a href="https://www.yuque.com/books/share/227872c0-1f19-4c83-960e-5e13e39343c8/fv71rh">https://www.yuque.com/books/share/227872c0-1f19-4c83-960e-5e13e39343c8/fv71rh</a></p>
+<h2 id="一-计算机如何执行指令"><a href="#一-计算机如何执行指令" class="headerlink" title="一.计算机如何执行指令"></a>一.计算机如何执行指令</h2><h4 id="1-1-计算机指令"><a href="#1-1-计算机指令" class="headerlink" title="1.1 计算机指令"></a>1.1 计算机指令</h4><p>如果我们从软件工程师的角度来讲，CPU 就是一个执行各种计算机指令（Instruction Code）的逻辑机器。这里的计算机指令，就好比一门 CPU 能够听得懂的语言，我们也可以把它叫作机器语言（Machine Language）。<br>不同的 CPU 能够听懂的语言不太一样。比如，我们的个人电脑用的是 Intel 的 CPU，苹果手机用的是 ARM 的 CPU。这两者能听懂的语言就不太一样。类似这样两种 CPU 各自支持的语言，就是两组不同的计算机指令集，英文叫 Instruction Set。这里面的“Set”，其实就是数学上的集合，代表不同的单词、语法。</p>
+<h4 id="1-2-CPU如何执行指令"><a href="#1-2-CPU如何执行指令" class="headerlink" title="1.2 CPU如何执行指令"></a>1.2 CPU如何执行指令</h4><p>下图展示了一般程序的运行流程（以 C 语言为例），可以说了解程序的运行流程是掌握程序运行机制的基础和前提。<br><img src="/images/cpuzl.png"><br>在这个流程中，CPU 负责的就是解释和运行最终转换成机器语言的内容。<br>CPU 是计算机的心脏和大脑，它和内存都是由许多晶体管组成的电子部件。它接收数据输入，执行指令并处理信息。它与输入/输出（I / O）设备进行通信，这些设备向 CPU 发送数据和从 CPU 接收数据。<br>从功能来看，CPU 的内部由寄存器、控制器、运算器和时钟四部分组成，各部分之间通过电信号连通。</p>
+<ul>
+<li>寄存器是中央处理器内的组成部分。它们可以用来暂存指令、数据和地址。可以将其看作是内存的一种。根据种类的不同，一个 CPU 内部会有 20 – 100个寄存器。</li>
+<li>控制器负责把内存上的指令、数据读入寄存器，并根据指令的结果控制计算机</li>
+<li>运算器负责运算从内存中读入寄存器的数据</li>
+<li>时钟负责发出 CPU 开始计时的时钟信号</li>
+</ul>
+<h4 id="1-3-CPU指令执行过程"><a href="#1-3-CPU指令执行过程" class="headerlink" title="1.3 CPU指令执行过程"></a>1.3 CPU指令执行过程</h4><p>几乎所有的冯·诺伊曼型计算机的CPU，其工作都可以分为5个阶段：取指令、指令译码、执行指令、访存取数、结果写回。</p>
+<ul>
+<li>取指令阶段是将内存中的指令读取到 CPU 中寄存器的过程，程序寄存器用于存储下一条指令所在的地址</li>
+<li>指令译码阶段，在取指令完成后，立马进入指令译码阶段，在指令译码阶段，指令译码器按照预定的指令格式，对取回的指令进行拆分和解释，识别区分出不同的指令类别以及各种获取操作数的方法。</li>
+<li>执行指令阶段，译码完成后，就需要执行这一条指令了，此阶段的任务是完成指令所规定的各种操作，具体实现指令的功能。</li>
+<li>访问取数阶段，根据指令的需要，有可能需要从内存中提取数据，此阶段的任务是：根据指令地址码，得到操作数在主存中的地址，并从主存中读取该操作数用于运算。</li>
+<li>结果写回阶段，作为最后一个阶段，结果写回（Write Back，WB）阶段把执行指令阶段的运行结果数据“写回”到某种存储形式：结果数据经常被写到CPU的内部寄存器中，以便被后续的指令快速地存取。</li>
+</ul>
+<h4 id="1-4-内存"><a href="#1-4-内存" class="headerlink" title="1.4 内存"></a>1.4 内存</h4><p>CPU 和 内存就像是一堆不可分割的恋人一样，是无法拆散的一对儿，没有内存，CPU 无法执行程序指令，那么计算机也就失去了意义；只有内存，无法执行指令，那么计算机照样无法运行。</p>
+<h5 id="1-4-1-内存组成"><a href="#1-4-1-内存组成" class="headerlink" title="1.4.1 内存组成"></a>1.4.1 内存组成</h5><p>内存的内部是由各种 IC 电路组成的，它的种类很庞大，但是其主要分为三种存储器</p>
+<ul>
+<li>随机存储器（RAM）：内存中最重要的一种，表示既可以从中读取数据，也可以写入数据。当机器关闭时，内存中的信息会 丢失。</li>
+<li>只读存储器（ROM）：ROM 一般只能用于数据的读取，不能写入数据，但是当机器停电时，这些数据不会丢失。</li>
+<li>高速缓存（Cache）：Cache 也是我们经常见到的，它分为一级缓存（L1 Cache）、二级缓存（L2 Cache）、三级缓存（L3 Cache）这些数据，它位于内存和 CPU 之间，是一个读写速度比内存更快的存储器。当 CPU 向内存写入数据时，这些数据也会被写入高速缓存中。当 CPU 需要读取数据时，会直接从高速缓存中直接读取，当然，如需要的数据在Cache中没有，CPU会再去读取内存中的数据。</li>
+</ul>
+]]></content>
+      <categories>
+        <category>计算机组成原理</category>
+      </categories>
+      <tags>
+        <tag>计算机组成原理</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>计算机基础系列-计算机组成原理</title>
     <url>/2022/01/27/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80%E7%B3%BB%E5%88%97-%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/</url>
     <content><![CDATA[<p>计算机发展由来</p>
@@ -2402,43 +2439,6 @@ transient volatile int cellsBusy;
 </tr>
 </tbody></table>
 <h2 id="九-第四代大规模集成电路计算机（1971-至今）"><a href="#九-第四代大规模集成电路计算机（1971-至今）" class="headerlink" title="九.第四代大规模集成电路计算机（1971-至今）"></a>九.第四代大规模集成电路计算机（1971-至今）</h2><p> 随着大规模集成电路的发展，计算机进入了第四代发展。第四代计算机以大规模集成电路作为逻辑元件和存储器，使计算机向着微型化和巨型化两个方向发展。从第一代到第四代，计算机的<a href="https://so.csdn.net/so/search?q=%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84&spm=1001.2101.3001.7020">体系结构</a>都是相同的，即都由控制器，存储器，运算器和输入输出设备组成，称为冯·诺依曼体系结构 。 </p>
-]]></content>
-      <categories>
-        <category>计算机组成原理</category>
-      </categories>
-      <tags>
-        <tag>计算机组成原理</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>计算机基础系列-计算机如何执行指令</title>
-    <url>/2022/01/28/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80%E7%B3%BB%E5%88%97-%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%A6%82%E4%BD%95%E6%89%A7%E8%A1%8C%E6%8C%87%E4%BB%A4/</url>
-    <content><![CDATA[<p>计算机如何执行指令</p>
-<span id="more"></span>
-<p>学习来源：<a href="https://www.yuque.com/books/share/227872c0-1f19-4c83-960e-5e13e39343c8/fv71rh">https://www.yuque.com/books/share/227872c0-1f19-4c83-960e-5e13e39343c8/fv71rh</a></p>
-<h2 id="一-计算机如何执行指令"><a href="#一-计算机如何执行指令" class="headerlink" title="一.计算机如何执行指令"></a>一.计算机如何执行指令</h2><h4 id="1-1-计算机指令"><a href="#1-1-计算机指令" class="headerlink" title="1.1 计算机指令"></a>1.1 计算机指令</h4><p>如果我们从软件工程师的角度来讲，CPU 就是一个执行各种计算机指令（Instruction Code）的逻辑机器。这里的计算机指令，就好比一门 CPU 能够听得懂的语言，我们也可以把它叫作机器语言（Machine Language）。<br>不同的 CPU 能够听懂的语言不太一样。比如，我们的个人电脑用的是 Intel 的 CPU，苹果手机用的是 ARM 的 CPU。这两者能听懂的语言就不太一样。类似这样两种 CPU 各自支持的语言，就是两组不同的计算机指令集，英文叫 Instruction Set。这里面的“Set”，其实就是数学上的集合，代表不同的单词、语法。</p>
-<h4 id="1-2-CPU如何执行指令"><a href="#1-2-CPU如何执行指令" class="headerlink" title="1.2 CPU如何执行指令"></a>1.2 CPU如何执行指令</h4><p>下图展示了一般程序的运行流程（以 C 语言为例），可以说了解程序的运行流程是掌握程序运行机制的基础和前提。<br><img src="/images/cpuzl.png"><br>在这个流程中，CPU 负责的就是解释和运行最终转换成机器语言的内容。<br>CPU 是计算机的心脏和大脑，它和内存都是由许多晶体管组成的电子部件。它接收数据输入，执行指令并处理信息。它与输入/输出（I / O）设备进行通信，这些设备向 CPU 发送数据和从 CPU 接收数据。<br>从功能来看，CPU 的内部由寄存器、控制器、运算器和时钟四部分组成，各部分之间通过电信号连通。</p>
-<ul>
-<li>寄存器是中央处理器内的组成部分。它们可以用来暂存指令、数据和地址。可以将其看作是内存的一种。根据种类的不同，一个 CPU 内部会有 20 – 100个寄存器。</li>
-<li>控制器负责把内存上的指令、数据读入寄存器，并根据指令的结果控制计算机</li>
-<li>运算器负责运算从内存中读入寄存器的数据</li>
-<li>时钟负责发出 CPU 开始计时的时钟信号</li>
-</ul>
-<h4 id="1-3-CPU指令执行过程"><a href="#1-3-CPU指令执行过程" class="headerlink" title="1.3 CPU指令执行过程"></a>1.3 CPU指令执行过程</h4><p>几乎所有的冯·诺伊曼型计算机的CPU，其工作都可以分为5个阶段：取指令、指令译码、执行指令、访存取数、结果写回。</p>
-<ul>
-<li>取指令阶段是将内存中的指令读取到 CPU 中寄存器的过程，程序寄存器用于存储下一条指令所在的地址</li>
-<li>指令译码阶段，在取指令完成后，立马进入指令译码阶段，在指令译码阶段，指令译码器按照预定的指令格式，对取回的指令进行拆分和解释，识别区分出不同的指令类别以及各种获取操作数的方法。</li>
-<li>执行指令阶段，译码完成后，就需要执行这一条指令了，此阶段的任务是完成指令所规定的各种操作，具体实现指令的功能。</li>
-<li>访问取数阶段，根据指令的需要，有可能需要从内存中提取数据，此阶段的任务是：根据指令地址码，得到操作数在主存中的地址，并从主存中读取该操作数用于运算。</li>
-<li>结果写回阶段，作为最后一个阶段，结果写回（Write Back，WB）阶段把执行指令阶段的运行结果数据“写回”到某种存储形式：结果数据经常被写到CPU的内部寄存器中，以便被后续的指令快速地存取。</li>
-</ul>
-<h4 id="1-4-内存"><a href="#1-4-内存" class="headerlink" title="1.4 内存"></a>1.4 内存</h4><p>CPU 和 内存就像是一堆不可分割的恋人一样，是无法拆散的一对儿，没有内存，CPU 无法执行程序指令，那么计算机也就失去了意义；只有内存，无法执行指令，那么计算机照样无法运行。</p>
-<h5 id="1-4-1-内存组成"><a href="#1-4-1-内存组成" class="headerlink" title="1.4.1 内存组成"></a>1.4.1 内存组成</h5><p>内存的内部是由各种 IC 电路组成的，它的种类很庞大，但是其主要分为三种存储器</p>
-<ul>
-<li>随机存储器（RAM）：内存中最重要的一种，表示既可以从中读取数据，也可以写入数据。当机器关闭时，内存中的信息会 丢失。</li>
-<li>只读存储器（ROM）：ROM 一般只能用于数据的读取，不能写入数据，但是当机器停电时，这些数据不会丢失。</li>
-<li>高速缓存（Cache）：Cache 也是我们经常见到的，它分为一级缓存（L1 Cache）、二级缓存（L2 Cache）、三级缓存（L3 Cache）这些数据，它位于内存和 CPU 之间，是一个读写速度比内存更快的存储器。当 CPU 向内存写入数据时，这些数据也会被写入高速缓存中。当 CPU 需要读取数据时，会直接从高速缓存中直接读取，当然，如需要的数据在Cache中没有，CPU会再去读取内存中的数据。</li>
-</ul>
 ]]></content>
       <categories>
         <category>计算机组成原理</category>
